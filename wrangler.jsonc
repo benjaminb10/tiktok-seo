@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tanstack-tiktok-analyzer",
+  "compatibility_date": "2026-04-28",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tiktok-analyzer-db",
+      "database_id": "local"
+    }
+  ],
+  "vars": {
+    "SIDECAR_TOKEN": "dev-sidecar-token"
+  }
+}

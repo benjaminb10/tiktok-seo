@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.wrangler/
+.mf/
+.vite/
+.DS_Store
+.env
+.env.*
+downloads/
+public/tiktok-videos/
+npm-debug.log*
