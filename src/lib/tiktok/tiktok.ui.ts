@@ -78,7 +78,7 @@ export function getRunStatusView(
 
   return {
     title: `${details.videos.length} vidéos trouvées`,
-    description: "Tu peux trier le tableau ou ouvrir une vidéo.",
+    description: "",
     isBusy: false,
   };
 }

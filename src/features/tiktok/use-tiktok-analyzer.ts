@@ -166,6 +166,14 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
     }
   }
 
+  function clearResults() {
+    setRunId(null);
+    setDetails(null);
+    setError(null);
+    setInput("");
+    window.sessionStorage.removeItem("tiktok:lastRunId");
+  }
+
   return {
     input,
     videos,
@@ -179,6 +187,7 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
     analyze,
     cancelRun,
     loadMore,
+    clearResults,
     requestVideoDownload,
   };
 }

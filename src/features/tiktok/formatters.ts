@@ -7,9 +7,14 @@ export function formatNumber(value: number | null): string {
 
 export function formatDate(value: string | null): string {
   if (!value) return "-";
+  const date = new Date(value);
   return new Intl.DateTimeFormat("fr-FR", {
-    dateStyle: "medium",
-  }).format(new Date(value));
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
 }
 
 export function formatDuration(value: number | null): string {

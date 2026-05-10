@@ -91,7 +91,7 @@ export function DescriptionCell({ video }: { video: RunVideoRow }) {
   if (!text) return <span className="text-muted-foreground">-</span>;
 
   return (
-    <div className="w-[280px]">
+    <div className="w-[180px]">
       <p
         ref={textRef}
         className={`${expanded ? "" : "line-clamp-3"} text-sm leading-snug whitespace-normal`}

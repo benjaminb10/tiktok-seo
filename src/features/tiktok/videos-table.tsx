@@ -7,9 +7,10 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ArrowUpDown, Download } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Download, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Button } from "#/components/ui/button";
+import { Progress } from "#/components/ui/progress";
 import {
   Table,
   TableBody,
@@ -66,7 +67,7 @@ function exportToCSV(videos: RunVideoRow[]) {
       video.viewCount,
       engagement != null ? `${(engagement * 100).toFixed(1)}%` : "",
       video.likeCount,
-      video.publishedAt ? new Date(video.publishedAt).toLocaleDateString("fr-FR") : "",
+      video.publishedAt ? formatDate(video.publishedAt) : "",
       video.commentCount,
       video.repostCount,
       video.durationSeconds,
@@ -91,6 +92,7 @@ type VideosTableProps = {
   canLoadMore: boolean;
   onRequestVideoDownload: (video: RunVideoRow) => Promise<void>;
   onLoadMore: () => void;
+  onClear: () => void;
 };
 
 export function VideosTable({
@@ -98,6 +100,7 @@ export function VideosTable({
   canLoadMore,
   onRequestVideoDownload,
   onLoadMore,
+  onClear,
 }: VideosTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
@@ -125,10 +128,10 @@ export function VideosTable({
               <img
                 src={row.original.thumbnailUrl}
                 alt=""
-                className="h-8 w-8 rounded object-cover hover:opacity-80 transition-opacity"
+                className="h-12 w-12 rounded object-cover hover:opacity-80 transition-opacity"
               />
             ) : (
-              <div className="h-8 w-8 rounded bg-muted hover:bg-muted/80 transition-colors" />
+              <div className="h-12 w-12 rounded bg-muted hover:bg-muted/80 transition-colors" />
             )}
           </button>
         ),
@@ -136,7 +139,7 @@ export function VideosTable({
       {
         id: "description",
         header: "Description",
-        size: 280,
+        size: 180,
         cell: ({ row }) => <DescriptionCell video={row.original} />,
       },
       {
@@ -148,7 +151,17 @@ export function VideosTable({
         id: "engagement",
         header: sortableHeader("Engagement"),
         accessorFn: (row) => engagementRate(row),
-        cell: ({ row }) => formatPercent(engagementRate(row.original)),
+        cell: ({ row }) => {
+          const rate = engagementRate(row.original);
+          const progressValue =
+            rate != null ? Math.min((rate / 0.15) * 100, 100) : 0;
+          return (
+            <div className="flex items-center gap-2 min-w-[100px]">
+              <Progress value={progressValue} className="h-2 w-16" />
+              <span className="text-sm">{formatPercent(rate)}</span>
+            </div>
+          );
+        },
       },
       {
         accessorKey: "likeCount",
@@ -171,15 +184,15 @@ export function VideosTable({
         cell: ({ row }) => formatNumber(row.original.repostCount),
       },
       {
+        id: "transcript",
+        header: "Retranscription",
+        size: 200,
+        cell: ({ row }) => <TranscriptCell video={row.original} />,
+      },
+      {
         accessorKey: "durationSeconds",
         header: sortableHeader("Durée"),
         cell: ({ row }) => formatDuration(row.original.durationSeconds),
-      },
-      {
-        id: "transcript",
-        header: "Retranscription",
-        size: 280,
-        cell: ({ row }) => <TranscriptCell video={row.original} />,
       },
       {
         accessorKey: "tags",
@@ -220,10 +233,16 @@ export function VideosTable({
             </Button>
           )}
           {videos.length > 0 && (
-            <Button type="button" variant="outline" onClick={() => exportToCSV(videos)}>
-              <Download className="h-4 w-4 mr-2" />
-              Exporter CSV
-            </Button>
+            <>
+              <Button type="button" variant="outline" onClick={() => exportToCSV(videos)}>
+                <Download className="h-4 w-4 mr-2" />
+                Exporter CSV
+              </Button>
+              <Button type="button" variant="outline" onClick={onClear}>
+                <Trash2 className="h-4 w-4 mr-2" />
+                Vider
+              </Button>
+            </>
           )}
         </div>
         <div className="rounded-md border overflow-auto max-w-full">
@@ -254,7 +273,10 @@ export function VideosTable({
             <TableBody>
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
+                  <TableRow
+                    key={row.id}
+                    className="odd:bg-muted/30 hover:bg-muted/50 transition-colors"
+                  >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
