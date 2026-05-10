@@ -14,6 +14,7 @@ type SearchPanelProps = {
   isMetadataBusy: boolean;
   onInputChange: (value: string) => void;
   onAnalyze: (event: FormEvent<HTMLFormElement>) => void;
+  onCancel: () => void;
 };
 
 export function SearchPanel({
@@ -23,6 +24,7 @@ export function SearchPanel({
   isMetadataBusy,
   onInputChange,
   onAnalyze,
+  onCancel,
 }: SearchPanelProps) {
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col items-center gap-6 pt-16">
@@ -52,6 +54,11 @@ export function SearchPanel({
               ? "Analyse..."
               : "Analyser le compte"}
           </Button>
+          {isMetadataBusy && (
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Arrêter
+            </Button>
+          )}
         </div>
         <p aria-live="polite">{statusText}</p>
       </form>

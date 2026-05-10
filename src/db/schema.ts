@@ -18,7 +18,7 @@ export const searchRuns = sqliteTable(
     handle: text("handle"),
     videoId: text("video_id"),
     status: text("status", {
-      enum: ["queued", "running", "completed", "failed"],
+      enum: ["queued", "running", "completed", "failed", "cancelled"],
     })
       .notNull()
       .default("queued"),

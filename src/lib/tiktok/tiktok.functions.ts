@@ -4,7 +4,7 @@ import {
   createDownloadJobs,
   createVideoDownloadJob,
 } from "./tiktok.jobs.server";
-import { createMetadataRun, getRunDetails } from "./tiktok.runs.server";
+import { cancelRun, createMetadataRun, getRunDetails } from "./tiktok.runs.server";
 import {
   createRunSchema,
   runIdSchema,
@@ -33,4 +33,10 @@ export const createVideoDownloadJobFn = createServerFn({ method: "POST" })
   .inputValidator((input) => videoDownloadSchema.parse(input))
   .handler(async ({ data }) => {
     return createVideoDownloadJob(db, data);
+  });
+
+export const cancelRunFn = createServerFn({ method: "POST" })
+  .inputValidator((input) => runIdSchema.parse(input))
+  .handler(async ({ data }) => {
+    return cancelRun(db, data.runId);
   });

@@ -19,6 +19,7 @@ export function TikTokAnalyzerPage({ searchRunId }: TikTokAnalyzerPageProps) {
           isMetadataBusy={analyzer.isMetadataBusy}
           onInputChange={analyzer.setInput}
           onAnalyze={analyzer.analyze}
+          onCancel={analyzer.cancelRun}
         />
         <VideosTable
           videos={analyzer.videos}

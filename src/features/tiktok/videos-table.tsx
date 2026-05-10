@@ -7,7 +7,7 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Button } from "#/components/ui/button";
 import { ScrollArea, ScrollBar } from "#/components/ui/scroll-area";
@@ -222,10 +222,28 @@ export function VideosTable({
 }
 
 function sortableHeader(label: string) {
-  return ({ column }: { column: { toggleSorting: () => void } }) => (
-    <Button type="button" variant="ghost" onClick={() => column.toggleSorting()}>
-      {label}
-      <ArrowUpDown />
-    </Button>
-  );
+  return ({
+    column,
+  }: {
+    column: { toggleSorting: () => void; getIsSorted: () => false | "asc" | "desc" };
+  }) => {
+    const sorted = column.getIsSorted();
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={() => column.toggleSorting()}
+        className={sorted ? "text-primary" : ""}
+      >
+        {label}
+        {sorted === "asc" ? (
+          <ArrowUp className="ml-1 h-4 w-4" />
+        ) : sorted === "desc" ? (
+          <ArrowDown className="ml-1 h-4 w-4" />
+        ) : (
+          <ArrowUpDown className="ml-1 h-4 w-4" />
+        )}
+      </Button>
+    );
+  };
 }

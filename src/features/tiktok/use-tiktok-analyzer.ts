@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import type { FormEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
+  cancelRunFn,
   createMetadataRunFn,
   createVideoDownloadJobFn,
   getRunDetailsFn,
@@ -20,6 +21,7 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
   const createRun = useServerFn(createMetadataRunFn);
   const getRunDetails = useServerFn(getRunDetailsFn);
   const createVideoDownloadJob = useServerFn(createVideoDownloadJobFn);
+  const cancelRunServer = useServerFn(cancelRunFn);
   const [input, setInput] = useState("");
   const [runId, setRunId] = useState<string | null>(() => {
     if (searchRunId) return searchRunId;
@@ -134,6 +136,18 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
     }
   }
 
+  async function cancelRun() {
+    if (!runId) return;
+
+    setError(null);
+    try {
+      await cancelRunServer({ data: { runId } });
+      await refreshRun(runId);
+    } catch (caught) {
+      setError(errorMessage(caught));
+    }
+  }
+
   return {
     input,
     videos,
@@ -144,6 +158,7 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
     queueingVideoIds,
     setInput,
     analyze,
+    cancelRun,
     requestVideoDownload,
   };
 }

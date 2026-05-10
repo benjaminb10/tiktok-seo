@@ -37,7 +37,7 @@ export type SelectedTikTokVideo = {
   rank: number;
 };
 
-export type RunStatus = "queued" | "running" | "completed" | "failed";
+export type RunStatus = "queued" | "running" | "completed" | "failed" | "cancelled";
 
 export type JobStatus = "queued" | "leased" | "completed" | "failed";
 

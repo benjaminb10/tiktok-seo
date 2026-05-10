@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import * as schema from "#/db/schema";
 import { normalizeTikTokInput } from "./tiktok.logic";
@@ -61,4 +61,31 @@ export async function getRunDetails(
     run,
     videos: await getRunVideos(database, runId),
   };
+}
+
+export async function cancelRun(
+  database: TikTokDb,
+  runId: string,
+  now = new Date(),
+): Promise<void> {
+  const timestamp = now.getTime();
+
+  await database
+    .update(schema.searchRuns)
+    .set({ status: "cancelled", updatedAt: timestamp })
+    .where(eq(schema.searchRuns.id, runId));
+
+  await database
+    .update(schema.searchJobs)
+    .set({
+      status: "failed",
+      error: "Annulé par l'utilisateur",
+      updatedAt: timestamp,
+    })
+    .where(
+      and(
+        eq(schema.searchJobs.runId, runId),
+        inArray(schema.searchJobs.status, ["queued", "leased"]),
+      ),
+    );
 }

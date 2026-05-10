@@ -68,6 +68,14 @@ export function getRunStatusView(
     };
   }
 
+  if (details.run.status === "cancelled") {
+    return {
+      title: "Analyse annulée",
+      description: "L'analyse a été arrêtée.",
+      isBusy: false,
+    };
+  }
+
   return {
     title: `${details.videos.length} vidéos trouvées`,
     description: "Tu peux trier le tableau ou ouvrir une vidéo.",
