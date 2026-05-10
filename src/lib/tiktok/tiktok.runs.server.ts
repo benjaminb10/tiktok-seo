@@ -89,3 +89,45 @@ export async function cancelRun(
       ),
     );
 }
+
+export async function continueMetadataRun(
+  database: TikTokDb,
+  runId: string,
+  now = new Date(),
+): Promise<{ jobId: string }> {
+  const [run] = await database
+    .select()
+    .from(schema.searchRuns)
+    .where(eq(schema.searchRuns.id, runId));
+
+  if (!run) {
+    throw new Error(`Run ${runId} introuvable.`);
+  }
+
+  const jobId = nanoid();
+  const timestamp = now.getTime();
+  const playlistStart = run.totalDiscovered + 1;
+
+  await database
+    .update(schema.searchRuns)
+    .set({ status: "running", updatedAt: timestamp })
+    .where(eq(schema.searchRuns.id, runId));
+
+  await database.insert(schema.searchJobs).values({
+    id: jobId,
+    runId,
+    type: "metadata_scan",
+    status: "queued",
+    payloadJson: JSON.stringify({
+      url: run.normalizedUrl,
+      input: run.input,
+      kind: run.kind,
+      playlistStart,
+      ...(run.kind === "video" ? { videoId: run.videoId } : {}),
+    }),
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  });
+
+  return { jobId };
+}

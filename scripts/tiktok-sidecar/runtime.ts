@@ -1,4 +1,7 @@
-import { readPayloadString } from "../../src/lib/tiktok/tiktok.payload";
+import {
+  readPayloadNumber,
+  readPayloadString,
+} from "../../src/lib/tiktok/tiktok.payload";
 import { SidecarClient } from "./http-client";
 import type { LeasedJob, SidecarConfig } from "./types";
 import {
@@ -59,10 +62,12 @@ async function handleMetadataJob(
   const url = readPayloadString(job.payload, "url");
   if (!url) throw new Error("metadata job missing url");
 
+  const playlistStart = readPayloadNumber(job.payload, "playlistStart") ?? undefined;
+
   console.info(
-    `[sidecar] metadata_scan job=${job.id} run=${job.runId} limit=${config.metadataLimit}`,
+    `[sidecar] metadata_scan job=${job.id} run=${job.runId} limit=${config.metadataLimit}${playlistStart ? ` start=${playlistStart}` : ""}`,
   );
-  const videos = await collectMetadataJob(config, client, job, url);
+  const videos = await collectMetadataJob(config, client, job, url, playlistStart);
   console.info(
     `[sidecar] metadata_scan complete job=${job.id} videos=${videos.length}`,
   );
@@ -90,6 +95,7 @@ async function collectMetadataJob(
   client: SidecarClient,
   job: LeasedJob,
   url: string,
+  playlistStart?: number,
 ): Promise<unknown[]> {
   const videos: unknown[] = [];
   const activeProgress = new Set<Promise<void>>();
@@ -98,6 +104,7 @@ async function collectMetadataJob(
   await collectTikTokMetadata({
     config,
     url,
+    playlistStart,
     onVideo: (video) => {
       videos.push(video);
       const task = enqueueProgress(

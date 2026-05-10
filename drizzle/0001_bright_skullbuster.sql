@@ -1,0 +1,1 @@
+ALTER TABLE `tiktok_videos` DROP COLUMN `favorite_count`;

@@ -4,7 +4,12 @@ import {
   createDownloadJobs,
   createVideoDownloadJob,
 } from "./tiktok.jobs.server";
-import { cancelRun, createMetadataRun, getRunDetails } from "./tiktok.runs.server";
+import {
+  cancelRun,
+  continueMetadataRun,
+  createMetadataRun,
+  getRunDetails,
+} from "./tiktok.runs.server";
 import {
   createRunSchema,
   runIdSchema,
@@ -39,4 +44,10 @@ export const cancelRunFn = createServerFn({ method: "POST" })
   .inputValidator((input) => runIdSchema.parse(input))
   .handler(async ({ data }) => {
     return cancelRun(db, data.runId);
+  });
+
+export const continueMetadataRunFn = createServerFn({ method: "POST" })
+  .inputValidator((input) => runIdSchema.parse(input))
+  .handler(async ({ data }) => {
+    return continueMetadataRun(db, data.runId);
   });

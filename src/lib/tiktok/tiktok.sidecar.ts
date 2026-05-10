@@ -1,4 +1,4 @@
-export const DEFAULT_METADATA_LIMIT = 100;
+export const DEFAULT_METADATA_LIMIT = 500;
 
 export function readMetadataLimit(value: string | undefined): number {
   if (!value) return DEFAULT_METADATA_LIMIT;
@@ -12,8 +12,9 @@ export function buildMetadataArgs(input: {
   url: string;
   outputTemplate: string;
   metadataLimit: number;
+  playlistStart?: number;
 }): string[] {
-  return [
+  const args = [
     "--skip-download",
     "--no-simulate",
     "--write-info-json",
@@ -32,14 +33,24 @@ export function buildMetadataArgs(input: {
     "3",
     "--extractor-retries",
     "3",
-    "--playlist-end",
-    String(input.metadataLimit),
+  ];
+
+  if (input.playlistStart && input.playlistStart > 1) {
+    args.push("--playlist-start", String(input.playlistStart));
+    args.push("--playlist-end", String(input.playlistStart + input.metadataLimit - 1));
+  } else {
+    args.push("--playlist-end", String(input.metadataLimit));
+  }
+
+  args.push(
     "--output-na-placeholder",
     "unknown",
     "-o",
     input.outputTemplate,
     input.url,
-  ];
+  );
+
+  return args;
 }
 
 export function parseVttTranscript(content: string): string | null {

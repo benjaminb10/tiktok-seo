@@ -43,6 +43,7 @@ CREATE TABLE `tiktok_videos` (
   `id` text PRIMARY KEY NOT NULL,
   `handle` text,
   `webpage_url` text NOT NULL,
+  `thumbnail_url` text,
   `title` text,
   `description` text,
   `published_at` text,

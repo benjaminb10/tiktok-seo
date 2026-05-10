@@ -7,10 +7,9 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Download } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Button } from "#/components/ui/button";
-import { ScrollArea, ScrollBar } from "#/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -19,7 +18,6 @@ import {
   TableHeader,
   TableRow,
 } from "#/components/ui/table";
-import { getLocalVideoUrl, getVideoStatusLabel } from "#/lib/tiktok/tiktok.ui";
 import type { RunVideoRow } from "#/lib/tiktok/tiktok.types";
 import {
   engagementRate,
@@ -27,25 +25,79 @@ import {
   formatDuration,
   formatNumber,
   formatPercent,
-  formatProvidedNumber,
 } from "./formatters";
-import {
-  DescriptionAction,
-  TranscriptCell,
-  VideoAction,
-  VideoDialog,
-} from "./video-dialogs";
+import { DescriptionCell, TranscriptCell, VideoDialog } from "./video-dialogs";
+
+function exportToCSV(videos: RunVideoRow[]) {
+  const headers = [
+    "ID",
+    "URL",
+    "Description",
+    "Vues",
+    "Engagement",
+    "Likes",
+    "Date",
+    "Commentaires",
+    "Reposts",
+    "Durée (s)",
+    "Tags",
+    "Retranscription",
+    "Audio",
+  ];
+
+  const escapeCSV = (value: string | number | null | undefined): string => {
+    if (value == null) return "";
+    const str = String(value);
+    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+
+  const rows = videos.map((video) => {
+    const engagement = video.viewCount
+      ? ((video.likeCount ?? 0) + (video.commentCount ?? 0) + (video.repostCount ?? 0)) / video.viewCount
+      : null;
+
+    return [
+      video.id,
+      video.webpageUrl,
+      video.description || video.title,
+      video.viewCount,
+      engagement != null ? `${(engagement * 100).toFixed(1)}%` : "",
+      video.likeCount,
+      video.publishedAt ? new Date(video.publishedAt).toLocaleDateString("fr-FR") : "",
+      video.commentCount,
+      video.repostCount,
+      video.durationSeconds,
+      video.tags.join(", "),
+      video.transcriptText,
+      [video.audioTrack, video.audioAuthor].filter(Boolean).join(" - "),
+    ].map(escapeCSV).join(",");
+  });
+
+  const csv = [headers.join(","), ...rows].join("\n");
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "tiktok-videos-export.csv";
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
 type VideosTableProps = {
   videos: RunVideoRow[];
-  queueingVideoIds: Set<string>;
+  canLoadMore: boolean;
   onRequestVideoDownload: (video: RunVideoRow) => Promise<void>;
+  onLoadMore: () => void;
 };
 
 export function VideosTable({
   videos,
-  queueingVideoIds,
+  canLoadMore,
   onRequestVideoDownload,
+  onLoadMore,
 }: VideosTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
@@ -60,34 +112,32 @@ export function VideosTable({
   const columns = useMemo<ColumnDef<RunVideoRow>[]>(
     () => [
       {
-        id: "status",
-        header: "Etat",
-        cell: ({ row }) =>
-          getVideoStatusLabel(
-            row.original.videoStatus,
-            Boolean(getLocalVideoUrl(row.original)),
-          ),
-      },
-      {
-        id: "video",
-        header: "Video",
-        cell: ({ row }) => row.original.title ?? row.original.id,
-      },
-      {
-        id: "link",
-        header: "Lien",
+        id: "thumbnail",
+        header: "Vidéo",
+        size: 50,
         cell: ({ row }) => (
-          <VideoAction
-            video={row.original}
-            isRequestingDownload={queueingVideoIds.has(row.original.id)}
-            onView={handleViewVideo}
-          />
+          <button
+            type="button"
+            onClick={() => handleViewVideo(row.original)}
+            className="cursor-pointer"
+          >
+            {row.original.thumbnailUrl ? (
+              <img
+                src={row.original.thumbnailUrl}
+                alt=""
+                className="h-8 w-8 rounded object-cover hover:opacity-80 transition-opacity"
+              />
+            ) : (
+              <div className="h-8 w-8 rounded bg-muted hover:bg-muted/80 transition-colors" />
+            )}
+          </button>
         ),
       },
       {
-        accessorKey: "publishedAt",
-        header: sortableHeader("Date"),
-        cell: ({ row }) => formatDate(row.original.publishedAt),
+        id: "description",
+        header: "Description",
+        size: 280,
+        cell: ({ row }) => <DescriptionCell video={row.original} />,
       },
       {
         accessorKey: "viewCount",
@@ -95,14 +145,25 @@ export function VideosTable({
         cell: ({ row }) => formatNumber(row.original.viewCount),
       },
       {
+        id: "engagement",
+        header: sortableHeader("Engagement"),
+        accessorFn: (row) => engagementRate(row),
+        cell: ({ row }) => formatPercent(engagementRate(row.original)),
+      },
+      {
         accessorKey: "likeCount",
         header: sortableHeader("Likes"),
         cell: ({ row }) => formatNumber(row.original.likeCount),
       },
       {
-        accessorKey: "favoriteCount",
-        header: sortableHeader("Favoris"),
-        cell: ({ row }) => formatProvidedNumber(row.original.favoriteCount),
+        accessorKey: "publishedAt",
+        header: sortableHeader("Date"),
+        cell: ({ row }) => formatDate(row.original.publishedAt),
+      },
+      {
+        accessorKey: "commentCount",
+        header: sortableHeader("Commentaires"),
+        cell: ({ row }) => formatNumber(row.original.commentCount),
       },
       {
         accessorKey: "repostCount",
@@ -110,24 +171,20 @@ export function VideosTable({
         cell: ({ row }) => formatNumber(row.original.repostCount),
       },
       {
-        accessorKey: "commentCount",
-        header: sortableHeader("Com."),
-        cell: ({ row }) => formatNumber(row.original.commentCount),
-      },
-      {
         accessorKey: "durationSeconds",
-        header: sortableHeader("Duree"),
+        header: sortableHeader("Durée"),
         cell: ({ row }) => formatDuration(row.original.durationSeconds),
       },
       {
-        id: "engagement",
-        header: sortableHeader("Eng."),
-        accessorFn: (row) => engagementRate(row),
-        cell: ({ row }) => formatPercent(engagementRate(row.original)),
+        id: "transcript",
+        header: "Retranscription",
+        size: 280,
+        cell: ({ row }) => <TranscriptCell video={row.original} />,
       },
       {
         accessorKey: "tags",
         header: "Tags",
+        size: 100,
         cell: ({ row }) => row.original.tags.slice(0, 4).join(", ") || "-",
       },
       {
@@ -138,18 +195,8 @@ export function VideosTable({
             .filter(Boolean)
             .join(" - ") || "-",
       },
-      {
-        id: "transcript",
-        header: "Transcript",
-        cell: ({ row }) => <TranscriptCell video={row.original} />,
-      },
-      {
-        id: "details",
-        header: "Details",
-        cell: ({ row }) => <DescriptionAction video={row.original} />,
-      },
     ],
-    [handleViewVideo, queueingVideoIds],
+    [handleViewVideo],
   );
 
   const table = useReactTable({
@@ -165,14 +212,34 @@ export function VideosTable({
   return (
     <>
       <section className="grid gap-4">
-        <h2>Vidéos disponibles ({videos.length})</h2>
-        <ScrollArea className="w-full">
+        <div className="flex items-center gap-4">
+          <h2>Vidéos disponibles ({videos.length})</h2>
+          {canLoadMore && (
+            <Button type="button" variant="outline" onClick={onLoadMore}>
+              Charger plus de vidéos
+            </Button>
+          )}
+          {videos.length > 0 && (
+            <Button type="button" variant="outline" onClick={() => exportToCSV(videos)}>
+              <Download className="h-4 w-4 mr-2" />
+              Exporter CSV
+            </Button>
+          )}
+        </div>
+        <div className="rounded-md border overflow-auto max-w-full">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      style={
+                        header.column.getSize() !== 150
+                          ? { width: header.column.getSize() }
+                          : undefined
+                      }
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -189,7 +256,14 @@ export function VideosTable({
                 table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell
+                        key={cell.id}
+                        style={
+                          cell.column.getSize() !== 150
+                            ? { width: cell.column.getSize() }
+                            : undefined
+                        }
+                      >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
@@ -204,15 +278,18 @@ export function VideosTable({
               )}
             </TableBody>
           </Table>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        </div>
+        {canLoadMore && (
+          <div className="flex justify-start">
+            <Button type="button" variant="outline" onClick={onLoadMore}>
+              Charger plus de vidéos
+            </Button>
+          </div>
+        )}
       </section>
       <VideoDialog
         video={selectedVideo}
         isOpen={selectedVideo !== null}
-        isRequestingDownload={
-          selectedVideo ? queueingVideoIds.has(selectedVideo.id) : false
-        }
         onOpenChange={(isOpen) => {
           if (!isOpen) setSelectedVideoId(null);
         }}
@@ -233,7 +310,7 @@ function sortableHeader(label: string) {
         type="button"
         variant="ghost"
         onClick={() => column.toggleSorting()}
-        className={sorted ? "text-primary" : ""}
+        className={`justify-start px-0 ${sorted ? "text-primary" : ""}`}
       >
         {label}
         {sorted === "asc" ? (

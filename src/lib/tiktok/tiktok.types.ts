@@ -15,6 +15,7 @@ export type SanitizedTikTokVideo = {
   id: string;
   handle: string | null;
   webpageUrl: string;
+  thumbnailUrl: string | null;
   title: string | null;
   description: string | null;
   publishedAt: string | null;
@@ -22,7 +23,6 @@ export type SanitizedTikTokVideo = {
   durationSeconds: number | null;
   viewCount: number | null;
   likeCount: number | null;
-  favoriteCount: number | null;
   repostCount: number | null;
   commentCount: number | null;
   tags: string[];

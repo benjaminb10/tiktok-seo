@@ -1,12 +1,11 @@
+import { useEffect, useRef, useState } from "react";
 import { Button } from "#/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "#/components/ui/dialog";
 import { getLocalVideoUrl } from "#/lib/tiktok/tiktok.ui";
 import type { RunVideoRow } from "#/lib/tiktok/tiktok.types";
@@ -38,14 +37,12 @@ export function VideoAction({
 type VideoDialogProps = {
   video: RunVideoRow | null;
   isOpen: boolean;
-  isRequestingDownload: boolean;
   onOpenChange: (isOpen: boolean) => void;
 };
 
 export function VideoDialog({
   video,
   isOpen,
-  isRequestingDownload,
   onOpenChange,
 }: VideoDialogProps) {
   const localVideoUrl = video ? getLocalVideoUrl(video) : null;
@@ -68,19 +65,10 @@ export function VideoDialog({
                 preload="metadata"
               />
             ) : (
-              <p>{videoDownloadMessage(video, isRequestingDownload)}</p>
+              <p className="text-muted-foreground py-8 text-center">
+                Vidéo en cours de récupération...
+              </p>
             )}
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="link"
-                render={
-                  <a href={video.webpageUrl} target="_blank" rel="noreferrer" />
-                }
-              >
-                Ouvrir sur TikTok
-              </Button>
-            </DialogFooter>
           </>
         ) : null}
       </DialogContent>
@@ -88,63 +76,71 @@ export function VideoDialog({
   );
 }
 
-function videoDownloadMessage(
-  video: RunVideoRow,
-  isRequestingDownload: boolean,
-): string {
-  if (isRequestingDownload || video.videoStatus === "queued") {
-    return "La vidéo est ajoutée à la file de récupération.";
-  }
+export function DescriptionCell({ video }: { video: RunVideoRow }) {
+  const [expanded, setExpanded] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
+  const text = video.description || video.title;
 
-  if (video.videoStatus === "downloading") {
-    return "La vidéo est en cours de récupération.";
-  }
+  useEffect(() => {
+    if (textRef.current) {
+      setIsTruncated(textRef.current.scrollHeight > textRef.current.clientHeight);
+    }
+  }, [text]);
 
-  if (video.videoStatus === "failed") {
-    return "La récupération a échoué. Clique sur Voir pour relancer.";
-  }
+  if (!text) return <span className="text-muted-foreground">-</span>;
 
-  return "La vidéo va s’afficher ici dès qu’elle sera récupérée.";
-}
-
-export function DescriptionAction({ video }: { video: RunVideoRow }) {
   return (
-    <Dialog>
-      <DialogTrigger
-        render={<Button type="button" variant="secondary" size="sm" />}
+    <div className="w-[280px]">
+      <p
+        ref={textRef}
+        className={`${expanded ? "" : "line-clamp-3"} text-sm leading-snug whitespace-normal`}
       >
-        Description
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Description</DialogTitle>
-          <DialogDescription>{video.title ?? video.id}</DialogDescription>
-        </DialogHeader>
-        <p>{video.description || "Aucune description."}</p>
-      </DialogContent>
-    </Dialog>
+        {text}
+      </p>
+      {(isTruncated || expanded) && (
+        <button
+          type="button"
+          onClick={() => setExpanded(!expanded)}
+          className="text-xs text-primary hover:underline mt-1"
+        >
+          {expanded ? "Voir moins" : "Voir plus"}
+        </button>
+      )}
+    </div>
   );
 }
 
 export function TranscriptCell({ video }: { video: RunVideoRow }) {
-  if (!video.transcriptText) return "Non fourni";
+  const [expanded, setExpanded] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (textRef.current) {
+      setIsTruncated(textRef.current.scrollHeight > textRef.current.clientHeight);
+    }
+  }, [video.transcriptText]);
+
+  if (!video.transcriptText) return <span className="text-muted-foreground">-</span>;
 
   return (
-    <Dialog>
-      <DialogTrigger
-        render={<Button type="button" variant="secondary" size="sm" />}
+    <div className="w-[280px]">
+      <p
+        ref={textRef}
+        className={`${expanded ? "" : "line-clamp-3"} text-sm leading-snug whitespace-normal`}
       >
-        Lire
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Transcript</DialogTitle>
-          <DialogDescription>
-            Fourni par TikTok, sans analyse audio.
-          </DialogDescription>
-        </DialogHeader>
-        <p>{video.transcriptText}</p>
-      </DialogContent>
-    </Dialog>
+        {video.transcriptText}
+      </p>
+      {(isTruncated || expanded) && (
+        <button
+          type="button"
+          onClick={() => setExpanded(!expanded)}
+          className="text-xs text-primary hover:underline mt-1"
+        >
+          {expanded ? "Voir moins" : "Voir plus"}
+        </button>
+      )}
+    </div>
   );
 }

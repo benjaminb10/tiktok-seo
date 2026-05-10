@@ -23,8 +23,9 @@ export function TikTokAnalyzerPage({ searchRunId }: TikTokAnalyzerPageProps) {
         />
         <VideosTable
           videos={analyzer.videos}
-          queueingVideoIds={analyzer.queueingVideoIds}
+          canLoadMore={analyzer.canLoadMore}
           onRequestVideoDownload={analyzer.requestVideoDownload}
+          onLoadMore={analyzer.loadMore}
         />
       </div>
     </main>

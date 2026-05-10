@@ -11,6 +11,7 @@ import type { SidecarConfig } from "./types";
 export async function collectTikTokMetadata(input: {
   config: SidecarConfig;
   url: string;
+  playlistStart?: number;
   onVideo: (video: unknown) => void;
 }): Promise<void> {
   await mkdir(input.config.metadataRoot, { recursive: true });
@@ -26,6 +27,7 @@ export async function collectTikTokMetadata(input: {
       url: input.url,
       outputTemplate,
       metadataLimit: input.config.metadataLimit,
+      playlistStart: input.playlistStart,
     }),
     input.onVideo,
   );

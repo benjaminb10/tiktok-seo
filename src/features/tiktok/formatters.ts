@@ -5,11 +5,6 @@ export function formatNumber(value: number | null): string {
   return new Intl.NumberFormat("fr-FR", { notation: "compact" }).format(value);
 }
 
-export function formatProvidedNumber(value: number | null): string {
-  if (value == null) return "Non fourni";
-  return formatNumber(value);
-}
-
 export function formatDate(value: string | null): string {
   if (!value) return "-";
   return new Intl.DateTimeFormat("fr-FR", {

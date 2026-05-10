@@ -20,7 +20,7 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <html lang="fr">
+    <html lang="fr" className="dark">
       <head>
         <HeadContent />
       </head>

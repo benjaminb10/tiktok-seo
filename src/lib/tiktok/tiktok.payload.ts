@@ -14,6 +14,14 @@ export function readPayloadString(
   return typeof value === "string" ? value : null;
 }
 
+export function readPayloadNumber(
+  payload: Record<string, unknown>,
+  key: string,
+): number | null {
+  const value = payload[key];
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
 export function parseStringArrayJson(value: string): string[] {
   const parsed = JSON.parse(value) as unknown;
   if (!Array.isArray(parsed)) return [];

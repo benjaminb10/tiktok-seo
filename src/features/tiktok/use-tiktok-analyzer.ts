@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
   cancelRunFn,
+  continueMetadataRunFn,
   createMetadataRunFn,
   createVideoDownloadJobFn,
   getRunDetailsFn,
@@ -22,6 +23,7 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
   const getRunDetails = useServerFn(getRunDetailsFn);
   const createVideoDownloadJob = useServerFn(createVideoDownloadJobFn);
   const cancelRunServer = useServerFn(cancelRunFn);
+  const continueRun = useServerFn(continueMetadataRunFn);
   const [input, setInput] = useState("");
   const [runId, setRunId] = useState<string | null>(() => {
     if (searchRunId) return searchRunId;
@@ -52,6 +54,10 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
   const isVideoWorkBusy = hasPendingVideoWork(details);
   const isMetadataBusy =
     details?.run.status === "queued" || details?.run.status === "running";
+  const canLoadMore =
+    details?.run.status === "completed" &&
+    details.run.totalDiscovered > 0 &&
+    details.run.totalDiscovered % 500 === 0;
   const statusView = getRunStatusView(details, runId);
   const statusText = error ?? statusView.description;
 
@@ -148,6 +154,18 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
     }
   }
 
+  async function loadMore() {
+    if (!runId || !canLoadMore) return;
+
+    setError(null);
+    try {
+      await continueRun({ data: { runId } });
+      await refreshRun(runId);
+    } catch (caught) {
+      setError(errorMessage(caught));
+    }
+  }
+
   return {
     input,
     videos,
@@ -155,10 +173,12 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
     isAnalyzing,
     isMetadataBusy,
     isVideoWorkBusy,
+    canLoadMore,
     queueingVideoIds,
     setInput,
     analyze,
     cancelRun,
+    loadMore,
     requestVideoDownload,
   };
 }

@@ -8,27 +8,27 @@ import {
 } from "./tiktok.sidecar";
 
 describe("readMetadataLimit", () => {
-  it("utilise 100 par defaut", () => {
+  it("utilise 500 par defaut", () => {
     expect(readMetadataLimit(undefined)).toBe(DEFAULT_METADATA_LIMIT);
   });
 
-  it("borne la limite metadata entre 1 et 100", () => {
+  it("borne la limite metadata entre 1 et 500", () => {
     expect(readMetadataLimit("0")).toBe(1);
     expect(readMetadataLimit("42")).toBe(42);
-    expect(readMetadataLimit("500")).toBe(100);
+    expect(readMetadataLimit("1000")).toBe(500);
   });
 });
 
 describe("buildMetadataArgs", () => {
-  it("limite le scan yt-dlp a 100 entrees maximum", () => {
+  it("limite le scan yt-dlp a 500 entrees maximum", () => {
     const args = buildMetadataArgs({
       url: "https://www.tiktok.com/@creator",
       outputTemplate: "downloads/%(id)s.%(ext)s",
-      metadataLimit: 100,
+      metadataLimit: 500,
     });
 
     expect(args).toContain("--playlist-end");
-    expect(args[args.indexOf("--playlist-end") + 1]).toBe("100");
+    expect(args[args.indexOf("--playlist-end") + 1]).toBe("500");
     expect(args).toContain("--write-subs");
     expect(args).toContain("--write-auto-subs");
     expect(args).toContain("--sub-langs");

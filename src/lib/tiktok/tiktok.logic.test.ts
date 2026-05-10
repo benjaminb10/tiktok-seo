@@ -58,7 +58,6 @@ describe("sanitizeTikTokInfo", () => {
       duration: 58,
       view_count: 56800,
       like_count: 2349,
-      favorite_count: 120,
       repost_count: 55,
       comment_count: 40,
       track: "son original",
@@ -75,7 +74,6 @@ describe("sanitizeTikTokInfo", () => {
         "https://www.tiktok.com/@babys_077888/video/7625134473557904670",
       viewCount: 56800,
       likeCount: 2349,
-      favoriteCount: 120,
       repostCount: 55,
       commentCount: 40,
       durationSeconds: 58,
@@ -127,8 +125,8 @@ describe("selectDisplayVideos", () => {
     const selected = selectDisplayVideos(videos);
     const uniqueIds = new Set(selected.map((item) => item.videoId));
 
-    expect(selected).toHaveLength(100);
-    expect(uniqueIds.size).toBe(100);
+    expect(selected).toHaveLength(120);
+    expect(uniqueIds.size).toBe(120);
     expect(selected.slice(0, 50).map((item) => item.videoId)).toEqual(
       Array.from({ length: 50 }, (_, offset) =>
         `video-${(119 - offset).toString().padStart(3, "0")}`,
@@ -146,6 +144,7 @@ function video(
     id: "video",
     handle: "creator",
     webpageUrl: "https://www.tiktok.com/@creator/video/video",
+    thumbnailUrl: null,
     title: null,
     description: null,
     publishedAt: null,
@@ -153,7 +152,6 @@ function video(
     durationSeconds: null,
     viewCount: null,
     likeCount: null,
-    favoriteCount: null,
     repostCount: null,
     commentCount: null,
     tags: [],

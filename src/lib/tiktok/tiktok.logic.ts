@@ -49,6 +49,7 @@ export function sanitizeTikTokInfo(info: unknown): SanitizedTikTokVideo {
       readString(record, "playlist") ??
       readHandleFromUrl(webpageUrl),
     webpageUrl,
+    thumbnailUrl: readString(record, "thumbnail"),
     title: readString(record, "title"),
     description: readString(record, "description"),
     publishedAt: readPublishedAt(record),
@@ -56,8 +57,6 @@ export function sanitizeTikTokInfo(info: unknown): SanitizedTikTokVideo {
     durationSeconds: readNumber(record, "duration"),
     viewCount: readNumber(record, "view_count"),
     likeCount: readNumber(record, "like_count"),
-    favoriteCount:
-      readNumber(record, "favorite_count") ?? readNumber(record, "digg_count"),
     repostCount: readNumber(record, "repost_count"),
     commentCount: readNumber(record, "comment_count"),
     tags: readTags(record),
@@ -98,7 +97,6 @@ export function selectDisplayVideos(
       continue;
     }
 
-    if (selected.size >= 100) break;
     selected.set(item.id, { videoId: item.id, source: "popular" });
   }
 
