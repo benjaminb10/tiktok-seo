@@ -20,23 +20,23 @@ export function getRunStatusView(
   if (!details) {
     if (requestedRunId) {
       return {
-        title: "Chargement des résultats",
-        description: "On récupère les vidéos déjà analysées.",
+        title: "Loading results",
+        description: "Fetching analyzed videos.",
         isBusy: true,
       };
     }
 
     return {
-      title: "Prêt",
-      description: "Colle un pseudo ou un lien TikTok pour commencer.",
+      title: "Ready",
+      description: "Paste a username or TikTok link to get started.",
       isBusy: false,
     };
   }
 
   if (details.run.status === "queued") {
     return {
-      title: "Analyse en cours",
-      description: "On prépare la liste des vidéos.",
+      title: "Analysis in progress",
+      description: "Preparing the video list.",
       isBusy: true,
     };
   }
@@ -48,46 +48,46 @@ export function getRunStatusView(
 
     if (details.videos.length > 0) {
       return {
-        title: "Analyse en cours",
-        description: `Récupération des vidéos (${current}/${total})`,
+        title: "Analysis in progress",
+        description: `Fetching videos (${current}/${total})`,
         isBusy: true,
         progress: { current, total, percentage },
       };
     }
 
     return {
-      title: "Analyse en cours",
-      description: "Les vidéos arrivent automatiquement.",
+      title: "Analysis in progress",
+      description: "Videos are loading automatically.",
       isBusy: true,
     };
   }
 
   if (hasPendingVideoWork(details)) {
     return {
-      title: "Récupération en cours",
-      description: "Les vidéos se récupèrent. Le tableau se met à jour automatiquement.",
+      title: "Fetching in progress",
+      description: "Videos are loading. The table updates automatically.",
       isBusy: true,
     };
   }
 
   if (details.run.status === "failed") {
     return {
-      title: "Analyse impossible",
-      description: "Impossible d'analyser ce compte pour le moment.",
+      title: "Analysis failed",
+      description: "Unable to analyze this account at the moment.",
       isBusy: false,
     };
   }
 
   if (details.run.status === "cancelled") {
     return {
-      title: "Analyse annulée",
-      description: "L'analyse a été arrêtée.",
+      title: "Analysis cancelled",
+      description: "The analysis was stopped.",
       isBusy: false,
     };
   }
 
   return {
-    title: `${details.videos.length} vidéos trouvées`,
+    title: `${details.videos.length} videos found`,
     description: "",
     isBusy: false,
   };
@@ -113,19 +113,19 @@ export function getVideoStatusLabel(
   status: VideoStatus,
   hasPlayableFile = true,
 ): string {
-  if (status === "downloaded" && !hasPlayableFile) return "À récupérer";
+  if (status === "downloaded" && !hasPlayableFile) return "To fetch";
 
   switch (status) {
     case "idle":
-      return "Disponible";
+      return "Available";
     case "queued":
-      return "En attente";
+      return "Queued";
     case "downloading":
-      return "Récupération";
+      return "Downloading";
     case "downloaded":
-      return "Récupérée";
+      return "Downloaded";
     case "failed":
-      return "Erreur";
+      return "Failed";
   }
 }
 

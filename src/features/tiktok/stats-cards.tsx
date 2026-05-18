@@ -1,10 +1,16 @@
-import { Eye, Heart, Play, TrendingUp } from "lucide-react";
+import { Eye, Heart, Info, Play, TrendingUp } from "lucide-react";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "#/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "#/components/ui/tooltip";
 import type { RunVideoRow } from "#/lib/tiktok/tiktok.types";
 import { engagementRate, formatNumber, formatPercent } from "./formatters";
 
@@ -19,6 +25,7 @@ type StatConfig = {
   iconBgColor: string;
   iconColor: string;
   sparklineColor: string;
+  tooltip?: string;
 };
 
 export function StatsCards({ videos }: StatsCardsProps) {
@@ -32,7 +39,7 @@ export function StatsCards({ videos }: StatsCardsProps) {
 
   const stats: StatConfig[] = [
     {
-      label: "Nombre de vidéos",
+      label: "Total videos",
       value: videos.length,
       icon: Play,
       iconBgColor: "bg-pink-100",
@@ -40,7 +47,7 @@ export function StatsCards({ videos }: StatsCardsProps) {
       sparklineColor: "stroke-pink-500",
     },
     {
-      label: "Vues totales",
+      label: "Total views",
       value: formatNumber(totalViews),
       icon: Eye,
       iconBgColor: "bg-blue-100",
@@ -48,15 +55,16 @@ export function StatsCards({ videos }: StatsCardsProps) {
       sparklineColor: "stroke-blue-500",
     },
     {
-      label: "Engagement moyen",
+      label: "Avg engagement",
       value: formatPercent(avgEngagement),
       icon: TrendingUp,
       iconBgColor: "bg-green-100",
       iconColor: "text-green-500",
       sparklineColor: "stroke-green-500",
+      tooltip: "Engagement rate = (Likes + Comments + Reposts) / Views",
     },
     {
-      label: "Likes totaux",
+      label: "Total likes",
       value: formatNumber(totalLikes),
       icon: Heart,
       iconBgColor: "bg-red-100",
@@ -66,24 +74,43 @@ export function StatsCards({ videos }: StatsCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-      {stats.map((stat) => (
-        <Card key={stat.label}>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {stat.label}
-            </CardTitle>
-            <div className={`flex h-10 w-10 items-center justify-center rounded-full ${stat.iconBgColor}`}>
-              <stat.icon className={`h-5 w-5 ${stat.iconColor}`} />
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-2xl font-bold">{stat.value}</p>
-            <MiniSparkline color={stat.sparklineColor} />
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+    <TooltipProvider>
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        {stats.map((stat) => (
+          <Card key={stat.label}>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div className="flex items-center gap-1.5">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {stat.label}
+                </CardTitle>
+                {stat.tooltip && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        className="inline-flex items-center justify-center rounded-full hover:bg-muted p-0.5 transition-colors"
+                      >
+                        <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-sm">{stat.tooltip}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+              <div className={`flex h-10 w-10 items-center justify-center rounded-full ${stat.iconBgColor}`}>
+                <stat.icon className={`h-5 w-5 ${stat.iconColor}`} />
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <p className="text-2xl font-bold">{stat.value}</p>
+              <MiniSparkline color={stat.sparklineColor} />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </TooltipProvider>
   );
 }
 

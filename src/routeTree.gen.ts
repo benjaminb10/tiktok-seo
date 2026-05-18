@@ -10,10 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ProfilesRouteImport } from './routes/profiles'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as ExportsRouteImport } from './routes/exports'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as AnalysesRouteImport } from './routes/analyses'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfileUsernameRouteImport } from './routes/profile.$username'
 import { Route as ApiSidecarLeaseRouteImport } from './routes/api/sidecar/lease'
 import { Route as ApiSidecarHeartbeatRouteImport } from './routes/api/sidecar/heartbeat'
 import { Route as ApiSidecarJobsJobIdProgressRouteImport } from './routes/api/sidecar/jobs/$jobId/progress'
@@ -23,6 +27,16 @@ import { Route as ApiSidecarJobsJobIdCompleteRouteImport } from './routes/api/si
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfilesRoute = ProfilesRouteImport.update({
+  id: '/profiles',
+  path: '/profiles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HelpRoute = HelpRouteImport.update({
@@ -35,6 +49,11 @@ const ExportsRoute = ExportsRouteImport.update({
   path: '/exports',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AnalysesRoute = AnalysesRouteImport.update({
   id: '/analyses',
   path: '/analyses',
@@ -43,6 +62,11 @@ const AnalysesRoute = AnalysesRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileUsernameRoute = ProfileUsernameRouteImport.update({
+  id: '/profile/$username',
+  path: '/profile/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSidecarLeaseRoute = ApiSidecarLeaseRouteImport.update({
@@ -76,9 +100,13 @@ const ApiSidecarJobsJobIdCompleteRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analyses': typeof AnalysesRoute
+  '/app': typeof AppRoute
   '/exports': typeof ExportsRoute
   '/help': typeof HelpRoute
+  '/pricing': typeof PricingRoute
+  '/profiles': typeof ProfilesRoute
   '/settings': typeof SettingsRoute
+  '/profile/$username': typeof ProfileUsernameRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
   '/api/sidecar/lease': typeof ApiSidecarLeaseRoute
   '/api/sidecar/jobs/$jobId/complete': typeof ApiSidecarJobsJobIdCompleteRoute
@@ -88,9 +116,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analyses': typeof AnalysesRoute
+  '/app': typeof AppRoute
   '/exports': typeof ExportsRoute
   '/help': typeof HelpRoute
+  '/pricing': typeof PricingRoute
+  '/profiles': typeof ProfilesRoute
   '/settings': typeof SettingsRoute
+  '/profile/$username': typeof ProfileUsernameRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
   '/api/sidecar/lease': typeof ApiSidecarLeaseRoute
   '/api/sidecar/jobs/$jobId/complete': typeof ApiSidecarJobsJobIdCompleteRoute
@@ -101,9 +133,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analyses': typeof AnalysesRoute
+  '/app': typeof AppRoute
   '/exports': typeof ExportsRoute
   '/help': typeof HelpRoute
+  '/pricing': typeof PricingRoute
+  '/profiles': typeof ProfilesRoute
   '/settings': typeof SettingsRoute
+  '/profile/$username': typeof ProfileUsernameRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
   '/api/sidecar/lease': typeof ApiSidecarLeaseRoute
   '/api/sidecar/jobs/$jobId/complete': typeof ApiSidecarJobsJobIdCompleteRoute
@@ -115,9 +151,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/analyses'
+    | '/app'
     | '/exports'
     | '/help'
+    | '/pricing'
+    | '/profiles'
     | '/settings'
+    | '/profile/$username'
     | '/api/sidecar/heartbeat'
     | '/api/sidecar/lease'
     | '/api/sidecar/jobs/$jobId/complete'
@@ -127,9 +167,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/analyses'
+    | '/app'
     | '/exports'
     | '/help'
+    | '/pricing'
+    | '/profiles'
     | '/settings'
+    | '/profile/$username'
     | '/api/sidecar/heartbeat'
     | '/api/sidecar/lease'
     | '/api/sidecar/jobs/$jobId/complete'
@@ -139,9 +183,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/analyses'
+    | '/app'
     | '/exports'
     | '/help'
+    | '/pricing'
+    | '/profiles'
     | '/settings'
+    | '/profile/$username'
     | '/api/sidecar/heartbeat'
     | '/api/sidecar/lease'
     | '/api/sidecar/jobs/$jobId/complete'
@@ -152,9 +200,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalysesRoute: typeof AnalysesRoute
+  AppRoute: typeof AppRoute
   ExportsRoute: typeof ExportsRoute
   HelpRoute: typeof HelpRoute
+  PricingRoute: typeof PricingRoute
+  ProfilesRoute: typeof ProfilesRoute
   SettingsRoute: typeof SettingsRoute
+  ProfileUsernameRoute: typeof ProfileUsernameRoute
   ApiSidecarHeartbeatRoute: typeof ApiSidecarHeartbeatRoute
   ApiSidecarLeaseRoute: typeof ApiSidecarLeaseRoute
   ApiSidecarJobsJobIdCompleteRoute: typeof ApiSidecarJobsJobIdCompleteRoute
@@ -171,6 +223,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profiles': {
+      id: '/profiles'
+      path: '/profiles'
+      fullPath: '/profiles'
+      preLoaderRoute: typeof ProfilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/help': {
       id: '/help'
       path: '/help'
@@ -185,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExportsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/analyses': {
       id: '/analyses'
       path: '/analyses'
@@ -197,6 +270,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/$username': {
+      id: '/profile/$username'
+      path: '/profile/$username'
+      fullPath: '/profile/$username'
+      preLoaderRoute: typeof ProfileUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/sidecar/lease': {
@@ -240,9 +320,13 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalysesRoute: AnalysesRoute,
+  AppRoute: AppRoute,
   ExportsRoute: ExportsRoute,
   HelpRoute: HelpRoute,
+  PricingRoute: PricingRoute,
+  ProfilesRoute: ProfilesRoute,
   SettingsRoute: SettingsRoute,
+  ProfileUsernameRoute: ProfileUsernameRoute,
   ApiSidecarHeartbeatRoute: ApiSidecarHeartbeatRoute,
   ApiSidecarLeaseRoute: ApiSidecarLeaseRoute,
   ApiSidecarJobsJobIdCompleteRoute: ApiSidecarJobsJobIdCompleteRoute,

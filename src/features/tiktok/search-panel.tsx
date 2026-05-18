@@ -1,4 +1,4 @@
-import { BarChart3, Search } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import type { FormEvent } from "react";
 import { Button } from "#/components/ui/button";
 import { InputGroup, InputGroupInput } from "#/components/ui/input-group";
@@ -10,9 +10,12 @@ type SearchPanelProps = {
   statusView: RunStatusView;
   isAnalyzing: boolean;
   isMetadataBusy: boolean;
+  currentHandle?: string | null;
+  hasResults: boolean;
   onInputChange: (value: string) => void;
   onAnalyze: (event: FormEvent<HTMLFormElement>) => void;
   onCancel: () => void;
+  onNewAnalysis: () => void;
 };
 
 export function SearchPanel({
@@ -20,19 +23,38 @@ export function SearchPanel({
   statusView,
   isAnalyzing,
   isMetadataBusy,
+  currentHandle,
+  hasResults,
   onInputChange,
   onAnalyze,
   onCancel,
+  onNewAnalysis,
 }: SearchPanelProps) {
   return (
     <section className="mx-auto flex w-full flex-col gap-6">
+      {currentHandle && hasResults && (
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold">{currentHandle}</h2>
+            <p className="text-sm text-muted-foreground">Analysis in progress</p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={onNewAnalysis}
+            className="gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            New analysis
+          </Button>
+        </div>
+      )}
       <form className="flex w-full flex-col gap-4" onSubmit={onAnalyze}>
         <InputGroup className="h-14 text-base shadow-sm">
           <Search className="ml-4 h-5 w-5 text-muted-foreground" />
           <InputGroupInput
             id="tiktok-input"
-            aria-label="Pseudo ou lien TikTok"
-            placeholder="Entrez un pseudo TikTok (@creator) ou un lien"
+            aria-label="TikTok username or link"
+            placeholder="Enter a TikTok username (@creator) or link"
             className="pl-2"
             value={input}
             onChange={(event) => onInputChange(event.target.value)}
@@ -46,7 +68,7 @@ export function SearchPanel({
                 size="sm"
                 onClick={onCancel}
               >
-                Arrêter
+                Stop
               </Button>
             )}
             <Button
@@ -54,7 +76,7 @@ export function SearchPanel({
               className="h-10"
               disabled={isAnalyzing || isMetadataBusy || !input.trim()}
             >
-              {isAnalyzing || isMetadataBusy ? "Analyse..." : "Analyser"}
+              {isAnalyzing || isMetadataBusy ? "Analyzing..." : "Analyze"}
             </Button>
           </div>
         </InputGroup>

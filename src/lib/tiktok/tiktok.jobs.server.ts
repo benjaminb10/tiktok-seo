@@ -108,6 +108,9 @@ export class TikTokJobService {
       await upsertVideo(this.database, video, timestamp);
     }
 
+    // Extract avatar URL from first video's raw metadata
+    const avatarUrl = this.extractAvatarUrl(input.videos);
+
     const selected = selectDisplayVideos(uniqueVideos);
     await replaceRunVideos(this.database, job.runId, selected, timestamp);
     await this.markJobCompleted(job.id, timestamp);
@@ -116,6 +119,7 @@ export class TikTokJobService {
       totalDiscovered: input.videos.length,
       totalSelected: selected.length,
       metadataProcessed: uniqueVideos.length,
+      avatarUrl,
       timestamp,
     });
 
@@ -380,6 +384,7 @@ export class TikTokJobService {
     totalDiscovered: number;
     totalSelected: number;
     metadataProcessed: number;
+    avatarUrl: string | null;
     timestamp: number;
   }) {
     await this.database
@@ -389,6 +394,7 @@ export class TikTokJobService {
         totalDiscovered: input.totalDiscovered,
         totalSelected: input.totalSelected,
         metadataProcessed: input.metadataProcessed,
+        avatarUrl: input.avatarUrl,
         updatedAt: input.timestamp,
       })
       .where(eq(schema.searchRuns.id, input.runId));
@@ -610,6 +616,33 @@ export class TikTokJobService {
       byId.set(sanitized.id, sanitized);
     }
     return Array.from(byId.values());
+  }
+
+  private extractAvatarUrl(videos: unknown[]): string | null {
+    // Try to extract uploader avatar from the first video's metadata
+    for (const raw of videos) {
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) continue;
+      const record = raw as Record<string, unknown>;
+
+      // Try various possible field names for the avatar URL
+      const avatarUrl =
+        this.readString(record, "thumbnail") ||
+        this.readString(record, "uploader_avatar") ||
+        this.readString(record, "uploader_thumbnail") ||
+        this.readString(record, "channel_avatar") ||
+        this.readString(record, "channel_thumbnail") ||
+        this.readString(record, "creator_avatar");
+
+      if (avatarUrl) return avatarUrl;
+    }
+    return null;
+  }
+
+  private readString(record: Record<string, unknown>, key: string): string | null {
+    const value = record[key];
+    if (typeof value !== "string") return null;
+    const trimmed = value.trim();
+    return trimmed ? trimmed : null;
   }
 }
 

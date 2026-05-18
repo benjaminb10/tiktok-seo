@@ -1,12 +1,13 @@
-import { BarChart3, FileDown, HelpCircle, LayoutDashboard, ListVideo, Settings } from "lucide-react";
+import { BarChart3, Compass, FileDown, HelpCircle, LayoutDashboard, ListVideo, Settings } from "lucide-react";
 import { Link, useLocation } from "@tanstack/react-router";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Analyses", href: "/analyses", icon: ListVideo },
+  { name: "Discover", href: "/profiles", icon: Compass },
   { name: "Exports", href: "/exports", icon: FileDown },
-  { name: "Paramètres", href: "/settings", icon: Settings },
-  { name: "Aide", href: "/help", icon: HelpCircle },
+  { name: "Settings", href: "/settings", icon: Settings },
+  { name: "Help", href: "/help", icon: HelpCircle },
 ];
 
 export function Sidebar() {
@@ -20,9 +21,8 @@ export function Sidebar() {
           <BarChart3 className="h-6 w-6 text-white" />
         </div>
         <div className="flex flex-col">
-          <span className="text-lg font-bold leading-none">TikTok</span>
-          <span className="bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-lg font-bold leading-none text-transparent">
-            Analyzer
+          <span className="text-lg font-bold leading-none">
+            <span className="bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">Viewlify</span>.ai
           </span>
         </div>
       </div>
@@ -52,10 +52,10 @@ export function Sidebar() {
       <div className="border-t p-4">
         <div className="flex items-center gap-3 px-3 py-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-violet-500">
-            <span className="text-xs font-semibold text-white">TA</span>
+            <span className="text-xs font-semibold text-white">V</span>
           </div>
           <div className="flex flex-col text-xs">
-            <span className="font-medium">TikTok Analyzer</span>
+            <span className="font-medium">Viewlify.ai</span>
             <span className="text-muted-foreground">v1.0.0</span>
           </div>
         </div>

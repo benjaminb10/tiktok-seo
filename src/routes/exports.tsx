@@ -10,7 +10,7 @@ function ExportsPage() {
       <div className="text-center">
         <h1 className="text-3xl font-bold mb-2">Exports</h1>
         <p className="text-muted-foreground">
-          Fonctionnalité à venir - Gérez vos exports et rapports
+          Coming soon - Manage your exports and reports
         </p>
       </div>
     </div>

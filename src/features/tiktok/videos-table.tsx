@@ -7,7 +7,7 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ArrowUpDown, Download, Music, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Download, Music, Plus } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
@@ -35,15 +35,15 @@ function exportToCSV(videos: RunVideoRow[]) {
     "ID",
     "URL",
     "Description",
-    "Vues",
+    "Views",
     "Engagement",
     "Likes",
     "Date",
-    "Commentaires",
+    "Comments",
     "Reposts",
-    "Durée (s)",
+    "Duration (s)",
     "Tags",
-    "Retranscription",
+    "Transcript",
     "Audio",
   ];
 
@@ -83,7 +83,7 @@ function exportToCSV(videos: RunVideoRow[]) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "tiktok-videos-export.csv";
+  link.download = "viewlify-export.csv";
   link.click();
   URL.revokeObjectURL(url);
 }
@@ -93,7 +93,7 @@ type VideosTableProps = {
   canLoadMore: boolean;
   onRequestVideoDownload: (video: RunVideoRow) => Promise<void>;
   onLoadMore: () => void;
-  onClear: () => void;
+  onNewAnalysis: () => void;
 };
 
 export function VideosTable({
@@ -101,7 +101,7 @@ export function VideosTable({
   canLoadMore,
   onRequestVideoDownload,
   onLoadMore,
-  onClear,
+  onNewAnalysis,
 }: VideosTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
@@ -117,7 +117,7 @@ export function VideosTable({
     () => [
       {
         id: "thumbnail",
-        header: "Vidéo",
+        header: "Video",
         size: 50,
         cell: ({ row }) => (
           <button
@@ -145,7 +145,7 @@ export function VideosTable({
       },
       {
         accessorKey: "viewCount",
-        header: sortableHeader("Vues"),
+        header: sortableHeader("Views"),
         cell: ({ row }) => formatNumber(row.original.viewCount),
       },
       {
@@ -176,7 +176,7 @@ export function VideosTable({
       },
       {
         accessorKey: "commentCount",
-        header: sortableHeader("Commentaires"),
+        header: sortableHeader("Comments"),
         cell: ({ row }) => formatNumber(row.original.commentCount),
       },
       {
@@ -186,13 +186,13 @@ export function VideosTable({
       },
       {
         id: "transcript",
-        header: "Retranscription",
+        header: "Transcript",
         size: 200,
         cell: ({ row }) => <TranscriptCell video={row.original} />,
       },
       {
         accessorKey: "durationSeconds",
-        header: sortableHeader("Durée"),
+        header: sortableHeader("Duration"),
         cell: ({ row }) => formatDuration(row.original.durationSeconds),
       },
       {
@@ -232,7 +232,7 @@ export function VideosTable({
                 <Music className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{row.original.audioTrack || "Sans titre"}</p>
+                <p className="truncate text-sm font-medium">{row.original.audioTrack || "Untitled"}</p>
                 {row.original.audioAuthor && (
                   <p className="truncate text-xs text-muted-foreground">{row.original.audioAuthor}</p>
                 )}
@@ -259,21 +259,21 @@ export function VideosTable({
     <>
       <section className="grid gap-4">
         <div className="flex items-center gap-4">
-          <h2>Vidéos disponibles ({videos.length})</h2>
+          <h2>Available videos ({videos.length})</h2>
           {canLoadMore && (
             <Button type="button" variant="outline" onClick={onLoadMore}>
-              Charger plus de vidéos
+              Load more videos
             </Button>
           )}
           {videos.length > 0 && (
             <>
               <Button type="button" variant="outline" onClick={() => exportToCSV(videos)}>
                 <Download className="h-4 w-4 mr-2" />
-                Exporter CSV
+                Export CSV
               </Button>
-              <Button type="button" variant="outline" onClick={onClear}>
-                <Trash2 className="h-4 w-4 mr-2" />
-                Vider
+              <Button type="button" variant="outline" onClick={onNewAnalysis}>
+                <Plus className="h-4 w-4 mr-2" />
+                New analysis
               </Button>
             </>
           )}
@@ -327,7 +327,7 @@ export function VideosTable({
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length}>
-                    Aucune video pour le moment.
+                    No videos yet.
                   </TableCell>
                 </TableRow>
               )}
@@ -337,7 +337,7 @@ export function VideosTable({
         {canLoadMore && (
           <div className="flex justify-start">
             <Button type="button" variant="outline" onClick={onLoadMore}>
-              Charger plus de vidéos
+              Load more videos
             </Button>
           </div>
         )}

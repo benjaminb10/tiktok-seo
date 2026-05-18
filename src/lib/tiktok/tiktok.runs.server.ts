@@ -1,4 +1,4 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import * as schema from "#/db/schema";
 import { normalizeTikTokInput } from "./tiktok.logic";
@@ -130,4 +130,13 @@ export async function continueMetadataRun(
   });
 
   return { jobId };
+}
+
+export async function listAllRuns(database: TikTokDb) {
+  const runs = await database
+    .select()
+    .from(schema.searchRuns)
+    .orderBy(desc(schema.searchRuns.createdAt));
+
+  return runs;
 }

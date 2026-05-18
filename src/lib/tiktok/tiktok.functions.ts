@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { db } from "#/db";
 import {
   createDownloadJobs,
@@ -9,7 +10,12 @@ import {
   continueMetadataRun,
   createMetadataRun,
   getRunDetails,
+  listAllRuns,
 } from "./tiktok.runs.server";
+import {
+  getAnalyzedProfiles,
+  getProfileDetail,
+} from "./tiktok.profiles.server";
 import {
   createRunSchema,
   runIdSchema,
@@ -50,4 +56,26 @@ export const continueMetadataRunFn = createServerFn({ method: "POST" })
   .inputValidator((input) => runIdSchema.parse(input))
   .handler(async ({ data }) => {
     return continueMetadataRun(db, data.runId);
+  });
+
+export const listAllRunsFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    return listAllRuns(db);
+  },
+);
+
+export const getAnalyzedProfilesFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    return getAnalyzedProfiles();
+  },
+);
+
+const usernameSchema = z.object({
+  username: z.string(),
+});
+
+export const getProfileDetailFn = createServerFn({ method: "GET" })
+  .inputValidator((input) => usernameSchema.parse(input))
+  .handler(async ({ data }) => {
+    return getProfileDetail(data.username);
   });

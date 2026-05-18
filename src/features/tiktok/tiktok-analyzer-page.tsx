@@ -18,9 +18,12 @@ export function TikTokAnalyzerPage({ searchRunId }: TikTokAnalyzerPageProps) {
           statusView={analyzer.statusView}
           isAnalyzing={analyzer.isAnalyzing}
           isMetadataBusy={analyzer.isMetadataBusy}
+          currentHandle={analyzer.currentHandle}
+          hasResults={analyzer.hasResults}
           onInputChange={analyzer.setInput}
           onAnalyze={analyzer.analyze}
           onCancel={analyzer.cancelRun}
+          onNewAnalysis={analyzer.newAnalysis}
         />
         {analyzer.videos.length > 0 && (
           <StatsCards videos={analyzer.videos} />
@@ -31,7 +34,7 @@ export function TikTokAnalyzerPage({ searchRunId }: TikTokAnalyzerPageProps) {
             canLoadMore={analyzer.canLoadMore}
             onRequestVideoDownload={analyzer.requestVideoDownload}
             onLoadMore={analyzer.loadMore}
-            onClear={analyzer.clearResults}
+            onNewAnalysis={analyzer.newAnalysis}
           />
         )}
       </div>

@@ -29,7 +29,7 @@ export function VideoAction({
       disabled={isRequestingDownload}
       onClick={() => onView(video)}
     >
-      Voir
+      View
     </Button>
   );
 }
@@ -53,7 +53,7 @@ export function VideoDialog({
         {video ? (
           <>
             <DialogHeader>
-              <DialogTitle>Video TikTok</DialogTitle>
+              <DialogTitle>TikTok Video</DialogTitle>
               <DialogDescription>{video.title ?? video.id}</DialogDescription>
             </DialogHeader>
             {localVideoUrl ? (
@@ -66,7 +66,7 @@ export function VideoDialog({
               />
             ) : (
               <p className="text-muted-foreground py-8 text-center">
-                Vidéo en cours de récupération...
+                Loading video...
               </p>
             )}
           </>
@@ -104,7 +104,7 @@ export function DescriptionCell({ video }: { video: RunVideoRow }) {
           onClick={() => setExpanded(!expanded)}
           className="text-xs text-primary hover:underline mt-1"
         >
-          {expanded ? "Voir moins" : "Voir plus"}
+          {expanded ? "Show less" : "Show more"}
         </button>
       )}
     </div>
@@ -138,7 +138,7 @@ export function TranscriptCell({ video }: { video: RunVideoRow }) {
           onClick={() => setExpanded(!expanded)}
           className="text-xs text-primary hover:underline mt-1"
         >
-          {expanded ? "Voir moins" : "Voir plus"}
+          {expanded ? "Show less" : "Show more"}
         </button>
       )}
     </div>

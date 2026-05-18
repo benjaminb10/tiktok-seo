@@ -18,7 +18,7 @@ import {
 } from "#/lib/tiktok/tiktok.ui";
 
 export function useTikTokAnalyzer(searchRunId?: string | null) {
-  const navigate = useNavigate({ from: "/" });
+  const navigate = useNavigate({ from: "/app" });
   const createRun = useServerFn(createMetadataRunFn);
   const getRunDetails = useServerFn(getRunDetailsFn);
   const createVideoDownloadJob = useServerFn(createVideoDownloadJobFn);
@@ -70,8 +70,7 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
       setError(null);
     }
     window.sessionStorage.setItem("tiktok:lastRunId", searchRunId);
-    void navigate({ to: "/", search: {}, replace: true });
-  }, [navigate, runId, searchRunId]);
+  }, [runId, searchRunId]);
 
   useEffect(() => {
     if (!runId) return;
@@ -113,7 +112,7 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
       setDetails(null);
       setRunId(created.runId);
       window.sessionStorage.setItem("tiktok:lastRunId", created.runId);
-      void navigate({ to: "/", search: {}, replace: true });
+      void navigate({ to: "/app", search: { runId: created.runId }, replace: true });
       await refreshRun(created.runId);
     } catch (caught) {
       setError(errorMessage(caught));
@@ -175,6 +174,11 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
     window.sessionStorage.removeItem("tiktok:lastRunId");
   }
 
+  function newAnalysis() {
+    clearResults();
+    void navigate({ to: "/app", search: {}, replace: true });
+  }
+
   return {
     input,
     videos,
@@ -185,11 +189,13 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
     isVideoWorkBusy,
     canLoadMore,
     queueingVideoIds,
+    currentHandle: details?.run.handle ?? null,
+    hasResults: videos.length > 0,
     setInput,
     analyze,
     cancelRun,
     loadMore,
-    clearResults,
+    newAnalysis,
     requestVideoDownload,
   };
 }
