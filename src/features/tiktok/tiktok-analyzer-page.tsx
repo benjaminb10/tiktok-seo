@@ -19,6 +19,7 @@ export function TikTokAnalyzerPage({ searchRunId }: TikTokAnalyzerPageProps) {
           isAnalyzing={analyzer.isAnalyzing}
           isMetadataBusy={analyzer.isMetadataBusy}
           currentHandle={analyzer.currentHandle}
+          avatarUrl={analyzer.avatarUrl}
           hasResults={analyzer.hasResults}
           onInputChange={analyzer.setInput}
           onAnalyze={analyzer.analyze}

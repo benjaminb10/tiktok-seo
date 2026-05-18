@@ -80,11 +80,29 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
       try {
         const next = await getRunDetails({ data: { runId } });
         if (!next) {
-          throw new Error(`Run ${runId} introuvable.`);
+          // Run not found - clean up and reset
+          if (!cancelled) {
+            setError(`Analysis not found. It may have been deleted.`);
+            setRunId(null);
+            setDetails(null);
+            window.sessionStorage.removeItem("tiktok:lastRunId");
+            void navigate({ to: "/app", search: {}, replace: true });
+          }
+          return;
         }
         if (!cancelled) setDetails(next);
       } catch (caught) {
-        if (!cancelled) setError(errorMessage(caught));
+        if (!cancelled) {
+          const message = errorMessage(caught);
+          // If run not found, clean up
+          if (message.includes("introuvable") || message.includes("not found")) {
+            setRunId(null);
+            setDetails(null);
+            window.sessionStorage.removeItem("tiktok:lastRunId");
+            void navigate({ to: "/app", search: {}, replace: true });
+          }
+          setError(message);
+        }
       }
     };
 
@@ -101,7 +119,7 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
       cancelled = true;
       window.clearInterval(interval);
     };
-  }, [getRunDetails, runId, shouldPoll]);
+  }, [getRunDetails, runId, shouldPoll, navigate]);
 
   async function analyze(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -190,6 +208,7 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
     canLoadMore,
     queueingVideoIds,
     currentHandle: details?.run.handle ?? null,
+    avatarUrl: details?.run.avatarUrl ?? null,
     hasResults: videos.length > 0,
     setInput,
     analyze,

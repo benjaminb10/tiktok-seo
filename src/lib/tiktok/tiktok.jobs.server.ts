@@ -108,8 +108,8 @@ export class TikTokJobService {
       await upsertVideo(this.database, video, timestamp);
     }
 
-    // Extract avatar URL from first video's raw metadata
-    const avatarUrl = this.extractAvatarUrl(input.videos);
+    // Extract avatar URL by fetching from TikTok profile page
+    const avatarUrl = await this.extractAvatarUrl(input.videos);
 
     const selected = selectDisplayVideos(uniqueVideos);
     await replaceRunVideos(this.database, job.runId, selected, timestamp);
@@ -618,24 +618,61 @@ export class TikTokJobService {
     return Array.from(byId.values());
   }
 
-  private extractAvatarUrl(videos: unknown[]): string | null {
-    // Try to extract uploader avatar from the first video's metadata
+  private async extractAvatarUrl(videos: unknown[]): Promise<string | null> {
+    // yt-dlp doesn't expose TikTok profile avatars in video metadata
+    // We need to fetch it from the profile page directly
     for (const raw of videos) {
       if (!raw || typeof raw !== "object" || Array.isArray(raw)) continue;
       const record = raw as Record<string, unknown>;
 
-      // Try various possible field names for the avatar URL
-      const avatarUrl =
-        this.readString(record, "thumbnail") ||
-        this.readString(record, "uploader_avatar") ||
-        this.readString(record, "uploader_thumbnail") ||
-        this.readString(record, "channel_avatar") ||
-        this.readString(record, "channel_thumbnail") ||
-        this.readString(record, "creator_avatar");
-
-      if (avatarUrl) return avatarUrl;
+      const uploaderUrl = this.readString(record, "uploader_url");
+      if (uploaderUrl && uploaderUrl.includes("tiktok.com/@")) {
+        try {
+          return await this.fetchProfileAvatarFromWeb(uploaderUrl);
+        } catch (error) {
+          console.error("[extractAvatarUrl] Failed to fetch avatar from profile page:", error);
+        }
+      }
     }
     return null;
+  }
+
+  private async fetchProfileAvatarFromWeb(profileUrl: string): Promise<string | null> {
+    try {
+      const response = await fetch(profileUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        },
+      });
+
+      if (!response.ok) return null;
+
+      const html = await response.text();
+
+      // TikTok embeds user data in a <script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"> tag
+      const match = html.match(/<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>(.*?)<\/script>/s);
+      if (!match) return null;
+
+      const jsonData = JSON.parse(match[1] || "{}");
+      const userDetail = jsonData?.__DEFAULT_SCOPE__?.["webapp.user-detail"]?.userInfo?.user;
+
+      // Try to get the avatar URL from the user data
+      const avatarUrl =
+        userDetail?.avatarLarger ||
+        userDetail?.avatarMedium ||
+        userDetail?.avatarThumb ||
+        userDetail?.avatar;
+
+      if (typeof avatarUrl === "string" && avatarUrl.startsWith("http")) {
+        console.log("[fetchProfileAvatarFromWeb] Found avatar:", avatarUrl);
+        return avatarUrl;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("[fetchProfileAvatarFromWeb] Error:", error);
+      return null;
+    }
   }
 
   private readString(record: Record<string, unknown>, key: string): string | null {

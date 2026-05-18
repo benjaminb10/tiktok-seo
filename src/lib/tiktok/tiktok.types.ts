@@ -76,6 +76,7 @@ export type RunDetails = {
     kind: "profile" | "video";
     handle: string | null;
     videoId: string | null;
+    avatarUrl: string | null;
     status: RunStatus;
     totalDiscovered: number;
     totalSelected: number;

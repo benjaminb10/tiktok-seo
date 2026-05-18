@@ -1,6 +1,6 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "#/db";
-import { searchRuns, searchRunVideos, tiktokVideos } from "#/db/schema";
+import { searchRuns, searchRunVideos, tiktokVideos, searchJobs } from "#/db/schema";
 
 export type ProfileSummary = {
   handle: string;
@@ -234,4 +234,52 @@ export async function getProfileDetail(handle: string): Promise<ProfileDetail | 
     analysisCount: runs.length,
     videos,
   };
+}
+
+export async function deleteProfile(handle: string): Promise<{ deleted: boolean }> {
+  // Get all runs for this handle
+  const runs = await db
+    .select({ id: searchRuns.id })
+    .from(searchRuns)
+    .where(
+      and(
+        eq(searchRuns.handle, handle),
+        eq(searchRuns.kind, "profile")
+      )
+    )
+    .all();
+
+  if (runs.length === 0) {
+    return { deleted: false };
+  }
+
+  const runIds = runs.map(r => r.id);
+
+  // Delete in order: jobs -> searchRunVideos -> searchRuns
+  // (videos in tiktokVideos table can stay as they might be referenced by other profiles)
+
+  // Delete all jobs for these runs
+  await db
+    .delete(searchJobs)
+    .where(inArray(searchJobs.runId, runIds))
+    .run();
+
+  // Delete all video associations for these runs
+  await db
+    .delete(searchRunVideos)
+    .where(inArray(searchRunVideos.runId, runIds))
+    .run();
+
+  // Delete all runs for this handle
+  await db
+    .delete(searchRuns)
+    .where(
+      and(
+        eq(searchRuns.handle, handle),
+        eq(searchRuns.kind, "profile")
+      )
+    )
+    .run();
+
+  return { deleted: true };
 }

@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs_20", "python3", "ffmpeg"]
+
+[phases.install]
+cmds = [
+  "npm ci",
+  "pip3 install --upgrade yt-dlp"
+]
+
+[start]
+cmd = "npm run sidecar"

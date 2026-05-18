@@ -87,9 +87,17 @@ export function LandingFooter() {
 
         {/* Bottom */}
         <div className="mt-12 border-t pt-8">
-          <p className="text-center text-xs text-muted-foreground">
-            Not affiliated with TikTok. All trademarks are property of their respective owners.
-          </p>
+          <div className="flex items-center justify-center gap-4">
+            <p className="text-center text-xs text-muted-foreground">
+              Not affiliated with TikTok. All trademarks are property of their respective owners.
+            </p>
+            <Link
+              to="/admin"
+              className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+            >
+              •
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

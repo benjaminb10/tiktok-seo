@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { db } from "#/db";
+import { checkAdminCredentials } from "#/lib/auth";
 import {
   createDownloadJobs,
   createVideoDownloadJob,
@@ -15,6 +16,7 @@ import {
 import {
   getAnalyzedProfiles,
   getProfileDetail,
+  deleteProfile,
 } from "./tiktok.profiles.server";
 import {
   createRunSchema,
@@ -78,4 +80,20 @@ export const getProfileDetailFn = createServerFn({ method: "GET" })
   .inputValidator((input) => usernameSchema.parse(input))
   .handler(async ({ data }) => {
     return getProfileDetail(data.username);
+  });
+
+const deleteProfileSchema = z.object({
+  username: z.string(),
+  password: z.string(),
+});
+
+export const deleteProfileFn = createServerFn({ method: "POST" })
+  .inputValidator((input) => deleteProfileSchema.parse(input))
+  .handler(async ({ data }) => {
+    // Simple password check without sessions
+    const isValid = checkAdminCredentials("admin", data.password);
+    if (!isValid) {
+      throw new Error("Invalid password");
+    }
+    return deleteProfile(data.username);
   });

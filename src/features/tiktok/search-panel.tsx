@@ -1,6 +1,7 @@
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, User } from "lucide-react";
 import type { FormEvent } from "react";
 import { Button } from "#/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
 import { InputGroup, InputGroupInput } from "#/components/ui/input-group";
 import { Progress } from "#/components/ui/progress";
 import type { RunStatusView } from "#/lib/tiktok/tiktok.ui";
@@ -11,6 +12,7 @@ type SearchPanelProps = {
   isAnalyzing: boolean;
   isMetadataBusy: boolean;
   currentHandle?: string | null;
+  avatarUrl?: string | null;
   hasResults: boolean;
   onInputChange: (value: string) => void;
   onAnalyze: (event: FormEvent<HTMLFormElement>) => void;
@@ -24,19 +26,33 @@ export function SearchPanel({
   isAnalyzing,
   isMetadataBusy,
   currentHandle,
+  avatarUrl,
   hasResults,
   onInputChange,
   onAnalyze,
   onCancel,
   onNewAnalysis,
 }: SearchPanelProps) {
+  const getInitials = (handle: string) => {
+    const cleaned = handle.replace(/^@/, "").trim();
+    return cleaned.slice(0, 2).toUpperCase();
+  };
+
   return (
     <section className="mx-auto flex w-full flex-col gap-6">
       {currentHandle && hasResults && (
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold">{currentHandle}</h2>
-            <p className="text-sm text-muted-foreground">Analysis in progress</p>
+          <div className="flex items-center gap-3">
+            <Avatar className="h-12 w-12 border-2 border-border">
+              <AvatarImage src={avatarUrl || undefined} alt={currentHandle} />
+              <AvatarFallback className="bg-gradient-to-br from-pink-500 to-violet-500 text-white font-semibold">
+                {getInitials(currentHandle)}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <h2 className="text-2xl font-bold">{currentHandle}</h2>
+              <p className="text-sm text-muted-foreground">Analysis in progress</p>
+            </div>
           </div>
           <Button
             variant="outline"
