@@ -1,9 +1,10 @@
-import { ArrowLeft, Eye, ExternalLink, Heart, MessageCircle, TrendingUp, Video } from "lucide-react";
+import { ArrowLeft, Eye, ExternalLink, Heart, MessageCircle, TrendingUp, Users, Video } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "#/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "#/components/ui/card";
 import type { ProfileDetail } from "#/lib/tiktok/tiktok.profiles.server";
 import { formatNumber } from "#/features/tiktok/formatters";
+import { ProfileVideosTable } from "./profile-videos-table";
 
 type PublicProfilePageProps = {
   username: string;
@@ -138,20 +139,20 @@ function ProfileWithData({ username, data }: { username: string; data: ProfileDe
           </Card>
         </div>
 
-        {/* Top Videos */}
-        <Card>
+        {/* Top Videos Preview */}
+        <Card className="mb-8">
           <CardHeader>
             <CardTitle>Recent Videos</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {data.videos.slice(0, 12).map((video) => (
+            <div className="grid gap-3 grid-cols-3 sm:grid-cols-4 lg:grid-cols-6">
+              {data.videos.slice(0, 6).map((video) => (
                 <a
                   key={video.id}
                   href={video.webpageUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group overflow-hidden rounded-lg border bg-background transition-all hover:shadow-lg"
+                  className="group overflow-hidden rounded-lg border bg-background transition-all hover:shadow-md"
                 >
                   {/* Thumbnail */}
                   {video.thumbnailUrl ? (
@@ -164,12 +165,9 @@ function ProfileWithData({ username, data }: { username: string; data: ProfileDe
                     <div className="aspect-[9/16] w-full bg-gradient-to-br from-pink-100 to-violet-100" />
                   )}
 
-                  {/* Video info */}
-                  <div className="p-4">
-                    <p className="mb-2 line-clamp-2 text-sm">
-                      {video.description || video.title || "No description"}
-                    </p>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  {/* Video stats overlay */}
+                  <div className="p-2 bg-background/95">
+                    <div className="flex items-center justify-between gap-1 text-xs text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Eye className="h-3 w-3" />
                         <span>{formatNumber(video.viewCount || 0)}</span>
@@ -178,15 +176,21 @@ function ProfileWithData({ username, data }: { username: string; data: ProfileDe
                         <Heart className="h-3 w-3" />
                         <span>{formatNumber(video.likeCount || 0)}</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <MessageCircle className="h-3 w-3" />
-                        <span>{formatNumber(video.commentCount || 0)}</span>
-                      </div>
                     </div>
                   </div>
                 </a>
               ))}
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Full Analysis Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Full Analysis</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ProfileVideosTable videos={data.videos} />
           </CardContent>
         </Card>
 

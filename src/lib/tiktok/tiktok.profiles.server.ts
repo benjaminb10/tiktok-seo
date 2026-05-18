@@ -1,4 +1,4 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { db } from "#/db";
 import { searchRuns, searchRunVideos, tiktokVideos } from "#/db/schema";
 
@@ -14,15 +14,26 @@ export type ProfileSummary = {
 
 export type ProfileVideo = {
   id: string;
+  handle: string | null;
   webpageUrl: string;
   thumbnailUrl: string | null;
   title: string | null;
   description: string | null;
   publishedAt: string | null;
+  uploadDate: string | null;
+  durationSeconds: number | null;
   viewCount: number | null;
   likeCount: number | null;
+  repostCount: number | null;
   commentCount: number | null;
   tags: string[];
+  audioTrack: string | null;
+  audioAuthor: string | null;
+  transcriptText: string | null;
+  source: string;
+  rank: number;
+  videoStatus: string;
+  localPath: string | null;
 };
 
 export type ProfileDetail = {
@@ -48,8 +59,12 @@ export async function getAnalyzedProfiles(): Promise<ProfileSummary[]> {
       createdAt: searchRuns.createdAt,
     })
     .from(searchRuns)
-    .where(eq(searchRuns.kind, "profile"))
-    .where(eq(searchRuns.status, "completed"))
+    .where(
+      and(
+        eq(searchRuns.kind, "profile"),
+        eq(searchRuns.status, "completed")
+      )
+    )
     .orderBy(desc(searchRuns.createdAt))
     .all();
 
@@ -119,13 +134,18 @@ export async function getProfileDetail(handle: string): Promise<ProfileDetail | 
   const runs = await db
     .select({
       id: searchRuns.id,
+      handle: searchRuns.handle,
       avatarUrl: searchRuns.avatarUrl,
       createdAt: searchRuns.createdAt,
     })
     .from(searchRuns)
-    .where(eq(searchRuns.handle, handle))
-    .where(eq(searchRuns.kind, "profile"))
-    .where(eq(searchRuns.status, "completed"))
+    .where(
+      and(
+        eq(searchRuns.handle, handle),
+        eq(searchRuns.kind, "profile"),
+        eq(searchRuns.status, "completed")
+      )
+    )
     .orderBy(desc(searchRuns.createdAt))
     .all();
 
@@ -141,16 +161,26 @@ export async function getProfileDetail(handle: string): Promise<ProfileDetail | 
   const videoRows = await db
     .select({
       id: tiktokVideos.id,
+      handle: tiktokVideos.handle,
       webpageUrl: tiktokVideos.webpageUrl,
       thumbnailUrl: tiktokVideos.thumbnailUrl,
       title: tiktokVideos.title,
       description: tiktokVideos.description,
       publishedAt: tiktokVideos.publishedAt,
+      uploadDate: tiktokVideos.uploadDate,
+      durationSeconds: tiktokVideos.durationSeconds,
       viewCount: tiktokVideos.viewCount,
       likeCount: tiktokVideos.likeCount,
+      repostCount: tiktokVideos.repostCount,
       commentCount: tiktokVideos.commentCount,
       tagsJson: tiktokVideos.tagsJson,
+      audioTrack: tiktokVideos.audioTrack,
+      audioAuthor: tiktokVideos.audioAuthor,
+      transcriptText: tiktokVideos.transcriptText,
+      source: searchRunVideos.source,
       rank: searchRunVideos.rank,
+      videoStatus: searchRunVideos.videoStatus,
+      localPath: searchRunVideos.localPath,
     })
     .from(searchRunVideos)
     .innerJoin(tiktokVideos, eq(searchRunVideos.videoId, tiktokVideos.id))
@@ -170,15 +200,26 @@ export async function getProfileDetail(handle: string): Promise<ProfileDetail | 
 
     return {
       id: row.id,
+      handle: row.handle,
       webpageUrl: row.webpageUrl,
       thumbnailUrl: row.thumbnailUrl,
       title: row.title,
       description: row.description,
       publishedAt: row.publishedAt,
+      uploadDate: row.uploadDate,
+      durationSeconds: row.durationSeconds,
       viewCount: row.viewCount,
       likeCount: row.likeCount,
+      repostCount: row.repostCount,
       commentCount: row.commentCount,
       tags: JSON.parse(row.tagsJson) as string[],
+      audioTrack: row.audioTrack,
+      audioAuthor: row.audioAuthor,
+      transcriptText: row.transcriptText,
+      source: row.source,
+      rank: row.rank,
+      videoStatus: row.videoStatus,
+      localPath: row.localPath,
     };
   });
 
