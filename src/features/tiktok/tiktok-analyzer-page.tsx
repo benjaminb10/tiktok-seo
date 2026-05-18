@@ -11,11 +11,11 @@ export function TikTokAnalyzerPage({ searchRunId }: TikTokAnalyzerPageProps) {
   const analyzer = useTikTokAnalyzer(searchRunId);
 
   return (
-    <main className="min-h-screen">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 p-4">
+    <main className="min-h-screen bg-background">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 p-8">
         <SearchPanel
           input={analyzer.input}
-          statusText={analyzer.statusText}
+          statusView={analyzer.statusView}
           isAnalyzing={analyzer.isAnalyzing}
           isMetadataBusy={analyzer.isMetadataBusy}
           onInputChange={analyzer.setInput}
@@ -25,13 +25,15 @@ export function TikTokAnalyzerPage({ searchRunId }: TikTokAnalyzerPageProps) {
         {analyzer.videos.length > 0 && (
           <StatsCards videos={analyzer.videos} />
         )}
-        <VideosTable
-          videos={analyzer.videos}
-          canLoadMore={analyzer.canLoadMore}
-          onRequestVideoDownload={analyzer.requestVideoDownload}
-          onLoadMore={analyzer.loadMore}
-          onClear={analyzer.clearResults}
-        />
+        {analyzer.videos.length > 0 && (
+          <VideosTable
+            videos={analyzer.videos}
+            canLoadMore={analyzer.canLoadMore}
+            onRequestVideoDownload={analyzer.requestVideoDownload}
+            onLoadMore={analyzer.loadMore}
+            onClear={analyzer.clearResults}
+          />
+        )}
       </div>
     </main>
   );

@@ -60,6 +60,7 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
     details.run.totalDiscovered % 500 === 0;
   const statusView = getRunStatusView(details, runId);
   const statusText = error ?? statusView.description;
+  const statusViewWithError = error ? { ...statusView, description: error } : statusView;
 
   useEffect(() => {
     if (!searchRunId) return;
@@ -178,6 +179,7 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
     input,
     videos,
     statusText,
+    statusView: statusViewWithError,
     isAnalyzing,
     isMetadataBusy,
     isVideoWorkBusy,

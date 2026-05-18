@@ -7,8 +7,9 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ArrowUpDown, Download, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Download, Music, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
+import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
 import { Progress } from "#/components/ui/progress";
 import {
@@ -197,16 +198,48 @@ export function VideosTable({
       {
         accessorKey: "tags",
         header: "Tags",
-        size: 100,
-        cell: ({ row }) => row.original.tags.slice(0, 4).join(", ") || "-",
+        size: 150,
+        cell: ({ row }) => {
+          const tags = row.original.tags.slice(0, 3);
+          if (tags.length === 0) return <span className="text-muted-foreground">-</span>;
+          return (
+            <div className="flex flex-wrap gap-1">
+              {tags.map((tag) => (
+                <Badge key={tag} variant="secondary" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          );
+        },
       },
       {
         id: "audio",
         header: "Audio",
-        cell: ({ row }) =>
-          [row.original.audioTrack, row.original.audioAuthor]
+        size: 200,
+        cell: ({ row }) => {
+          const audioText = [row.original.audioTrack, row.original.audioAuthor]
             .filter(Boolean)
-            .join(" - ") || "-",
+            .join(" - ");
+
+          if (!audioText) {
+            return <span className="text-muted-foreground">-</span>;
+          }
+
+          return (
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted">
+                <Music className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">{row.original.audioTrack || "Sans titre"}</p>
+                {row.original.audioAuthor && (
+                  <p className="truncate text-xs text-muted-foreground">{row.original.audioAuthor}</p>
+                )}
+              </div>
+            </div>
+          );
+        },
       },
     ],
     [handleViewVideo],

@@ -2,10 +2,15 @@ import type { RunDetails, RunVideoRow } from "./tiktok.types";
 
 type VideoStatus = RunDetails["videos"][number]["videoStatus"];
 
-type RunStatusView = {
+export type RunStatusView = {
   title: string;
   description: string;
   isBusy: boolean;
+  progress?: {
+    current: number;
+    total: number;
+    percentage: number;
+  };
 };
 
 export function getRunStatusView(
@@ -37,11 +42,16 @@ export function getRunStatusView(
   }
 
   if (details.run.status === "running") {
+    const current = details.run.metadataProcessed;
+    const total = details.run.totalSelected || details.run.totalDiscovered;
+    const percentage = total > 0 ? Math.round((current / total) * 100) : 0;
+
     if (details.videos.length > 0) {
       return {
         title: "Analyse en cours",
-        description: `${details.videos.length} vidéos disponibles. L'analyse continue.`,
+        description: `Récupération des vidéos (${current}/${total})`,
         isBusy: true,
+        progress: { current, total, percentage },
       };
     }
 

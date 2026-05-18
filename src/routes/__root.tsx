@@ -4,6 +4,7 @@ import {
   Outlet,
   Scripts,
 } from "@tanstack/react-router";
+import { Sidebar } from "#/components/sidebar";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -25,7 +26,12 @@ function RootComponent() {
         <HeadContent />
       </head>
       <body>
-        <Outlet />
+        <div className="flex h-screen overflow-hidden">
+          <Sidebar />
+          <main className="flex-1 overflow-auto">
+            <Outlet />
+          </main>
+        </div>
         <Scripts />
       </body>
     </html>

@@ -9,6 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as HelpRouteImport } from './routes/help'
+import { Route as ExportsRouteImport } from './routes/exports'
+import { Route as AnalysesRouteImport } from './routes/analyses'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiSidecarLeaseRouteImport } from './routes/api/sidecar/lease'
 import { Route as ApiSidecarHeartbeatRouteImport } from './routes/api/sidecar/heartbeat'
@@ -16,6 +20,26 @@ import { Route as ApiSidecarJobsJobIdProgressRouteImport } from './routes/api/si
 import { Route as ApiSidecarJobsJobIdFailRouteImport } from './routes/api/sidecar/jobs/$jobId/fail'
 import { Route as ApiSidecarJobsJobIdCompleteRouteImport } from './routes/api/sidecar/jobs/$jobId/complete'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExportsRoute = ExportsRouteImport.update({
+  id: '/exports',
+  path: '/exports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalysesRoute = AnalysesRouteImport.update({
+  id: '/analyses',
+  path: '/analyses',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -51,6 +75,10 @@ const ApiSidecarJobsJobIdCompleteRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analyses': typeof AnalysesRoute
+  '/exports': typeof ExportsRoute
+  '/help': typeof HelpRoute
+  '/settings': typeof SettingsRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
   '/api/sidecar/lease': typeof ApiSidecarLeaseRoute
   '/api/sidecar/jobs/$jobId/complete': typeof ApiSidecarJobsJobIdCompleteRoute
@@ -59,6 +87,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analyses': typeof AnalysesRoute
+  '/exports': typeof ExportsRoute
+  '/help': typeof HelpRoute
+  '/settings': typeof SettingsRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
   '/api/sidecar/lease': typeof ApiSidecarLeaseRoute
   '/api/sidecar/jobs/$jobId/complete': typeof ApiSidecarJobsJobIdCompleteRoute
@@ -68,6 +100,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/analyses': typeof AnalysesRoute
+  '/exports': typeof ExportsRoute
+  '/help': typeof HelpRoute
+  '/settings': typeof SettingsRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
   '/api/sidecar/lease': typeof ApiSidecarLeaseRoute
   '/api/sidecar/jobs/$jobId/complete': typeof ApiSidecarJobsJobIdCompleteRoute
@@ -78,6 +114,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/analyses'
+    | '/exports'
+    | '/help'
+    | '/settings'
     | '/api/sidecar/heartbeat'
     | '/api/sidecar/lease'
     | '/api/sidecar/jobs/$jobId/complete'
@@ -86,6 +126,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/analyses'
+    | '/exports'
+    | '/help'
+    | '/settings'
     | '/api/sidecar/heartbeat'
     | '/api/sidecar/lease'
     | '/api/sidecar/jobs/$jobId/complete'
@@ -94,6 +138,10 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/analyses'
+    | '/exports'
+    | '/help'
+    | '/settings'
     | '/api/sidecar/heartbeat'
     | '/api/sidecar/lease'
     | '/api/sidecar/jobs/$jobId/complete'
@@ -103,6 +151,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnalysesRoute: typeof AnalysesRoute
+  ExportsRoute: typeof ExportsRoute
+  HelpRoute: typeof HelpRoute
+  SettingsRoute: typeof SettingsRoute
   ApiSidecarHeartbeatRoute: typeof ApiSidecarHeartbeatRoute
   ApiSidecarLeaseRoute: typeof ApiSidecarLeaseRoute
   ApiSidecarJobsJobIdCompleteRoute: typeof ApiSidecarJobsJobIdCompleteRoute
@@ -112,6 +164,34 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exports': {
+      id: '/exports'
+      path: '/exports'
+      fullPath: '/exports'
+      preLoaderRoute: typeof ExportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analyses': {
+      id: '/analyses'
+      path: '/analyses'
+      fullPath: '/analyses'
+      preLoaderRoute: typeof AnalysesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -159,6 +239,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnalysesRoute: AnalysesRoute,
+  ExportsRoute: ExportsRoute,
+  HelpRoute: HelpRoute,
+  SettingsRoute: SettingsRoute,
   ApiSidecarHeartbeatRoute: ApiSidecarHeartbeatRoute,
   ApiSidecarLeaseRoute: ApiSidecarLeaseRoute,
   ApiSidecarJobsJobIdCompleteRoute: ApiSidecarJobsJobIdCompleteRoute,
