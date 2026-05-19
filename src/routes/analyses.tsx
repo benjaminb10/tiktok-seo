@@ -28,6 +28,7 @@ type RunRow = {
   error: string | null;
   createdAt: number;
   updatedAt: number;
+  totalViews: number;
 };
 
 export const Route = createFileRoute("/analyses")({
@@ -173,7 +174,7 @@ function AnalysesPage() {
                           <div className="text-center">
                             <div className="flex items-center gap-1 text-lg font-semibold text-foreground">
                               <Eye className="h-4 w-4" />
-                              <span>-</span>
+                              <span>{formatNumber(run.totalViews)}</span>
                             </div>
                             <div className="text-xs text-muted-foreground">
                               Views

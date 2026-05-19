@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import * as schema from "#/db/schema";
 import { normalizeTikTokInput } from "./tiktok.logic";
@@ -134,7 +134,31 @@ export async function continueMetadataRun(
 
 export async function listAllRuns(database: TikTokDb) {
   const runs = await database
-    .select()
+    .select({
+      id: schema.searchRuns.id,
+      input: schema.searchRuns.input,
+      normalizedUrl: schema.searchRuns.normalizedUrl,
+      kind: schema.searchRuns.kind,
+      handle: schema.searchRuns.handle,
+      videoId: schema.searchRuns.videoId,
+      avatarUrl: schema.searchRuns.avatarUrl,
+      status: schema.searchRuns.status,
+      totalDiscovered: schema.searchRuns.totalDiscovered,
+      totalSelected: schema.searchRuns.totalSelected,
+      metadataProcessed: schema.searchRuns.metadataProcessed,
+      videoJobsTotal: schema.searchRuns.videoJobsTotal,
+      videoJobsCompleted: schema.searchRuns.videoJobsCompleted,
+      videoJobsFailed: schema.searchRuns.videoJobsFailed,
+      error: schema.searchRuns.error,
+      createdAt: schema.searchRuns.createdAt,
+      updatedAt: schema.searchRuns.updatedAt,
+      totalViews: sql<number>`(
+        SELECT COALESCE(SUM(${schema.tiktokVideos.viewCount}), 0)
+        FROM ${schema.searchRunVideos}
+        JOIN ${schema.tiktokVideos} ON ${schema.searchRunVideos.videoId} = ${schema.tiktokVideos.id}
+        WHERE ${schema.searchRunVideos.runId} = ${schema.searchRuns.id}
+      )`.as("total_views"),
+    })
     .from(schema.searchRuns)
     .orderBy(desc(schema.searchRuns.createdAt));
 
