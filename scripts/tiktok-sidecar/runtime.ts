@@ -13,6 +13,7 @@ import {
 export async function runSidecar(config: SidecarConfig): Promise<void> {
   const client = new SidecarClient(config);
   const active = new Set<Promise<void>>();
+  const POLL_INTERVAL = 5_000; // Re-poll every 5 seconds even during job processing
 
   while (true) {
     while (active.size < config.concurrency) {
@@ -33,7 +34,8 @@ export async function runSidecar(config: SidecarConfig): Promise<void> {
       continue;
     }
 
-    await Promise.race(active);
+    // Wait for either a job to complete OR 5 seconds to pass (for re-polling)
+    await Promise.race([...active, sleep(POLL_INTERVAL)]);
   }
 }
 
