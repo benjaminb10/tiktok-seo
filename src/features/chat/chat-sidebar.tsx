@@ -81,7 +81,7 @@ export function ChatSidebar() {
               <ChatMessage key={message.id} message={message} />
             ))
           )}
-          {isLoading && (
+          {isLoading && messages.length > 0 && messages[messages.length - 1].content === "" && (
             <div className="flex justify-start">
               <div className="max-w-[85%] rounded-lg bg-muted px-3 py-2">
                 <div className="flex gap-1">

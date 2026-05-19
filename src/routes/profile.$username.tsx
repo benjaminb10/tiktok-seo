@@ -22,6 +22,11 @@ export const Route = createFileRoute("/profile/$username")({
       },
       { property: "og:type", content: "profile" },
       { property: "og:url", content: `https://viewlify.ai/profile/${params.username}` },
+      { property: "og:image", content: `https://viewlify.ai/api/og/profile/${params.username}` },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: `https://viewlify.ai/api/og/profile/${params.username}` },
     ],
   }),
 });
