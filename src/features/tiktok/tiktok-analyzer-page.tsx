@@ -1,10 +1,12 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { SearchPanel } from "./search-panel";
 import { useTikTokAnalyzer } from "./use-tiktok-analyzer";
 import { VideoDialog } from "./video-dialogs";
 import { UnifiedStatsCards } from "#/features/analysis/unified-stats-cards";
 import { RecentVideosPreview } from "#/features/analysis/recent-videos-preview";
 import { UnifiedVideosTable } from "#/features/analysis/unified-videos-table";
+import { useChatContext } from "#/features/chat/chat-context";
+import { buildVideoContext } from "#/features/chat/chat.utils";
 import type { RunVideoRow } from "#/lib/tiktok/tiktok.types";
 
 type TikTokAnalyzerPageProps = {
@@ -14,6 +16,17 @@ type TikTokAnalyzerPageProps = {
 export function TikTokAnalyzerPage({ searchRunId }: TikTokAnalyzerPageProps) {
   const analyzer = useTikTokAnalyzer(searchRunId);
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+  const { setVideoContext } = useChatContext();
+
+  // Update chat context when videos or handle change
+  useEffect(() => {
+    if (analyzer.currentHandle && analyzer.videos.length > 0) {
+      const context = buildVideoContext(analyzer.currentHandle, analyzer.videos);
+      setVideoContext(context);
+    } else {
+      setVideoContext(null);
+    }
+  }, [analyzer.currentHandle, analyzer.videos, setVideoContext]);
 
   const selectedVideo = analyzer.videos.find((v) => v.id === selectedVideoId) ?? null;
 

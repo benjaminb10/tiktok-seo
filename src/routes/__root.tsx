@@ -7,6 +7,8 @@ import {
 } from "@tanstack/react-router";
 import { LandingNavbar } from "#/components/landing-navbar";
 import { Sidebar } from "#/components/sidebar";
+import { ChatProvider } from "#/features/chat/chat-context";
+import { ChatSidebar } from "#/features/chat/chat-sidebar";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -32,6 +34,7 @@ function RootComponent() {
                      location.pathname.startsWith("/exports") ||
                      location.pathname.startsWith("/settings") ||
                      location.pathname.startsWith("/help");
+  const showChatSidebar = location.pathname.startsWith("/app");
 
   if (isAppRoute) {
     return (
@@ -40,12 +43,15 @@ function RootComponent() {
           <HeadContent />
         </head>
         <body>
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <main className="flex-1 overflow-auto">
-              <Outlet />
-            </main>
-          </div>
+          <ChatProvider>
+            <div className="flex h-screen overflow-hidden">
+              <Sidebar />
+              <main className="flex-1 overflow-auto">
+                <Outlet />
+              </main>
+              {showChatSidebar && <ChatSidebar />}
+            </div>
+          </ChatProvider>
           <Scripts />
         </body>
       </html>

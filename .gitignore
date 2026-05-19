@@ -6,6 +6,7 @@ dist/
 .DS_Store
 .env
 .env.*
+.dev.vars
 downloads/
 public/tiktok-videos/
 npm-debug.log*
