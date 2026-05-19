@@ -53,6 +53,25 @@ function AnalysesPage() {
     void fetchRuns();
   }, [listAllRuns]);
 
+  // Auto-refresh when there are running/queued analyses
+  useEffect(() => {
+    const hasActiveRuns = runs.some(
+      (run) => run.status === "running" || run.status === "queued"
+    );
+    if (!hasActiveRuns) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const data = await listAllRuns();
+        setRuns(data);
+      } catch (error) {
+        console.error("Failed to refresh runs:", error);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [runs, listAllRuns]);
+
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center p-8">
