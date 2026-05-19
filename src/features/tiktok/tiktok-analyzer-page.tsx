@@ -1,7 +1,11 @@
+import { useState, useCallback } from "react";
 import { SearchPanel } from "./search-panel";
-import { StatsCards } from "./stats-cards";
 import { useTikTokAnalyzer } from "./use-tiktok-analyzer";
-import { VideosTable } from "./videos-table";
+import { VideoDialog } from "./video-dialogs";
+import { UnifiedStatsCards } from "#/features/analysis/unified-stats-cards";
+import { RecentVideosPreview } from "#/features/analysis/recent-videos-preview";
+import { UnifiedVideosTable } from "#/features/analysis/unified-videos-table";
+import type { RunVideoRow } from "#/lib/tiktok/tiktok.types";
 
 type TikTokAnalyzerPageProps = {
   searchRunId?: string | null;
@@ -9,6 +13,14 @@ type TikTokAnalyzerPageProps = {
 
 export function TikTokAnalyzerPage({ searchRunId }: TikTokAnalyzerPageProps) {
   const analyzer = useTikTokAnalyzer(searchRunId);
+  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+
+  const selectedVideo = analyzer.videos.find((v) => v.id === selectedVideoId) ?? null;
+
+  const handleVideoClick = useCallback((video: RunVideoRow) => {
+    setSelectedVideoId(video.id);
+    void analyzer.requestVideoDownload(video);
+  }, [analyzer]);
 
   return (
     <main className="min-h-screen bg-background">
@@ -27,18 +39,33 @@ export function TikTokAnalyzerPage({ searchRunId }: TikTokAnalyzerPageProps) {
           onNewAnalysis={analyzer.newAnalysis}
         />
         {analyzer.videos.length > 0 && (
-          <StatsCards videos={analyzer.videos} />
+          <UnifiedStatsCards videos={analyzer.videos} />
         )}
         {analyzer.videos.length > 0 && (
-          <VideosTable
+          <RecentVideosPreview
+            videos={analyzer.videos}
+            maxVideos={6}
+            onVideoClick={handleVideoClick}
+          />
+        )}
+        {analyzer.videos.length > 0 && (
+          <UnifiedVideosTable
             videos={analyzer.videos}
             canLoadMore={analyzer.canLoadMore}
-            onRequestVideoDownload={analyzer.requestVideoDownload}
             onLoadMore={analyzer.loadMore}
             onNewAnalysis={analyzer.newAnalysis}
+            onVideoClick={handleVideoClick}
+            exportFilename="viewlify-export.csv"
           />
         )}
       </div>
+      <VideoDialog
+        video={selectedVideo}
+        isOpen={selectedVideo !== null}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setSelectedVideoId(null);
+        }}
+      />
     </main>
   );
 }

@@ -11,11 +11,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/components/ui/tooltip";
-import type { RunVideoRow } from "#/lib/tiktok/tiktok.types";
-import { engagementRate, formatNumber, formatPercent } from "./formatters";
+import { formatNumber, formatPercent } from "#/features/tiktok/formatters";
+import type { UnifiedVideo } from "./types";
+import { computeStats } from "./types";
 
-type StatsCardsProps = {
-  videos: RunVideoRow[];
+type UnifiedStatsCardsProps = {
+  videos: UnifiedVideo[];
 };
 
 type StatConfig = {
@@ -28,19 +29,13 @@ type StatConfig = {
   tooltip?: string;
 };
 
-export function StatsCards({ videos }: StatsCardsProps) {
-  const totalViews = videos.reduce((sum, v) => sum + (v.viewCount ?? 0), 0);
-  const totalLikes = videos.reduce((sum, v) => sum + (v.likeCount ?? 0), 0);
-  const avgEngagement =
-    videos.length > 0
-      ? videos.reduce((sum, v) => sum + (engagementRate(v) ?? 0), 0) /
-        videos.length
-      : 0;
+export function UnifiedStatsCards({ videos }: UnifiedStatsCardsProps) {
+  const stats = computeStats(videos);
 
-  const stats: StatConfig[] = [
+  const statConfigs: StatConfig[] = [
     {
       label: "Total videos",
-      value: videos.length,
+      value: stats.totalVideos,
       icon: Play,
       iconBgColor: "bg-pink-100",
       iconColor: "text-pink-500",
@@ -48,7 +43,7 @@ export function StatsCards({ videos }: StatsCardsProps) {
     },
     {
       label: "Total views",
-      value: formatNumber(totalViews),
+      value: formatNumber(stats.totalViews),
       icon: Eye,
       iconBgColor: "bg-blue-100",
       iconColor: "text-blue-500",
@@ -56,7 +51,7 @@ export function StatsCards({ videos }: StatsCardsProps) {
     },
     {
       label: "Avg engagement",
-      value: formatPercent(avgEngagement),
+      value: formatPercent(stats.avgEngagement),
       icon: TrendingUp,
       iconBgColor: "bg-green-100",
       iconColor: "text-green-500",
@@ -65,7 +60,7 @@ export function StatsCards({ videos }: StatsCardsProps) {
     },
     {
       label: "Total likes",
-      value: formatNumber(totalLikes),
+      value: formatNumber(stats.totalLikes),
       icon: Heart,
       iconBgColor: "bg-red-100",
       iconColor: "text-red-500",
@@ -76,7 +71,7 @@ export function StatsCards({ videos }: StatsCardsProps) {
   return (
     <TooltipProvider>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        {stats.map((stat) => (
+        {statConfigs.map((stat) => (
           <Card key={stat.label}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div className="flex items-center gap-1.5">

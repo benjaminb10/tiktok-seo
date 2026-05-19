@@ -1,4 +1,9 @@
-import type { RunVideoRow } from "#/lib/tiktok/tiktok.types";
+type VideoWithCounts = {
+  viewCount: number | null;
+  likeCount: number | null;
+  commentCount: number | null;
+  repostCount: number | null;
+};
 
 export function formatNumber(value: number | null): string {
   if (value == null) return "-";
@@ -24,7 +29,7 @@ export function formatDuration(value: number | null): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-export function engagementRate(video: RunVideoRow): number | null {
+export function engagementRate(video: VideoWithCounts): number | null {
   if (!video.viewCount) return null;
   const interactions =
     (video.likeCount ?? 0) + (video.commentCount ?? 0) + (video.repostCount ?? 0);

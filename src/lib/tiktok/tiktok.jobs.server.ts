@@ -113,7 +113,9 @@ export class TikTokJobService {
 
     const selected = selectDisplayVideos(uniqueVideos);
     await replaceRunVideos(this.database, job.runId, selected, timestamp);
-    await this.markJobCompleted(job.id, timestamp);
+
+    // Mark run completed FIRST - this is the user-facing status
+    // If job marking fails after, the run is still correctly shown as completed
     await this.markMetadataRunCompleted({
       runId: job.runId,
       totalDiscovered: input.videos.length,
@@ -122,6 +124,7 @@ export class TikTokJobService {
       avatarUrl,
       timestamp,
     });
+    await this.markJobCompleted(job.id, timestamp);
 
     return {
       totalDiscovered: input.videos.length,

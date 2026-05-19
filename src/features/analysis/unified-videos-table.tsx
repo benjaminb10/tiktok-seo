@@ -7,8 +7,8 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ArrowUpDown, Download, Music } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Download, Music, Plus } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
 import { Progress } from "#/components/ui/progress";
@@ -20,17 +20,22 @@ import {
   TableHeader,
   TableRow,
 } from "#/components/ui/table";
-import type { ProfileVideo } from "#/lib/tiktok/tiktok.profiles.server";
 import {
-  engagementRate,
   formatDate,
   formatDuration,
   formatNumber,
   formatPercent,
 } from "#/features/tiktok/formatters";
-import { DescriptionCell, TranscriptCell } from "#/features/tiktok/video-dialogs";
+import type { UnifiedVideo, UnifiedVideoExtended } from "./types";
 
-function exportToCSV(videos: ProfileVideo[]) {
+function engagementRate(video: UnifiedVideo): number | null {
+  if (!video.viewCount) return null;
+  const interactions =
+    (video.likeCount ?? 0) + (video.commentCount ?? 0) + (video.repostCount ?? 0);
+  return interactions / video.viewCount;
+}
+
+function exportToCSV(videos: UnifiedVideo[], filename: string) {
   const headers = [
     "ID",
     "URL",
@@ -57,9 +62,8 @@ function exportToCSV(videos: ProfileVideo[]) {
   };
 
   const rows = videos.map((video) => {
-    const viewCount = video.viewCount || 0;
-    const engagement = viewCount
-      ? ((video.likeCount ?? 0) + (video.commentCount ?? 0) + (video.repostCount ?? 0)) / viewCount
+    const engagement = video.viewCount
+      ? ((video.likeCount ?? 0) + (video.commentCount ?? 0) + (video.repostCount ?? 0)) / video.viewCount
       : null;
 
     return [
@@ -84,29 +88,52 @@ function exportToCSV(videos: ProfileVideo[]) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "viewlify-profile-export.csv";
+  link.download = filename;
   link.click();
   URL.revokeObjectURL(url);
 }
 
-type ProfileVideosTableProps = {
-  videos: ProfileVideo[];
+type UnifiedVideosTableProps<T extends UnifiedVideo> = {
+  videos: T[];
+  // Optional features for app page
+  canLoadMore?: boolean;
+  onLoadMore?: () => void;
+  onNewAnalysis?: () => void;
+  onVideoClick?: (video: T) => void;
+  // Configuration
+  exportFilename?: string;
+  title?: string;
 };
 
-export function ProfileVideosTable({ videos }: ProfileVideosTableProps) {
+export function UnifiedVideosTable<T extends UnifiedVideo>({
+  videos,
+  canLoadMore = false,
+  onLoadMore,
+  onNewAnalysis,
+  onVideoClick,
+  exportFilename = "viewlify-export.csv",
+  title = "Available videos",
+}: UnifiedVideosTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns = useMemo<ColumnDef<ProfileVideo>[]>(
+  const handleThumbnailClick = useCallback((video: T) => {
+    if (onVideoClick) {
+      onVideoClick(video);
+    } else {
+      window.open(video.webpageUrl, "_blank", "noopener,noreferrer");
+    }
+  }, [onVideoClick]);
+
+  const columns = useMemo<ColumnDef<T>[]>(
     () => [
       {
         id: "thumbnail",
         header: "Video",
         size: 50,
         cell: ({ row }) => (
-          <a
-            href={row.original.webpageUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => handleThumbnailClick(row.original)}
             className="cursor-pointer"
           >
             {row.original.thumbnailUrl ? (
@@ -118,7 +145,7 @@ export function ProfileVideosTable({ videos }: ProfileVideosTableProps) {
             ) : (
               <div className="h-12 w-12 rounded bg-muted hover:bg-muted/80 transition-colors" />
             )}
-          </a>
+          </button>
         ),
       },
       {
@@ -135,16 +162,9 @@ export function ProfileVideosTable({ videos }: ProfileVideosTableProps) {
       {
         id: "engagement",
         header: sortableHeader("Engagement"),
-        accessorFn: (row) => {
-          const viewCount = row.viewCount || 0;
-          if (!viewCount) return null;
-          return ((row.likeCount ?? 0) + (row.commentCount ?? 0) + (row.repostCount ?? 0)) / viewCount;
-        },
+        accessorFn: (row) => engagementRate(row),
         cell: ({ row }) => {
-          const viewCount = row.original.viewCount || 0;
-          const rate = viewCount
-            ? ((row.original.likeCount ?? 0) + (row.original.commentCount ?? 0) + (row.original.repostCount ?? 0)) / viewCount
-            : null;
+          const rate = engagementRate(row.original);
           const progressValue =
             rate != null ? Math.min((rate / 0.15) * 100, 100) : 0;
           return (
@@ -233,7 +253,7 @@ export function ProfileVideosTable({ videos }: ProfileVideosTableProps) {
         },
       },
     ],
-    [],
+    [handleThumbnailClick],
   );
 
   const table = useReactTable({
@@ -249,12 +269,25 @@ export function ProfileVideosTable({ videos }: ProfileVideosTableProps) {
   return (
     <section className="grid gap-4">
       <div className="flex items-center gap-4">
-        <h3 className="text-lg font-medium">All Videos ({videos.length})</h3>
-        {videos.length > 0 && (
-          <Button type="button" variant="outline" onClick={() => exportToCSV(videos)}>
-            <Download className="h-4 w-4 mr-2" />
-            Export CSV
+        <h2>{title} ({videos.length})</h2>
+        {canLoadMore && onLoadMore && (
+          <Button type="button" variant="outline" onClick={onLoadMore}>
+            Load more videos
           </Button>
+        )}
+        {videos.length > 0 && (
+          <>
+            <Button type="button" variant="outline" onClick={() => exportToCSV(videos, exportFilename)}>
+              <Download className="h-4 w-4 mr-2" />
+              Export CSV
+            </Button>
+            {onNewAnalysis && (
+              <Button type="button" variant="outline" onClick={onNewAnalysis}>
+                <Plus className="h-4 w-4 mr-2" />
+                New analysis
+              </Button>
+            )}
+          </>
         )}
       </div>
       <div className="rounded-md border overflow-auto max-w-full">
@@ -313,6 +346,13 @@ export function ProfileVideosTable({ videos }: ProfileVideosTableProps) {
           </TableBody>
         </Table>
       </div>
+      {canLoadMore && onLoadMore && (
+        <div className="flex justify-start">
+          <Button type="button" variant="outline" onClick={onLoadMore}>
+            Load more videos
+          </Button>
+        </div>
+      )}
     </section>
   );
 }
@@ -342,4 +382,74 @@ function sortableHeader(label: string) {
       </Button>
     );
   };
+}
+
+// Inline DescriptionCell and TranscriptCell to avoid circular dependencies
+function DescriptionCell({ video }: { video: UnifiedVideo }) {
+  const [expanded, setExpanded] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
+  const text = video.description || video.title;
+
+  useEffect(() => {
+    if (textRef.current) {
+      setIsTruncated(textRef.current.scrollHeight > textRef.current.clientHeight);
+    }
+  }, [text]);
+
+  if (!text) return <span className="text-muted-foreground">-</span>;
+
+  return (
+    <div className="w-[180px]">
+      <p
+        ref={textRef}
+        className={`${expanded ? "" : "line-clamp-3"} text-sm leading-snug whitespace-normal`}
+      >
+        {text}
+      </p>
+      {(isTruncated || expanded) && (
+        <button
+          type="button"
+          onClick={() => setExpanded(!expanded)}
+          className="text-xs text-primary hover:underline mt-1"
+        >
+          {expanded ? "Show less" : "Show more"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function TranscriptCell({ video }: { video: UnifiedVideo }) {
+  const [expanded, setExpanded] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (textRef.current) {
+      setIsTruncated(textRef.current.scrollHeight > textRef.current.clientHeight);
+    }
+  }, [video.transcriptText]);
+
+  if (!video.transcriptText) return <span className="text-muted-foreground">-</span>;
+
+  return (
+    <div className="w-[280px]">
+      <p
+        ref={textRef}
+        className={`${expanded ? "" : "line-clamp-3"} text-sm leading-snug whitespace-normal`}
+      >
+        {video.transcriptText}
+      </p>
+      {(isTruncated || expanded) && (
+        <button
+          type="button"
+          onClick={() => setExpanded(!expanded)}
+          className="text-xs text-primary hover:underline mt-1"
+        >
+          {expanded ? "Show less" : "Show more"}
+        </button>
+      )}
+    </div>
+  );
 }
