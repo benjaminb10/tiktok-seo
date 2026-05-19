@@ -1,17 +1,15 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tanstack-tiktok-analyzer",
+  "name": "viewlify",
   "compatibility_date": "2026-04-28",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "tiktok-analyzer-db",
-      "database_id": "local"
+      "database_name": "viewlify-db",
+      "database_id": "568d5db9-099a-4b00-9a72-94e6149bfea6"
     }
   ],
-  "vars": {
-    "SIDECAR_TOKEN": "dev-sidecar-token"
-  }
+  "vars": {}
 }
