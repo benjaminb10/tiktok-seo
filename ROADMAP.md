@@ -1,4 +1,4 @@
-# 🚀 Viewlify.ai - Global Development Roadmap
+# 🚀 Viewlify.app - Global Development Roadmap
 
 ## 🎯 Vision Stratégique
 
@@ -399,7 +399,7 @@ Insights:
 
 **URL format :**
 ```
-viewlify.ai/share/abc123
+viewlify.app/share/abc123
 ```
 
 **Page de partage :**
@@ -472,7 +472,7 @@ Side-by-side comparison
 **Watermark logic :**
 ```typescript
 if (user.tier === 'free') {
-  // Watermark visible: "Analyzed with Viewlify.ai"
+  // Watermark visible: "Analyzed with Viewlify.app"
 } else {
   // Clean export, just small logo
 }
@@ -487,7 +487,7 @@ if (user.tier === 'free') {
 
 **Widget code :**
 ```html
-<script src="https://viewlify.ai/embed.js"></script>
+<script src="https://viewlify.app/embed.js"></script>
 <div data-tiktok-analyzer="@username"></div>
 ```
 
@@ -1647,7 +1647,7 @@ Interactive API docs:
 /support
 
 Free/Creator:
-"Email support: support@viewlify.ai"
+"Email support: support@viewlify.app"
 "Response time: 48h"
 
 Pro:

@@ -76,7 +76,7 @@ export function ProblemSolutionSection() {
                 <CheckCircle2 className="h-4 w-4" />
                 The Solution
               </div>
-              <h3 className="text-2xl font-bold">With Viewlify.ai</h3>
+              <h3 className="text-2xl font-bold">With Viewlify.app</h3>
             </div>
             <ul className="space-y-4">
               {solutions.map((solution) => (

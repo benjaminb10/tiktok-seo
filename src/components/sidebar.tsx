@@ -34,7 +34,7 @@ export function Sidebar() {
           <BarChart3 className="h-4 w-4 text-white" />
         </div>
         <span className="text-sm font-bold">
-          <span className="bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">Viewlify</span>
+          <span className="bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">Viewlify</span>.app
         </span>
       </div>
 

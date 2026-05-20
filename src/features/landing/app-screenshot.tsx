@@ -11,7 +11,7 @@ export function AppScreenshot() {
           <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
         </div>
         <div className="ml-3 flex-1 rounded-md bg-muted/80 px-3 py-1.5 text-xs font-medium text-muted-foreground">
-          🔒 viewlify.ai/app/@charlidamelio
+          🔒 viewlify.app/app/@charlidamelio
         </div>
       </div>
 

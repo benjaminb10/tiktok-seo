@@ -101,7 +101,7 @@ export function FAQSection() {
             Our support team is here to help you succeed
           </p>
           <a
-            href="mailto:support@viewlify.ai"
+            href="mailto:support@viewlify.app"
             className="inline-flex items-center gap-2 text-sm font-medium text-violet-500 hover:text-violet-600"
           >
             Contact Support →

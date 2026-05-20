@@ -1,6 +1,6 @@
 # 🚀 Deployment Guide - Cloudflare Pages + Railway
 
-This guide will help you deploy **Viewlify.ai** with:
+This guide will help you deploy **Viewlify.app** with:
 - **Frontend/API**: Cloudflare Pages (Free tier)
 - **Sidecar Worker**: Railway ($5/month)
 - **Database**: Cloudflare D1 (Free tier)
@@ -249,12 +249,12 @@ Railway automatically deploys from GitHub:
 
 1. Cloudflare Dashboard → Pages → viewlify → Custom domains
 2. Click "Set up a custom domain"
-3. Enter: `viewlify.ai`
+3. Enter: `viewlify.app`
 4. Cloudflare will automatically configure DNS
 
 **Update Railway**:
 ```bash
-railway variables set APP_URL=https://viewlify.ai
+railway variables set APP_URL=https://viewlify.app
 ```
 
 ---

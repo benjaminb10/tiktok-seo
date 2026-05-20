@@ -5,8 +5,8 @@ export const Route = createFileRoute("/terms")({
   component: TermsPage,
   head: () => ({
     meta: [
-      { title: "Terms of Service | Viewlify.ai" },
-      { name: "description", content: "Terms of Service for Viewlify.ai - TikTok Analytics Platform" },
+      { title: "Terms of Service | Viewlify.app" },
+      { name: "description", content: "Terms of Service for Viewlify.app - TikTok Analytics Platform" },
     ],
   }),
 });
@@ -22,14 +22,14 @@ function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">1. Acceptance of Terms</h2>
             <p className="text-gray-600 leading-relaxed">
-              By accessing or using Viewlify.ai ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our Service.
+              By accessing or using Viewlify.app ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our Service.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">2. Description of Service</h2>
             <p className="text-gray-600 leading-relaxed">
-              Viewlify.ai is a TikTok analytics platform that provides insights, statistics, and AI-powered analysis of publicly available TikTok content. We help creators and businesses understand their TikTok performance.
+              Viewlify.app is a TikTok analytics platform that provides insights, statistics, and AI-powered analysis of publicly available TikTok content. We help creators and businesses understand their TikTok performance.
             </p>
           </section>
 
@@ -60,7 +60,7 @@ function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Intellectual Property</h2>
             <p className="text-gray-600 leading-relaxed">
-              The Service and its original content, features, and functionality are owned by Viewlify.ai and are protected by international copyright, trademark, and other intellectual property laws. TikTok data displayed through our Service remains the property of TikTok and its users.
+              The Service and its original content, features, and functionality are owned by Viewlify.app and are protected by international copyright, trademark, and other intellectual property laws. TikTok data displayed through our Service remains the property of TikTok and its users.
             </p>
           </section>
 
@@ -74,7 +74,7 @@ function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">7. Limitation of Liability</h2>
             <p className="text-gray-600 leading-relaxed">
-              To the maximum extent permitted by law, Viewlify.ai shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the Service. Our total liability shall not exceed the amount you paid us in the twelve months prior to the claim.
+              To the maximum extent permitted by law, Viewlify.app shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the Service. Our total liability shall not exceed the amount you paid us in the twelve months prior to the claim.
             </p>
           </section>
 
@@ -103,8 +103,8 @@ function TermsPage() {
             <h2 className="text-xl font-semibold text-gray-900 mb-3">11. Contact Us</h2>
             <p className="text-gray-600 leading-relaxed">
               If you have any questions about these Terms, please contact us at{" "}
-              <a href="mailto:contact@viewlify.ai" className="text-primary hover:underline">
-                contact@viewlify.ai
+              <a href="mailto:contact@viewlify.app" className="text-primary hover:underline">
+                contact@viewlify.app
               </a>
             </p>
           </section>

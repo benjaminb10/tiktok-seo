@@ -6,7 +6,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       {
-        title: "TikTok Analytics Tool - Viral Video Analysis | Viewlify.ai",
+        title: "TikTok Analytics Tool - Viral Video Analysis | Viewlify.app",
       },
       {
         name: "description",
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:site_name",
-        content: "Viewlify.ai",
+        content: "Viewlify.app",
       },
       {
         name: "twitter:card",
@@ -62,7 +62,7 @@ function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
-            name: "Viewlify.ai",
+            name: "Viewlify.app",
             applicationCategory: "BusinessApplication",
             operatingSystem: "Web",
             description:
@@ -82,7 +82,7 @@ function HomePage() {
             },
             creator: {
               "@type": "Organization",
-              name: "Viewlify.ai",
+              name: "Viewlify.app",
             },
           }),
         }}

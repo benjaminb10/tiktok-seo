@@ -1,4 +1,4 @@
-# Viewlify.ai
+# Viewlify.app
 
 > **Discover what makes TikTok videos go viral**
 
@@ -47,7 +47,7 @@ Private - All rights reserved
 
 ## 🔗 Links
 
-- Website: [viewlify.ai](https://viewlify.ai)
+- Website: [viewlify.app](https://viewlify.app)
 - Documentation: Coming soon
 - API: Coming soon
 

@@ -5,8 +5,8 @@ export const Route = createFileRoute("/privacy")({
   component: PrivacyPage,
   head: () => ({
     meta: [
-      { title: "Privacy Policy | Viewlify.ai" },
-      { name: "description", content: "Privacy Policy for Viewlify.ai - TikTok Analytics Platform" },
+      { title: "Privacy Policy | Viewlify.app" },
+      { name: "description", content: "Privacy Policy for Viewlify.app - TikTok Analytics Platform" },
     ],
   }),
 });
@@ -22,7 +22,7 @@ function PrivacyPage() {
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">1. Introduction</h2>
             <p className="text-gray-600 leading-relaxed">
-              Viewlify.ai ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our TikTok analytics platform.
+              Viewlify.app ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our TikTok analytics platform.
             </p>
           </section>
 
@@ -91,8 +91,8 @@ function PrivacyPage() {
             <h2 className="text-xl font-semibold text-gray-900 mb-3">9. Contact Us</h2>
             <p className="text-gray-600 leading-relaxed">
               If you have any questions about this Privacy Policy, please contact us at{" "}
-              <a href="mailto:contact@viewlify.ai" className="text-primary hover:underline">
-                contact@viewlify.ai
+              <a href="mailto:contact@viewlify.app" className="text-primary hover:underline">
+                contact@viewlify.app
               </a>
             </p>
           </section>

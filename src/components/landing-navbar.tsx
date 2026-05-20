@@ -32,7 +32,7 @@ export function LandingNavbar() {
             <BarChart3 className="h-5 w-5 text-white" />
           </div>
           <span className="text-lg font-bold">
-            <span className="bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">Viewlify</span>.ai
+            <span className="bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">Viewlify</span>.app
           </span>
         </Link>
 

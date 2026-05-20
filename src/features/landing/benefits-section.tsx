@@ -46,7 +46,7 @@ export function BenefitsSection() {
             <span className="text-muted-foreground">Real Results, Real Fast</span>
           </div>
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
-            What you'll achieve with Viewlify.ai
+            What you'll achieve with Viewlify.app
           </h2>
           <p className="text-lg text-muted-foreground">
             Join thousands of creators who transformed their TikTok strategy

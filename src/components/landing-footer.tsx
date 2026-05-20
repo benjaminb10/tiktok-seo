@@ -13,7 +13,7 @@ export function LandingFooter() {
                 <BarChart3 className="h-5 w-5 text-white" />
               </div>
               <span className="text-lg font-bold">
-                <span className="bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">Viewlify</span>.ai
+                <span className="bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">Viewlify</span>.app
               </span>
             </Link>
             <p className="text-sm text-muted-foreground mb-4 max-w-md">
@@ -21,7 +21,7 @@ export function LandingFooter() {
               AI-powered insights to help you understand and replicate viral success.
             </p>
             <p className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} Viewlify.ai. All rights reserved.
+              © {new Date().getFullYear()} Viewlify.app. All rights reserved.
             </p>
           </div>
 

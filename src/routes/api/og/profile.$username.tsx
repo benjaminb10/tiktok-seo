@@ -78,7 +78,7 @@ function generateOgSvg(
   <!-- Footer -->
   <rect x="60" y="450" width="40" height="40" rx="8" fill="url(#brand)"/>
   <text x="80" y="480" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="600" fill="white" text-anchor="middle">V</text>
-  <text x="115" y="480" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" fill="#1f2937">Viewlify.ai</text>
+  <text x="115" y="480" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" fill="#1f2937">Viewlify.app</text>
   <text x="1140" y="480" font-family="system-ui, -apple-system, sans-serif" font-size="18" fill="#6b7280" text-anchor="end">TikTok Analytics &amp; AI Insights</text>
 </svg>`;
 }

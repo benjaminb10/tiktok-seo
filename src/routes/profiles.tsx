@@ -24,12 +24,12 @@ export const Route = createFileRoute("/profiles")({
   },
   head: () => ({
     meta: [
-      { title: "Discover TikTok Creators | Viewlify.ai" },
+      { title: "Discover TikTok Creators | Viewlify.app" },
       {
         name: "description",
         content: "Browse analyzed TikTok creators. View stats, engagement rates, and viral content patterns from thousands of TikTok profiles.",
       },
-      { property: "og:title", content: "Discover TikTok Creators | Viewlify.ai" },
+      { property: "og:title", content: "Discover TikTok Creators | Viewlify.app" },
       {
         property: "og:description",
         content: "Browse analyzed TikTok creators with detailed performance insights",

@@ -11,7 +11,7 @@ export const pricingTiers: PricingTier[] = [
   {
     name: "Free",
     price: "0",
-    description: "Perfect for trying out Viewlify.ai",
+    description: "Perfect for trying out Viewlify.app",
     features: [
       "1 analysis per day",
       "20 videos max per analysis",

@@ -16,7 +16,7 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Viewlify.ai - Discover What Makes TikTok Videos Go Viral" },
+      { title: "Viewlify.app - Discover What Makes TikTok Videos Go Viral" },
       { name: "description", content: "Analyze any TikTok account with AI. Detect viral hooks, engagement patterns, and strategies that generate millions of views. AI-powered insights for creators and agencies." },
     ],
     links: [

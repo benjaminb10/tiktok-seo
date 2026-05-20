@@ -76,7 +76,7 @@ function AdminPage() {
             <div>
               <h1 className="text-4xl font-bold mb-2">Admin Dashboard</h1>
               <p className="text-muted-foreground">
-                Manage Viewlify.ai content and settings
+                Manage Viewlify.app content and settings
               </p>
             </div>
             <Button variant="outline" onClick={handleLogout}>

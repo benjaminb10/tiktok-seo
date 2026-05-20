@@ -10,23 +10,23 @@ export const Route = createFileRoute("/profile/$username")({
   },
   head: ({ params }) => ({
     meta: [
-      { title: `@${params.username} - TikTok Analytics | Viewlify.ai` },
+      { title: `@${params.username} - TikTok Analytics | Viewlify.app` },
       {
         name: "description",
         content: `Analyze @${params.username}'s TikTok performance with AI-powered insights. View engagement rates, top videos, and viral patterns.`,
       },
-      { property: "og:title", content: `@${params.username} - TikTok Analytics | Viewlify.ai` },
+      { property: "og:title", content: `@${params.username} - TikTok Analytics | Viewlify.app` },
       {
         property: "og:description",
         content: `Detailed analytics and insights for @${params.username} on TikTok`,
       },
       { property: "og:type", content: "profile" },
-      { property: "og:url", content: `https://viewlify.ai/profile/${params.username}` },
-      { property: "og:image", content: `https://viewlify.ai/api/og/profile/${params.username}` },
+      { property: "og:url", content: `https://viewlify.app/profile/${params.username}` },
+      { property: "og:image", content: `https://viewlify.app/api/og/profile/${params.username}` },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: `https://viewlify.ai/api/og/profile/${params.username}` },
+      { name: "twitter:image", content: `https://viewlify.app/api/og/profile/${params.username}` },
     ],
   }),
 });
