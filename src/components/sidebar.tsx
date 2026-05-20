@@ -1,18 +1,7 @@
-import { BarChart3, Compass, FileDown, HelpCircle, LayoutDashboard, ListVideo, Settings } from "lucide-react";
+import { BarChart3, Compass, FileDown, HelpCircle, LayoutDashboard, ListVideo, LogOut, Settings } from "lucide-react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { lazy, Suspense } from "react";
-
-const SidebarFooter = lazy(() =>
-  import("#/components/sidebar-footer.client").then((m) => ({ default: m.SidebarFooter }))
-);
-
-function SidebarFooterFallback() {
-  return (
-    <div className="border-t p-3">
-      <div className="h-7" />
-    </div>
-  );
-}
+import { useState, useEffect } from "react";
+import { Button } from "#/components/ui/button";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -22,6 +11,93 @@ const navigation = [
   { name: "Settings", href: "/settings", icon: Settings },
   { name: "Help", href: "/help", icon: HelpCircle },
 ];
+
+function SidebarFooterFallback() {
+  return (
+    <div className="border-t p-3">
+      <div className="h-7" />
+    </div>
+  );
+}
+
+function SidebarFooter() {
+  const [mounted, setMounted] = useState(false);
+  const [session, setSession] = useState<{ user: { name: string; email: string; image: string | null } } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setMounted(true);
+    // Dynamic import to avoid SSR issues
+    import("#/lib/auth.client").then(({ authClient }) => {
+      authClient.getSession().then((result) => {
+        if (result.data) {
+          setSession({
+            user: {
+              name: result.data.user.name,
+              email: result.data.user.email,
+              image: result.data.user.image ?? null,
+            },
+          });
+        }
+        setLoading(false);
+      });
+    });
+  }, []);
+
+  // Server render and initial hydration - must match exactly
+  if (!mounted || loading) {
+    return <SidebarFooterFallback />;
+  }
+
+  if (!session) {
+    return (
+      <div className="border-t p-3">
+        <Link to="/login">
+          <Button variant="outline" size="sm" className="w-full">
+            Sign in
+          </Button>
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border-t p-3 space-y-2">
+      <div className="flex items-center gap-2 px-1">
+        {session.user.image ? (
+          <img
+            src={session.user.image}
+            alt=""
+            className="h-7 w-7 rounded-full"
+          />
+        ) : (
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-violet-500">
+            <span className="text-xs font-semibold text-white">
+              {session.user.name?.charAt(0) || "U"}
+            </span>
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-medium truncate">{session.user.name}</p>
+          <p className="text-[10px] text-muted-foreground truncate">{session.user.email}</p>
+        </div>
+      </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
+        onClick={async () => {
+          const { signOut } = await import("#/lib/auth.client");
+          await signOut();
+          window.location.href = "/";
+        }}
+      >
+        <LogOut className="h-4 w-4" />
+        Sign out
+      </Button>
+    </div>
+  );
+}
 
 export function Sidebar() {
   const location = useLocation();
@@ -60,9 +136,7 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <Suspense fallback={<SidebarFooterFallback />}>
-        <SidebarFooter />
-      </Suspense>
+      <SidebarFooter />
     </div>
   );
 }

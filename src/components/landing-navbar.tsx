@@ -1,11 +1,7 @@
-import { BarChart3 } from "lucide-react";
+import { BarChart3, LogOut } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { lazy, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "#/components/ui/button";
-
-const AuthButtons = lazy(() =>
-  import("#/components/auth-buttons.client").then((m) => ({ default: m.AuthButtons }))
-);
 
 function AuthButtonsFallback() {
   return (
@@ -20,6 +16,68 @@ function AuthButtonsFallback() {
       </Link>
     </>
   );
+}
+
+function AuthButtons() {
+  const [mounted, setMounted] = useState(false);
+  const [session, setSession] = useState<{ user: { name: string; email: string; image: string | null } } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setMounted(true);
+    // Dynamic import to avoid SSR issues
+    import("#/lib/auth.client").then(({ authClient }) => {
+      authClient.getSession().then((result) => {
+        if (result.data) {
+          setSession({
+            user: {
+              name: result.data.user.name,
+              email: result.data.user.email,
+              image: result.data.user.image ?? null,
+            },
+          });
+        }
+        setLoading(false);
+      });
+    });
+  }, []);
+
+  // Server render and initial hydration - must match exactly
+  if (!mounted || loading) {
+    return <AuthButtonsFallback />;
+  }
+
+  if (session) {
+    return (
+      <>
+        <Link to="/app">
+          <Button variant="ghost" size="sm" className="gap-2">
+            {session.user.image && (
+              <img
+                src={session.user.image}
+                alt=""
+                className="h-5 w-5 rounded-full"
+              />
+            )}
+            {session.user.name || session.user.email}
+          </Button>
+        </Link>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={async () => {
+            const { signOut } = await import("#/lib/auth.client");
+            await signOut();
+            window.location.href = "/";
+          }}
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
+      </>
+    );
+  }
+
+  return <AuthButtonsFallback />;
 }
 
 export function LandingNavbar() {
@@ -66,9 +124,7 @@ export function LandingNavbar() {
 
         {/* CTA */}
         <div className="flex items-center gap-2">
-          <Suspense fallback={<AuthButtonsFallback />}>
-            <AuthButtons />
-          </Suspense>
+          <AuthButtons />
         </div>
       </div>
     </header>
