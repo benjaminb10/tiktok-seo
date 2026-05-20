@@ -9,6 +9,7 @@ import type { RunDetails } from "./tiktok.types";
 export async function createMetadataRun(
   database: TikTokDb,
   input: string,
+  userId?: string | null,
   now = new Date(),
 ): Promise<{ runId: string; jobId: string }> {
   const normalized = normalizeTikTokInput(input);
@@ -18,6 +19,7 @@ export async function createMetadataRun(
 
   await database.insert(schema.searchRuns).values({
     id: runId,
+    userId: userId ?? null,
     input,
     normalizedUrl: normalized.url,
     kind: normalized.kind,
@@ -132,34 +134,46 @@ export async function continueMetadataRun(
   return { jobId };
 }
 
+const runSelectFields = {
+  id: schema.searchRuns.id,
+  input: schema.searchRuns.input,
+  normalizedUrl: schema.searchRuns.normalizedUrl,
+  kind: schema.searchRuns.kind,
+  handle: schema.searchRuns.handle,
+  videoId: schema.searchRuns.videoId,
+  avatarUrl: schema.searchRuns.avatarUrl,
+  status: schema.searchRuns.status,
+  totalDiscovered: schema.searchRuns.totalDiscovered,
+  totalSelected: schema.searchRuns.totalSelected,
+  metadataProcessed: schema.searchRuns.metadataProcessed,
+  videoJobsTotal: schema.searchRuns.videoJobsTotal,
+  videoJobsCompleted: schema.searchRuns.videoJobsCompleted,
+  videoJobsFailed: schema.searchRuns.videoJobsFailed,
+  error: schema.searchRuns.error,
+  createdAt: schema.searchRuns.createdAt,
+  updatedAt: schema.searchRuns.updatedAt,
+  totalViews: sql<number>`(
+    SELECT COALESCE(SUM(${schema.tiktokVideos.viewCount}), 0)
+    FROM ${schema.searchRunVideos}
+    JOIN ${schema.tiktokVideos} ON ${schema.searchRunVideos.videoId} = ${schema.tiktokVideos.id}
+    WHERE ${schema.searchRunVideos.runId} = ${schema.searchRuns.id}
+  )`.as("total_views"),
+};
+
 export async function listAllRuns(database: TikTokDb) {
   const runs = await database
-    .select({
-      id: schema.searchRuns.id,
-      input: schema.searchRuns.input,
-      normalizedUrl: schema.searchRuns.normalizedUrl,
-      kind: schema.searchRuns.kind,
-      handle: schema.searchRuns.handle,
-      videoId: schema.searchRuns.videoId,
-      avatarUrl: schema.searchRuns.avatarUrl,
-      status: schema.searchRuns.status,
-      totalDiscovered: schema.searchRuns.totalDiscovered,
-      totalSelected: schema.searchRuns.totalSelected,
-      metadataProcessed: schema.searchRuns.metadataProcessed,
-      videoJobsTotal: schema.searchRuns.videoJobsTotal,
-      videoJobsCompleted: schema.searchRuns.videoJobsCompleted,
-      videoJobsFailed: schema.searchRuns.videoJobsFailed,
-      error: schema.searchRuns.error,
-      createdAt: schema.searchRuns.createdAt,
-      updatedAt: schema.searchRuns.updatedAt,
-      totalViews: sql<number>`(
-        SELECT COALESCE(SUM(${schema.tiktokVideos.viewCount}), 0)
-        FROM ${schema.searchRunVideos}
-        JOIN ${schema.tiktokVideos} ON ${schema.searchRunVideos.videoId} = ${schema.tiktokVideos.id}
-        WHERE ${schema.searchRunVideos.runId} = ${schema.searchRuns.id}
-      )`.as("total_views"),
-    })
+    .select(runSelectFields)
     .from(schema.searchRuns)
+    .orderBy(desc(schema.searchRuns.createdAt));
+
+  return runs;
+}
+
+export async function listUserRuns(database: TikTokDb, userId: string) {
+  const runs = await database
+    .select(runSelectFields)
+    .from(schema.searchRuns)
+    .where(eq(schema.searchRuns.userId, userId))
     .orderBy(desc(schema.searchRuns.createdAt));
 
   return runs;

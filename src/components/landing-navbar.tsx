@@ -1,6 +1,26 @@
 import { BarChart3 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 import { Button } from "#/components/ui/button";
+
+const AuthButtons = lazy(() =>
+  import("#/components/auth-buttons.client").then((m) => ({ default: m.AuthButtons }))
+);
+
+function AuthButtonsFallback() {
+  return (
+    <>
+      <Link to="/login">
+        <Button variant="ghost" size="sm">
+          Sign in
+        </Button>
+      </Link>
+      <Link to="/login">
+        <Button size="sm">Get started</Button>
+      </Link>
+    </>
+  );
+}
 
 export function LandingNavbar() {
   return (
@@ -46,14 +66,9 @@ export function LandingNavbar() {
 
         {/* CTA */}
         <div className="flex items-center gap-2">
-          <Link to="/app">
-            <Button variant="ghost" size="sm">
-              Sign in
-            </Button>
-          </Link>
-          <Link to="/app">
-            <Button size="sm">Get started</Button>
-          </Link>
+          <Suspense fallback={<AuthButtonsFallback />}>
+            <AuthButtons />
+          </Suspense>
         </div>
       </div>
     </header>

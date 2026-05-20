@@ -1,14 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { listAllRunsFn } from "#/lib/tiktok/tiktok.functions";
+import { listUserRunsFn } from "#/lib/tiktok/tiktok.functions";
 import type { RunStatus } from "#/lib/tiktok/tiktok.types";
 import { formatNumber } from "#/features/tiktok/formatters";
 import { Button } from "#/components/ui/button";
 import { Badge } from "#/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
 import { Card } from "#/components/ui/card";
-import { PlayCircle, User, Clock, CheckCircle2, XCircle, Ban, Eye, ThumbsUp } from "lucide-react";
+import { PlayCircle, Clock, CheckCircle2, XCircle, Ban, Eye, LogIn } from "lucide-react";
 
 type RunRow = {
   id: string;
@@ -36,15 +36,17 @@ export const Route = createFileRoute("/analyses")({
 });
 
 function AnalysesPage() {
-  const listAllRuns = useServerFn(listAllRunsFn);
+  const listUserRuns = useServerFn(listUserRunsFn);
   const [runs, setRuns] = useState<RunRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [authenticated, setAuthenticated] = useState(true);
 
   useEffect(() => {
     async function fetchRuns() {
       try {
-        const data = await listAllRuns();
-        setRuns(data);
+        const data = await listUserRuns();
+        setAuthenticated(data.authenticated);
+        setRuns(data.runs);
       } catch (error) {
         console.error("Failed to load runs:", error);
       } finally {
@@ -52,10 +54,12 @@ function AnalysesPage() {
       }
     }
     void fetchRuns();
-  }, [listAllRuns]);
+  }, [listUserRuns]);
 
   // Auto-refresh when there are running/queued analyses
   useEffect(() => {
+    if (!authenticated) return;
+
     const hasActiveRuns = runs.some(
       (run) => run.status === "running" || run.status === "queued"
     );
@@ -63,21 +67,40 @@ function AnalysesPage() {
 
     const interval = setInterval(async () => {
       try {
-        const data = await listAllRuns();
-        setRuns(data);
+        const data = await listUserRuns();
+        setRuns(data.runs);
       } catch (error) {
         console.error("Failed to refresh runs:", error);
       }
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [runs, listAllRuns]);
+  }, [runs, listUserRuns, authenticated]);
 
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center p-8">
         <div className="text-center">
           <p className="text-muted-foreground">Loading analyses...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!authenticated) {
+    return (
+      <div className="flex h-full items-center justify-center p-8">
+        <div className="text-center">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-violet-500">
+            <LogIn className="h-10 w-10 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold mb-2">Sign in to view your analyses</h1>
+          <p className="text-muted-foreground mb-6 max-w-md">
+            Create an account or sign in to save your TikTok analyses and access them anytime.
+          </p>
+          <Link to="/login">
+            <Button size="lg">Sign in with Google</Button>
+          </Link>
         </div>
       </div>
     );

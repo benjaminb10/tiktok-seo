@@ -72,14 +72,14 @@ export function LandingFooter() {
                 </a>
               </li>
               <li>
-                <a href="/privacy" className="text-muted-foreground hover:text-foreground">
+                <Link to="/privacy" className="text-muted-foreground hover:text-foreground">
                   Privacy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/terms" className="text-muted-foreground hover:text-foreground">
+                <Link to="/terms" className="text-muted-foreground hover:text-foreground">
                   Terms
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

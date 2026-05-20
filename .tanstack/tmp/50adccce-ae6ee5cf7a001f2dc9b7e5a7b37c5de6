@@ -9,10 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProfilesRouteImport } from './routes/profiles'
-import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HelpRouteImport } from './routes/help'
@@ -31,11 +29,6 @@ import { Route as ApiSidecarJobsJobIdProgressRouteImport } from './routes/api/si
 import { Route as ApiSidecarJobsJobIdFailRouteImport } from './routes/api/sidecar/jobs/$jobId/fail'
 import { Route as ApiSidecarJobsJobIdCompleteRouteImport } from './routes/api/sidecar/jobs/$jobId/complete'
 
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -44,11 +37,6 @@ const SettingsRoute = SettingsRouteImport.update({
 const ProfilesRoute = ProfilesRouteImport.update({
   id: '/profiles',
   path: '/profiles',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -148,10 +136,8 @@ export interface FileRoutesByFullPath {
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
-  '/privacy': typeof PrivacyRoute
   '/profiles': typeof ProfilesRoute
   '/settings': typeof SettingsRoute
-  '/terms': typeof TermsRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/chat/stream': typeof ApiChatStreamRoute
@@ -171,10 +157,8 @@ export interface FileRoutesByTo {
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
-  '/privacy': typeof PrivacyRoute
   '/profiles': typeof ProfilesRoute
   '/settings': typeof SettingsRoute
-  '/terms': typeof TermsRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/chat/stream': typeof ApiChatStreamRoute
@@ -195,10 +179,8 @@ export interface FileRoutesById {
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
-  '/privacy': typeof PrivacyRoute
   '/profiles': typeof ProfilesRoute
   '/settings': typeof SettingsRoute
-  '/terms': typeof TermsRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/chat/stream': typeof ApiChatStreamRoute
@@ -220,10 +202,8 @@ export interface FileRouteTypes {
     | '/help'
     | '/login'
     | '/pricing'
-    | '/privacy'
     | '/profiles'
     | '/settings'
-    | '/terms'
     | '/profile/$username'
     | '/api/auth/$'
     | '/api/chat/stream'
@@ -243,10 +223,8 @@ export interface FileRouteTypes {
     | '/help'
     | '/login'
     | '/pricing'
-    | '/privacy'
     | '/profiles'
     | '/settings'
-    | '/terms'
     | '/profile/$username'
     | '/api/auth/$'
     | '/api/chat/stream'
@@ -266,10 +244,8 @@ export interface FileRouteTypes {
     | '/help'
     | '/login'
     | '/pricing'
-    | '/privacy'
     | '/profiles'
     | '/settings'
-    | '/terms'
     | '/profile/$username'
     | '/api/auth/$'
     | '/api/chat/stream'
@@ -290,10 +266,8 @@ export interface RootRouteChildren {
   HelpRoute: typeof HelpRoute
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
-  PrivacyRoute: typeof PrivacyRoute
   ProfilesRoute: typeof ProfilesRoute
   SettingsRoute: typeof SettingsRoute
-  TermsRoute: typeof TermsRoute
   ProfileUsernameRoute: typeof ProfileUsernameRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiChatStreamRoute: typeof ApiChatStreamRoute
@@ -307,13 +281,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -326,13 +293,6 @@ declare module '@tanstack/react-router' {
       path: '/profiles'
       fullPath: '/profiles'
       preLoaderRoute: typeof ProfilesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -466,10 +426,8 @@ const rootRouteChildren: RootRouteChildren = {
   HelpRoute: HelpRoute,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
-  PrivacyRoute: PrivacyRoute,
   ProfilesRoute: ProfilesRoute,
   SettingsRoute: SettingsRoute,
-  TermsRoute: TermsRoute,
   ProfileUsernameRoute: ProfileUsernameRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiChatStreamRoute: ApiChatStreamRoute,

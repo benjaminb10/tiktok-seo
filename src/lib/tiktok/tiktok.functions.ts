@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { db } from "#/db";
 import { checkAdminCredentials } from "#/lib/auth";
+import { getServerSession } from "#/lib/auth.server";
 import {
   createDownloadJobs,
   createVideoDownloadJob,
@@ -12,6 +13,7 @@ import {
   createMetadataRun,
   getRunDetails,
   listAllRuns,
+  listUserRuns,
 } from "./tiktok.runs.server";
 import {
   getAnalyzedProfiles,
@@ -27,7 +29,9 @@ import {
 export const createMetadataRunFn = createServerFn({ method: "POST" })
   .inputValidator((input) => createRunSchema.parse(input))
   .handler(async ({ data }) => {
-    return createMetadataRun(db, data.input);
+    const session = await getServerSession();
+    const userId = session?.user?.id ?? null;
+    return createMetadataRun(db, data.input, userId);
   });
 
 export const getRunDetailsFn = createServerFn({ method: "GET" })
@@ -63,6 +67,17 @@ export const continueMetadataRunFn = createServerFn({ method: "POST" })
 export const listAllRunsFn = createServerFn({ method: "GET" }).handler(
   async () => {
     return listAllRuns(db);
+  },
+);
+
+export const listUserRunsFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const session = await getServerSession();
+    if (!session?.user?.id) {
+      return { authenticated: false as const, runs: [] };
+    }
+    const runs = await listUserRuns(db, session.user.id);
+    return { authenticated: true as const, runs };
   },
 );
 

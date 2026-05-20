@@ -1,5 +1,18 @@
 import { BarChart3, Compass, FileDown, HelpCircle, LayoutDashboard, ListVideo, Settings } from "lucide-react";
 import { Link, useLocation } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
+
+const SidebarFooter = lazy(() =>
+  import("#/components/sidebar-footer.client").then((m) => ({ default: m.SidebarFooter }))
+);
+
+function SidebarFooterFallback() {
+  return (
+    <div className="border-t p-3">
+      <div className="h-7" />
+    </div>
+  );
+}
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -47,14 +60,9 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="border-t p-3">
-        <div className="flex items-center gap-2 px-2 py-1">
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-violet-500">
-            <span className="text-xs font-semibold text-white">V</span>
-          </div>
-          <span className="text-xs text-muted-foreground">v1.0.0</span>
-        </div>
-      </div>
+      <Suspense fallback={<SidebarFooterFallback />}>
+        <SidebarFooter />
+      </Suspense>
     </div>
   );
 }

@@ -28,7 +28,7 @@ describe("TikTok D1 jobs", () => {
     const db = getDb();
     const now = new Date("2026-05-07T10:00:00.000Z");
 
-    const result = await createMetadataRun(db, "@creator", now);
+    const result = await createMetadataRun(db, "@creator", null, now);
 
     const [run] = await db
       .select()
@@ -62,7 +62,7 @@ describe("TikTok D1 jobs", () => {
   it("leases queued or expired jobs without leasing the same job twice", async () => {
     const db = getDb();
     const now = new Date("2026-05-07T10:00:00.000Z");
-    await createMetadataRun(db, "@creator", now);
+    await createMetadataRun(db, "@creator", null, now);
 
     const [first] = await leaseJobs(db, {
       workerId: "worker-a",
@@ -105,7 +105,7 @@ describe("TikTok D1 jobs", () => {
   it("completes metadata jobs, deduplicates videos, and selects display rows", async () => {
     const db = getDb();
     const now = new Date("2026-05-07T10:00:00.000Z");
-    const { runId } = await createMetadataRun(db, "@creator", now);
+    const { runId } = await createMetadataRun(db, "@creator", null, now);
     const [job] = await leaseJobs(db, {
       workerId: "worker-a",
       limit: 1,
@@ -147,7 +147,7 @@ describe("TikTok D1 jobs", () => {
   it("appends metadata videos while a scan is still running", async () => {
     const db = getDb();
     const now = new Date("2026-05-07T10:00:00.000Z");
-    const { runId } = await createMetadataRun(db, "@creator", now);
+    const { runId } = await createMetadataRun(db, "@creator", null, now);
     const [job] = await leaseJobs(db, {
       workerId: "worker-a",
       limit: 1,
@@ -194,7 +194,7 @@ describe("TikTok D1 jobs", () => {
   it("replaces stale selected rows when a metadata job is retried", async () => {
     const db = getDb();
     const now = new Date("2026-05-07T10:00:00.000Z");
-    const { runId } = await createMetadataRun(db, "@creator", now);
+    const { runId } = await createMetadataRun(db, "@creator", null, now);
     const [job] = await leaseJobs(db, { workerId: "worker-a", limit: 1, now });
     await completeMetadataJob(db, {
       jobId: job?.id ?? "",
@@ -236,7 +236,7 @@ describe("TikTok D1 jobs", () => {
   it("creates video download jobs idempotently from selected rows", async () => {
     const db = getDb();
     const now = new Date("2026-05-07T10:00:00.000Z");
-    const { runId } = await createMetadataRun(db, "@creator", now);
+    const { runId } = await createMetadataRun(db, "@creator", null, now);
     const [job] = await leaseJobs(db, { workerId: "worker-a", limit: 1, now });
     await completeMetadataJob(db, {
       jobId: job?.id ?? "",
@@ -274,7 +274,7 @@ describe("TikTok D1 jobs", () => {
   it("requeues downloaded rows when the local file path is missing", async () => {
     const db = getDb();
     const now = new Date("2026-05-07T10:00:00.000Z");
-    const { runId } = await createMetadataRun(db, "@creator", now);
+    const { runId } = await createMetadataRun(db, "@creator", null, now);
     const [job] = await leaseJobs(db, { workerId: "worker-a", limit: 1, now });
     await completeMetadataJob(db, {
       jobId: job?.id ?? "",
@@ -324,7 +324,7 @@ describe("TikTok D1 jobs", () => {
   it("creates one video download job from a Voir action", async () => {
     const db = getDb();
     const now = new Date("2026-05-07T10:00:00.000Z");
-    const { runId } = await createMetadataRun(db, "@creator", now);
+    const { runId } = await createMetadataRun(db, "@creator", null, now);
     const [job] = await leaseJobs(db, { workerId: "worker-a", limit: 1, now });
     await completeMetadataJob(db, {
       jobId: job?.id ?? "",
@@ -366,8 +366,8 @@ describe("TikTok D1 jobs", () => {
   it("does not lease unexpired jobs even when another expired job exists", async () => {
     const db = getDb();
     const now = new Date("2026-05-07T10:00:00.000Z");
-    await createMetadataRun(db, "@creator", now);
-    await createMetadataRun(db, "@other", now);
+    await createMetadataRun(db, "@creator", null, now);
+    await createMetadataRun(db, "@other", null, now);
     const leased = await leaseJobs(db, {
       workerId: "worker-a",
       limit: 2,
