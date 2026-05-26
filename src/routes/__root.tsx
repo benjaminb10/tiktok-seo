@@ -54,7 +54,6 @@ function RootComponent() {
                 </main>
                 {showChatSidebar && <ChatSidebar />}
               </div>
-              <WhatsAppButton />
             </ChatProvider>
           </QuotaProvider>
           <Scripts />

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { listUserRunsFn } from "#/lib/tiktok/tiktok.functions";
 import type { RunStatus } from "#/lib/tiktok/tiktok.types";
 import { formatNumber } from "#/features/tiktok/formatters";
+import { getAvatarUrl } from "#/features/analysis/types";
 import { Button } from "#/components/ui/button";
 import { Badge } from "#/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
@@ -170,7 +171,7 @@ function AnalysesPage() {
                 {/* Avatar */}
                 <Avatar className="h-16 w-16 border-2 border-border">
                   <AvatarImage
-                    src={run.avatarUrl || undefined}
+                    src={run.handle && run.avatarUrl ? getAvatarUrl(run.handle) : undefined}
                     alt={run.handle || run.input}
                   />
                   <AvatarFallback className="bg-gradient-to-br from-pink-500 to-violet-500 text-white text-lg font-semibold">

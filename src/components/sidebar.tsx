@@ -1,4 +1,4 @@
-import { BarChart3, Compass, FileDown, HelpCircle, LayoutDashboard, ListVideo, LogOut, Settings } from "lucide-react";
+import { BarChart3, Compass, FileDown, HelpCircle, LayoutDashboard, ListVideo, LogOut, MessageCircle, Settings } from "lucide-react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Button } from "#/components/ui/button";
@@ -139,6 +139,19 @@ export function Sidebar() {
       {/* Quota Summary */}
       <div className="px-3 pb-3">
         <QuotaSummaryCard />
+      </div>
+
+      {/* Contact */}
+      <div className="px-3 pb-3">
+        <a
+          href="https://wa.me/33651774359?text=Hey%20I%20have%20a%20question%20or%20need%20help%20on%20Viewlify.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+        >
+          <MessageCircle className="h-4 w-4 text-[#25D366]" />
+          Contact us
+        </a>
       </div>
 
       {/* Footer */}
