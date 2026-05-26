@@ -14,35 +14,35 @@ function buildSystemPrompt(context: VideoContext): string {
 
   const videosList = topVideos
     .map((v, i) => {
-      const title = v.title || v.description?.slice(0, 50) || "Sans titre";
+      const title = v.title || v.description?.slice(0, 50) || "Untitled";
       return `${i + 1}. "${title}"
-   - Vues: ${formatNumber(v.viewCount)} | Likes: ${formatNumber(v.likeCount)} | Commentaires: ${formatNumber(v.commentCount)}
-   - Tags: ${v.tags.slice(0, 5).join(", ") || "Aucun"}
-   - Publié: ${v.publishedAt || "Date inconnue"}`;
+   - Views: ${formatNumber(v.viewCount)} | Likes: ${formatNumber(v.likeCount)} | Comments: ${formatNumber(v.commentCount)}
+   - Tags: ${v.tags.slice(0, 5).join(", ") || "None"}
+   - Published: ${v.publishedAt || "Unknown date"}`;
     })
     .join("\n\n");
 
-  return `Tu es un assistant IA expert en analyse TikTok. Tu aides l'utilisateur à comprendre les performances de son compte TikTok.
+  return `You are an AI assistant expert in TikTok analytics. You help users understand their TikTok account performance.
 
-## Profil analysé: @${handle}
+## Analyzed profile: @${handle}
 
-### Statistiques globales
-- Vidéos analysées: ${totalVideos}
-- Vues totales: ${formatNumber(stats.totalViews)}
-- Likes totaux: ${formatNumber(stats.totalLikes)}
-- Commentaires totaux: ${formatNumber(stats.totalComments)}
-- Moyenne de vues par vidéo: ${formatNumber(stats.avgViews)}
-- Moyenne de likes par vidéo: ${formatNumber(stats.avgLikes)}
-- Taux d'engagement moyen: ${(stats.avgEngagement * 100).toFixed(2)}%
+### Global statistics
+- Videos analyzed: ${totalVideos}
+- Total views: ${formatNumber(stats.totalViews)}
+- Total likes: ${formatNumber(stats.totalLikes)}
+- Total comments: ${formatNumber(stats.totalComments)}
+- Average views per video: ${formatNumber(stats.avgViews)}
+- Average likes per video: ${formatNumber(stats.avgLikes)}
+- Average engagement rate: ${(stats.avgEngagement * 100).toFixed(2)}%
 
-### Top ${topVideos.length} vidéos (par nombre de vues)
+### Top ${topVideos.length} videos (by views)
 ${videosList}
 
 ## Instructions
-- Réponds en français
-- Sois concis et actionnable
-- Donne des conseils pratiques basés sur les données
-- Si l'utilisateur pose une question hors sujet, ramène-le gentiment à l'analyse TikTok`;
+- IMPORTANT: Always respond in the same language the user writes in. If they write in English, respond in English. If they write in French, respond in French. Etc.
+- Be concise and actionable
+- Give practical advice based on the data
+- If the user asks an off-topic question, gently bring them back to TikTok analysis`;
 }
 
 export const Route = createFileRoute("/api/tools/chat")({
