@@ -18,14 +18,13 @@ export function VideoLimitBanner({
   if (!nextTier || hiddenCount <= 0) return null;
 
   return (
-    <div className="relative my-6 overflow-hidden rounded-xl border border-pink-500/20 bg-gradient-to-r from-pink-500/5 via-violet-500/5 to-pink-500/5 p-6">
-      <div className="absolute inset-0 bg-gradient-to-r from-pink-500/10 via-transparent to-violet-500/10 opacity-50" />
-      <div className="relative flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-violet-500 text-white">
-          <Lock className="h-6 w-6" />
+    <div className="my-6 rounded-lg border bg-muted/30 p-6">
+      <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-muted">
+          <Lock className="h-6 w-6 text-muted-foreground" />
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold">
+          <h3 className="text-lg font-semibold text-foreground">
             {hiddenCount} more videos available
           </h3>
           <p className="text-sm text-muted-foreground">
@@ -34,7 +33,6 @@ export function VideoLimitBanner({
         </div>
         <Button
           asChild
-          className="shrink-0 bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600"
           onClick={onUpgradeClick}
         >
           <Link to="/pricing">

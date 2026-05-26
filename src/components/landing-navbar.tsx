@@ -82,41 +82,45 @@ function AuthButtons() {
 
 export function LandingNavbar() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+    <header className="sticky top-0 z-50 w-full border-b bg-background">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-pink-500 to-violet-500">
-            <BarChart3 className="h-5 w-5 text-white" />
+        <Link to="/" className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
+            <BarChart3 className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="text-lg font-bold">
-            <span className="bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">Viewlify</span>.app
-          </span>
+          <span className="text-base font-semibold text-foreground">Viewlify</span>
         </Link>
 
         {/* Navigation */}
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-8 md:flex">
           <Link
             to="/"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             Home
           </Link>
           <Link
             to="/profiles"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             Discover
           </Link>
           <Link
+            to="/tools"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Free Tools
+          </Link>
+          <Link
             to="/pricing"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             Pricing
           </Link>
           <a
-            href="#features"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            href="/#features"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             Features
           </a>

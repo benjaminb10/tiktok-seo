@@ -82,7 +82,7 @@ export function PricingCards({
           >
             {tier.highlighted && (
               <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <span className="rounded-full bg-gradient-to-r from-pink-500 to-violet-500 px-4 py-1 text-xs font-semibold text-white">
+                <span className="rounded-md bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
                   Most popular
                 </span>
               </div>

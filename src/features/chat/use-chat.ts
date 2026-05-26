@@ -47,7 +47,7 @@ export function useChat(context: VideoContext | null) {
           content: m.content,
         }));
 
-        const response = await fetch("/api/chat/stream", {
+        const response = await fetch("/api/tools/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -59,25 +59,8 @@ export function useChat(context: VideoContext | null) {
         });
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({})) as {
-            error?: string;
-            used?: number;
-            limit?: number;
-          };
-
-          // Handle quota exceeded error
-          if (errorData.error === "AI_QUOTA_EXCEEDED") {
-            setQuotaExceeded({
-              used: errorData.used ?? 0,
-              limit: errorData.limit ?? 1,
-            });
-            // Remove the empty AI message
-            setMessages((prev) => prev.filter((m) => m.id !== aiMessageId));
-            setIsLoading(false);
-            return;
-          }
-
-          throw new Error(errorData.error || `Erreur: ${response.status}`);
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error((errorData as { error?: string }).error || `Erreur: ${response.status}`);
         }
 
         const reader = response.body?.getReader();
@@ -117,7 +100,7 @@ export function useChat(context: VideoContext | null) {
                 if (event.type === "error") {
                   throw new Error(event.error?.message || "Erreur du stream");
                 }
-              } catch (parseError) {
+              } catch {
                 // Ignore parse errors for non-JSON lines
               }
             }
@@ -131,8 +114,6 @@ export function useChat(context: VideoContext | null) {
         const errorMessage =
           err instanceof Error ? err.message : "Erreur lors de l'envoi du message";
         setError(errorMessage);
-
-        // Remove the empty AI message on error
         setMessages((prev) => prev.filter((m) => m.id !== aiMessageId));
       } finally {
         setIsLoading(false);

@@ -50,7 +50,7 @@ export function SearchPanel({
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12 border-2 border-border">
               <AvatarImage src={avatarUrl ? getAvatarUrl(currentHandle) : undefined} alt={currentHandle} />
-              <AvatarFallback className="bg-gradient-to-br from-pink-500 to-violet-500 text-white font-semibold">
+              <AvatarFallback className="bg-primary text-white font-semibold">
                 {getInitials(currentHandle)}
               </AvatarFallback>
             </Avatar>

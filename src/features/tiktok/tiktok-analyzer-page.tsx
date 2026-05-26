@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { SearchPanel } from "./search-panel";
 import { useTikTokAnalyzer } from "./use-tiktok-analyzer";
 import { VideoDialog } from "./video-dialogs";
@@ -55,15 +55,23 @@ export function TikTokAnalyzerPage({ searchRunId }: TikTokAnalyzerPageProps) {
     [isAuthenticated, canPerformAction, incrementAnonUsage, analyzer, refetch]
   );
 
-  // Update chat context when videos or handle change
+  // Memoize video context to avoid rebuilding on every poll
+  // Only rebuild when handle or video count changes
+  const videoContextKey = `${analyzer.currentHandle}-${analyzer.videos.length}`;
+  const prevKeyRef = useRef<string | null>(null);
+
   useEffect(() => {
+    // Skip if key hasn't changed (same handle + same video count)
+    if (videoContextKey === prevKeyRef.current) return;
+    prevKeyRef.current = videoContextKey;
+
     if (analyzer.currentHandle && analyzer.videos.length > 0) {
       const context = buildVideoContext(analyzer.currentHandle, analyzer.videos);
       setVideoContext(context);
     } else {
       setVideoContext(null);
     }
-  }, [analyzer.currentHandle, analyzer.videos, setVideoContext]);
+  }, [videoContextKey, analyzer.currentHandle, analyzer.videos, setVideoContext]);
 
   const selectedVideo = analyzer.videos.find((v) => v.id === selectedVideoId) ?? null;
 

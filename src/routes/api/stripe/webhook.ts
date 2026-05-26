@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { constructWebhookEvent } from "#/lib/stripe/stripe.server";
-import { getTierFromPriceId } from "#/lib/stripe/stripe.config";
+import { getTierFromPriceId } from "#/lib/stripe/stripe.price.server";
 import { db } from "#/db";
 import { user, subscriptions } from "#/db/schema";
 import { eq } from "drizzle-orm";

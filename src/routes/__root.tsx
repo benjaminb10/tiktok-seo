@@ -22,6 +22,9 @@ export const Route = createRootRoute({
       { name: "description", content: "Analyze any TikTok account with AI. Detect viral hooks, engagement patterns, and strategies that generate millions of views. AI-powered insights for creators and agencies." },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
     ],

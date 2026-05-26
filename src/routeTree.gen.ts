@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProfilesRouteImport } from './routes/profiles'
@@ -21,14 +22,23 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as AnalysesRouteImport } from './routes/analyses'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ToolsIndexRouteImport } from './routes/tools/index'
+import { Route as ToolsTiktokUsernameGeneratorRouteImport } from './routes/tools/tiktok-username-generator'
+import { Route as ToolsTiktokMoneyCalculatorRouteImport } from './routes/tools/tiktok-money-calculator'
+import { Route as ToolsTiktokHashtagGeneratorRouteImport } from './routes/tools/tiktok-hashtag-generator'
+import { Route as ToolsTiktokHashtagExtractorRouteImport } from './routes/tools/tiktok-hashtag-extractor'
+import { Route as ToolsTiktokEngagementCalculatorRouteImport } from './routes/tools/tiktok-engagement-calculator'
+import { Route as ToolsTiktokCharacterCounterRouteImport } from './routes/tools/tiktok-character-counter'
 import { Route as ProfileUsernameRouteImport } from './routes/profile.$username'
+import { Route as ApiToolsGenerateUsernamesRouteImport } from './routes/api/tools/generate-usernames'
+import { Route as ApiToolsGenerateHashtagsRouteImport } from './routes/api/tools/generate-hashtags'
+import { Route as ApiToolsChatRouteImport } from './routes/api/tools/chat'
 import { Route as ApiThumbnailVideoIdRouteImport } from './routes/api/thumbnail/$videoId'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 import { Route as ApiStripePortalRouteImport } from './routes/api/stripe/portal'
 import { Route as ApiStripeCheckoutRouteImport } from './routes/api/stripe/checkout'
 import { Route as ApiSidecarLeaseRouteImport } from './routes/api/sidecar/lease'
 import { Route as ApiSidecarHeartbeatRouteImport } from './routes/api/sidecar/heartbeat'
-import { Route as ApiChatStreamRouteImport } from './routes/api/chat/stream'
 import { Route as ApiAvatarHandleRouteImport } from './routes/api/avatar/$handle'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiOgProfileUsernameRouteImport } from './routes/api/og/profile.$username'
@@ -36,6 +46,11 @@ import { Route as ApiSidecarJobsJobIdProgressRouteImport } from './routes/api/si
 import { Route as ApiSidecarJobsJobIdFailRouteImport } from './routes/api/sidecar/jobs/$jobId/fail'
 import { Route as ApiSidecarJobsJobIdCompleteRouteImport } from './routes/api/sidecar/jobs/$jobId/complete'
 
+const ToolsRoute = ToolsRouteImport.update({
+  id: '/tools',
+  path: '/tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -96,9 +111,67 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ToolsIndexRoute = ToolsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ToolsRoute,
+} as any)
+const ToolsTiktokUsernameGeneratorRoute =
+  ToolsTiktokUsernameGeneratorRouteImport.update({
+    id: '/tiktok-username-generator',
+    path: '/tiktok-username-generator',
+    getParentRoute: () => ToolsRoute,
+  } as any)
+const ToolsTiktokMoneyCalculatorRoute =
+  ToolsTiktokMoneyCalculatorRouteImport.update({
+    id: '/tiktok-money-calculator',
+    path: '/tiktok-money-calculator',
+    getParentRoute: () => ToolsRoute,
+  } as any)
+const ToolsTiktokHashtagGeneratorRoute =
+  ToolsTiktokHashtagGeneratorRouteImport.update({
+    id: '/tiktok-hashtag-generator',
+    path: '/tiktok-hashtag-generator',
+    getParentRoute: () => ToolsRoute,
+  } as any)
+const ToolsTiktokHashtagExtractorRoute =
+  ToolsTiktokHashtagExtractorRouteImport.update({
+    id: '/tiktok-hashtag-extractor',
+    path: '/tiktok-hashtag-extractor',
+    getParentRoute: () => ToolsRoute,
+  } as any)
+const ToolsTiktokEngagementCalculatorRoute =
+  ToolsTiktokEngagementCalculatorRouteImport.update({
+    id: '/tiktok-engagement-calculator',
+    path: '/tiktok-engagement-calculator',
+    getParentRoute: () => ToolsRoute,
+  } as any)
+const ToolsTiktokCharacterCounterRoute =
+  ToolsTiktokCharacterCounterRouteImport.update({
+    id: '/tiktok-character-counter',
+    path: '/tiktok-character-counter',
+    getParentRoute: () => ToolsRoute,
+  } as any)
 const ProfileUsernameRoute = ProfileUsernameRouteImport.update({
   id: '/profile/$username',
   path: '/profile/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiToolsGenerateUsernamesRoute =
+  ApiToolsGenerateUsernamesRouteImport.update({
+    id: '/api/tools/generate-usernames',
+    path: '/api/tools/generate-usernames',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiToolsGenerateHashtagsRoute =
+  ApiToolsGenerateHashtagsRouteImport.update({
+    id: '/api/tools/generate-hashtags',
+    path: '/api/tools/generate-hashtags',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiToolsChatRoute = ApiToolsChatRouteImport.update({
+  id: '/api/tools/chat',
+  path: '/api/tools/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiThumbnailVideoIdRoute = ApiThumbnailVideoIdRouteImport.update({
@@ -129,11 +202,6 @@ const ApiSidecarLeaseRoute = ApiSidecarLeaseRouteImport.update({
 const ApiSidecarHeartbeatRoute = ApiSidecarHeartbeatRouteImport.update({
   id: '/api/sidecar/heartbeat',
   path: '/api/sidecar/heartbeat',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiChatStreamRoute = ApiChatStreamRouteImport.update({
-  id: '/api/chat/stream',
-  path: '/api/chat/stream',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAvatarHandleRoute = ApiAvatarHandleRouteImport.update({
@@ -182,16 +250,26 @@ export interface FileRoutesByFullPath {
   '/profiles': typeof ProfilesRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/tools': typeof ToolsRouteWithChildren
   '/profile/$username': typeof ProfileUsernameRoute
+  '/tools/tiktok-character-counter': typeof ToolsTiktokCharacterCounterRoute
+  '/tools/tiktok-engagement-calculator': typeof ToolsTiktokEngagementCalculatorRoute
+  '/tools/tiktok-hashtag-extractor': typeof ToolsTiktokHashtagExtractorRoute
+  '/tools/tiktok-hashtag-generator': typeof ToolsTiktokHashtagGeneratorRoute
+  '/tools/tiktok-money-calculator': typeof ToolsTiktokMoneyCalculatorRoute
+  '/tools/tiktok-username-generator': typeof ToolsTiktokUsernameGeneratorRoute
+  '/tools/': typeof ToolsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$handle': typeof ApiAvatarHandleRoute
-  '/api/chat/stream': typeof ApiChatStreamRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
   '/api/sidecar/lease': typeof ApiSidecarLeaseRoute
   '/api/stripe/checkout': typeof ApiStripeCheckoutRoute
   '/api/stripe/portal': typeof ApiStripePortalRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/api/thumbnail/$videoId': typeof ApiThumbnailVideoIdRoute
+  '/api/tools/chat': typeof ApiToolsChatRoute
+  '/api/tools/generate-hashtags': typeof ApiToolsGenerateHashtagsRoute
+  '/api/tools/generate-usernames': typeof ApiToolsGenerateUsernamesRoute
   '/api/og/profile/$username': typeof ApiOgProfileUsernameRoute
   '/api/sidecar/jobs/$jobId/complete': typeof ApiSidecarJobsJobIdCompleteRoute
   '/api/sidecar/jobs/$jobId/fail': typeof ApiSidecarJobsJobIdFailRoute
@@ -211,15 +289,24 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
   '/profile/$username': typeof ProfileUsernameRoute
+  '/tools/tiktok-character-counter': typeof ToolsTiktokCharacterCounterRoute
+  '/tools/tiktok-engagement-calculator': typeof ToolsTiktokEngagementCalculatorRoute
+  '/tools/tiktok-hashtag-extractor': typeof ToolsTiktokHashtagExtractorRoute
+  '/tools/tiktok-hashtag-generator': typeof ToolsTiktokHashtagGeneratorRoute
+  '/tools/tiktok-money-calculator': typeof ToolsTiktokMoneyCalculatorRoute
+  '/tools/tiktok-username-generator': typeof ToolsTiktokUsernameGeneratorRoute
+  '/tools': typeof ToolsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$handle': typeof ApiAvatarHandleRoute
-  '/api/chat/stream': typeof ApiChatStreamRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
   '/api/sidecar/lease': typeof ApiSidecarLeaseRoute
   '/api/stripe/checkout': typeof ApiStripeCheckoutRoute
   '/api/stripe/portal': typeof ApiStripePortalRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/api/thumbnail/$videoId': typeof ApiThumbnailVideoIdRoute
+  '/api/tools/chat': typeof ApiToolsChatRoute
+  '/api/tools/generate-hashtags': typeof ApiToolsGenerateHashtagsRoute
+  '/api/tools/generate-usernames': typeof ApiToolsGenerateUsernamesRoute
   '/api/og/profile/$username': typeof ApiOgProfileUsernameRoute
   '/api/sidecar/jobs/$jobId/complete': typeof ApiSidecarJobsJobIdCompleteRoute
   '/api/sidecar/jobs/$jobId/fail': typeof ApiSidecarJobsJobIdFailRoute
@@ -239,16 +326,26 @@ export interface FileRoutesById {
   '/profiles': typeof ProfilesRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/tools': typeof ToolsRouteWithChildren
   '/profile/$username': typeof ProfileUsernameRoute
+  '/tools/tiktok-character-counter': typeof ToolsTiktokCharacterCounterRoute
+  '/tools/tiktok-engagement-calculator': typeof ToolsTiktokEngagementCalculatorRoute
+  '/tools/tiktok-hashtag-extractor': typeof ToolsTiktokHashtagExtractorRoute
+  '/tools/tiktok-hashtag-generator': typeof ToolsTiktokHashtagGeneratorRoute
+  '/tools/tiktok-money-calculator': typeof ToolsTiktokMoneyCalculatorRoute
+  '/tools/tiktok-username-generator': typeof ToolsTiktokUsernameGeneratorRoute
+  '/tools/': typeof ToolsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$handle': typeof ApiAvatarHandleRoute
-  '/api/chat/stream': typeof ApiChatStreamRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
   '/api/sidecar/lease': typeof ApiSidecarLeaseRoute
   '/api/stripe/checkout': typeof ApiStripeCheckoutRoute
   '/api/stripe/portal': typeof ApiStripePortalRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/api/thumbnail/$videoId': typeof ApiThumbnailVideoIdRoute
+  '/api/tools/chat': typeof ApiToolsChatRoute
+  '/api/tools/generate-hashtags': typeof ApiToolsGenerateHashtagsRoute
+  '/api/tools/generate-usernames': typeof ApiToolsGenerateUsernamesRoute
   '/api/og/profile/$username': typeof ApiOgProfileUsernameRoute
   '/api/sidecar/jobs/$jobId/complete': typeof ApiSidecarJobsJobIdCompleteRoute
   '/api/sidecar/jobs/$jobId/fail': typeof ApiSidecarJobsJobIdFailRoute
@@ -269,16 +366,26 @@ export interface FileRouteTypes {
     | '/profiles'
     | '/settings'
     | '/terms'
+    | '/tools'
     | '/profile/$username'
+    | '/tools/tiktok-character-counter'
+    | '/tools/tiktok-engagement-calculator'
+    | '/tools/tiktok-hashtag-extractor'
+    | '/tools/tiktok-hashtag-generator'
+    | '/tools/tiktok-money-calculator'
+    | '/tools/tiktok-username-generator'
+    | '/tools/'
     | '/api/auth/$'
     | '/api/avatar/$handle'
-    | '/api/chat/stream'
     | '/api/sidecar/heartbeat'
     | '/api/sidecar/lease'
     | '/api/stripe/checkout'
     | '/api/stripe/portal'
     | '/api/stripe/webhook'
     | '/api/thumbnail/$videoId'
+    | '/api/tools/chat'
+    | '/api/tools/generate-hashtags'
+    | '/api/tools/generate-usernames'
     | '/api/og/profile/$username'
     | '/api/sidecar/jobs/$jobId/complete'
     | '/api/sidecar/jobs/$jobId/fail'
@@ -298,15 +405,24 @@ export interface FileRouteTypes {
     | '/settings'
     | '/terms'
     | '/profile/$username'
+    | '/tools/tiktok-character-counter'
+    | '/tools/tiktok-engagement-calculator'
+    | '/tools/tiktok-hashtag-extractor'
+    | '/tools/tiktok-hashtag-generator'
+    | '/tools/tiktok-money-calculator'
+    | '/tools/tiktok-username-generator'
+    | '/tools'
     | '/api/auth/$'
     | '/api/avatar/$handle'
-    | '/api/chat/stream'
     | '/api/sidecar/heartbeat'
     | '/api/sidecar/lease'
     | '/api/stripe/checkout'
     | '/api/stripe/portal'
     | '/api/stripe/webhook'
     | '/api/thumbnail/$videoId'
+    | '/api/tools/chat'
+    | '/api/tools/generate-hashtags'
+    | '/api/tools/generate-usernames'
     | '/api/og/profile/$username'
     | '/api/sidecar/jobs/$jobId/complete'
     | '/api/sidecar/jobs/$jobId/fail'
@@ -325,16 +441,26 @@ export interface FileRouteTypes {
     | '/profiles'
     | '/settings'
     | '/terms'
+    | '/tools'
     | '/profile/$username'
+    | '/tools/tiktok-character-counter'
+    | '/tools/tiktok-engagement-calculator'
+    | '/tools/tiktok-hashtag-extractor'
+    | '/tools/tiktok-hashtag-generator'
+    | '/tools/tiktok-money-calculator'
+    | '/tools/tiktok-username-generator'
+    | '/tools/'
     | '/api/auth/$'
     | '/api/avatar/$handle'
-    | '/api/chat/stream'
     | '/api/sidecar/heartbeat'
     | '/api/sidecar/lease'
     | '/api/stripe/checkout'
     | '/api/stripe/portal'
     | '/api/stripe/webhook'
     | '/api/thumbnail/$videoId'
+    | '/api/tools/chat'
+    | '/api/tools/generate-hashtags'
+    | '/api/tools/generate-usernames'
     | '/api/og/profile/$username'
     | '/api/sidecar/jobs/$jobId/complete'
     | '/api/sidecar/jobs/$jobId/fail'
@@ -354,16 +480,19 @@ export interface RootRouteChildren {
   ProfilesRoute: typeof ProfilesRoute
   SettingsRoute: typeof SettingsRoute
   TermsRoute: typeof TermsRoute
+  ToolsRoute: typeof ToolsRouteWithChildren
   ProfileUsernameRoute: typeof ProfileUsernameRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAvatarHandleRoute: typeof ApiAvatarHandleRoute
-  ApiChatStreamRoute: typeof ApiChatStreamRoute
   ApiSidecarHeartbeatRoute: typeof ApiSidecarHeartbeatRoute
   ApiSidecarLeaseRoute: typeof ApiSidecarLeaseRoute
   ApiStripeCheckoutRoute: typeof ApiStripeCheckoutRoute
   ApiStripePortalRoute: typeof ApiStripePortalRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
   ApiThumbnailVideoIdRoute: typeof ApiThumbnailVideoIdRoute
+  ApiToolsChatRoute: typeof ApiToolsChatRoute
+  ApiToolsGenerateHashtagsRoute: typeof ApiToolsGenerateHashtagsRoute
+  ApiToolsGenerateUsernamesRoute: typeof ApiToolsGenerateUsernamesRoute
   ApiOgProfileUsernameRoute: typeof ApiOgProfileUsernameRoute
   ApiSidecarJobsJobIdCompleteRoute: typeof ApiSidecarJobsJobIdCompleteRoute
   ApiSidecarJobsJobIdFailRoute: typeof ApiSidecarJobsJobIdFailRoute
@@ -372,6 +501,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tools': {
+      id: '/tools'
+      path: '/tools'
+      fullPath: '/tools'
+      preLoaderRoute: typeof ToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -456,11 +592,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tools/': {
+      id: '/tools/'
+      path: '/'
+      fullPath: '/tools/'
+      preLoaderRoute: typeof ToolsIndexRouteImport
+      parentRoute: typeof ToolsRoute
+    }
+    '/tools/tiktok-username-generator': {
+      id: '/tools/tiktok-username-generator'
+      path: '/tiktok-username-generator'
+      fullPath: '/tools/tiktok-username-generator'
+      preLoaderRoute: typeof ToolsTiktokUsernameGeneratorRouteImport
+      parentRoute: typeof ToolsRoute
+    }
+    '/tools/tiktok-money-calculator': {
+      id: '/tools/tiktok-money-calculator'
+      path: '/tiktok-money-calculator'
+      fullPath: '/tools/tiktok-money-calculator'
+      preLoaderRoute: typeof ToolsTiktokMoneyCalculatorRouteImport
+      parentRoute: typeof ToolsRoute
+    }
+    '/tools/tiktok-hashtag-generator': {
+      id: '/tools/tiktok-hashtag-generator'
+      path: '/tiktok-hashtag-generator'
+      fullPath: '/tools/tiktok-hashtag-generator'
+      preLoaderRoute: typeof ToolsTiktokHashtagGeneratorRouteImport
+      parentRoute: typeof ToolsRoute
+    }
+    '/tools/tiktok-hashtag-extractor': {
+      id: '/tools/tiktok-hashtag-extractor'
+      path: '/tiktok-hashtag-extractor'
+      fullPath: '/tools/tiktok-hashtag-extractor'
+      preLoaderRoute: typeof ToolsTiktokHashtagExtractorRouteImport
+      parentRoute: typeof ToolsRoute
+    }
+    '/tools/tiktok-engagement-calculator': {
+      id: '/tools/tiktok-engagement-calculator'
+      path: '/tiktok-engagement-calculator'
+      fullPath: '/tools/tiktok-engagement-calculator'
+      preLoaderRoute: typeof ToolsTiktokEngagementCalculatorRouteImport
+      parentRoute: typeof ToolsRoute
+    }
+    '/tools/tiktok-character-counter': {
+      id: '/tools/tiktok-character-counter'
+      path: '/tiktok-character-counter'
+      fullPath: '/tools/tiktok-character-counter'
+      preLoaderRoute: typeof ToolsTiktokCharacterCounterRouteImport
+      parentRoute: typeof ToolsRoute
+    }
     '/profile/$username': {
       id: '/profile/$username'
       path: '/profile/$username'
       fullPath: '/profile/$username'
       preLoaderRoute: typeof ProfileUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/tools/generate-usernames': {
+      id: '/api/tools/generate-usernames'
+      path: '/api/tools/generate-usernames'
+      fullPath: '/api/tools/generate-usernames'
+      preLoaderRoute: typeof ApiToolsGenerateUsernamesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/tools/generate-hashtags': {
+      id: '/api/tools/generate-hashtags'
+      path: '/api/tools/generate-hashtags'
+      fullPath: '/api/tools/generate-hashtags'
+      preLoaderRoute: typeof ApiToolsGenerateHashtagsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/tools/chat': {
+      id: '/api/tools/chat'
+      path: '/api/tools/chat'
+      fullPath: '/api/tools/chat'
+      preLoaderRoute: typeof ApiToolsChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/thumbnail/$videoId': {
@@ -503,13 +709,6 @@ declare module '@tanstack/react-router' {
       path: '/api/sidecar/heartbeat'
       fullPath: '/api/sidecar/heartbeat'
       preLoaderRoute: typeof ApiSidecarHeartbeatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/chat/stream': {
-      id: '/api/chat/stream'
-      path: '/api/chat/stream'
-      fullPath: '/api/chat/stream'
-      preLoaderRoute: typeof ApiChatStreamRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/avatar/$handle': {
@@ -557,6 +756,28 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ToolsRouteChildren {
+  ToolsTiktokCharacterCounterRoute: typeof ToolsTiktokCharacterCounterRoute
+  ToolsTiktokEngagementCalculatorRoute: typeof ToolsTiktokEngagementCalculatorRoute
+  ToolsTiktokHashtagExtractorRoute: typeof ToolsTiktokHashtagExtractorRoute
+  ToolsTiktokHashtagGeneratorRoute: typeof ToolsTiktokHashtagGeneratorRoute
+  ToolsTiktokMoneyCalculatorRoute: typeof ToolsTiktokMoneyCalculatorRoute
+  ToolsTiktokUsernameGeneratorRoute: typeof ToolsTiktokUsernameGeneratorRoute
+  ToolsIndexRoute: typeof ToolsIndexRoute
+}
+
+const ToolsRouteChildren: ToolsRouteChildren = {
+  ToolsTiktokCharacterCounterRoute: ToolsTiktokCharacterCounterRoute,
+  ToolsTiktokEngagementCalculatorRoute: ToolsTiktokEngagementCalculatorRoute,
+  ToolsTiktokHashtagExtractorRoute: ToolsTiktokHashtagExtractorRoute,
+  ToolsTiktokHashtagGeneratorRoute: ToolsTiktokHashtagGeneratorRoute,
+  ToolsTiktokMoneyCalculatorRoute: ToolsTiktokMoneyCalculatorRoute,
+  ToolsTiktokUsernameGeneratorRoute: ToolsTiktokUsernameGeneratorRoute,
+  ToolsIndexRoute: ToolsIndexRoute,
+}
+
+const ToolsRouteWithChildren = ToolsRoute._addFileChildren(ToolsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -570,16 +791,19 @@ const rootRouteChildren: RootRouteChildren = {
   ProfilesRoute: ProfilesRoute,
   SettingsRoute: SettingsRoute,
   TermsRoute: TermsRoute,
+  ToolsRoute: ToolsRouteWithChildren,
   ProfileUsernameRoute: ProfileUsernameRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAvatarHandleRoute: ApiAvatarHandleRoute,
-  ApiChatStreamRoute: ApiChatStreamRoute,
   ApiSidecarHeartbeatRoute: ApiSidecarHeartbeatRoute,
   ApiSidecarLeaseRoute: ApiSidecarLeaseRoute,
   ApiStripeCheckoutRoute: ApiStripeCheckoutRoute,
   ApiStripePortalRoute: ApiStripePortalRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
   ApiThumbnailVideoIdRoute: ApiThumbnailVideoIdRoute,
+  ApiToolsChatRoute: ApiToolsChatRoute,
+  ApiToolsGenerateHashtagsRoute: ApiToolsGenerateHashtagsRoute,
+  ApiToolsGenerateUsernamesRoute: ApiToolsGenerateUsernamesRoute,
   ApiOgProfileUsernameRoute: ApiOgProfileUsernameRoute,
   ApiSidecarJobsJobIdCompleteRoute: ApiSidecarJobsJobIdCompleteRoute,
   ApiSidecarJobsJobIdFailRoute: ApiSidecarJobsJobIdFailRoute,

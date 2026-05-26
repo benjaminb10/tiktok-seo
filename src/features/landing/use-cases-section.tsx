@@ -12,7 +12,6 @@ const useCases = [
       "3x average views per video",
       "Consistent viral content formula",
     ],
-    gradient: "from-pink-500 to-rose-500",
   },
   {
     icon: Briefcase,
@@ -25,7 +24,6 @@ const useCases = [
       "Deliver professional analytics reports",
       "Increase client retention by 40%",
     ],
-    gradient: "from-violet-500 to-purple-500",
   },
   {
     icon: Users,
@@ -38,20 +36,16 @@ const useCases = [
       "Identify high-performing creators",
       "Beat competitors to trending topics",
     ],
-    gradient: "from-blue-500 to-cyan-500",
   },
 ];
 
 export function UseCasesSection() {
   return (
-    <section className="relative py-24 sm:py-32">
-      {/* Background */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background via-muted/30 to-background" />
-
-      <div className="mx-auto max-w-7xl px-4">
+    <section className="py-24 bg-muted/30">
+      <div className="mx-auto max-w-6xl px-4">
         {/* Header */}
         <div className="mx-auto mb-16 max-w-2xl text-center">
-          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="mb-4 text-3xl font-semibold tracking-tight text-foreground">
             Built for Everyone Growing on TikTok
           </h2>
           <p className="text-lg text-muted-foreground">
@@ -60,35 +54,33 @@ export function UseCasesSection() {
         </div>
 
         {/* Use Cases */}
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="grid gap-6 lg:grid-cols-3">
           {useCases.map((useCase) => (
             <div
               key={useCase.role}
-              className="relative rounded-2xl border bg-background p-8"
+              className="rounded-lg border bg-background p-6"
             >
               {/* Icon */}
-              <div
-                className={`mb-6 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${useCase.gradient}`}
-              >
-                <useCase.icon className="h-7 w-7 text-white" />
+              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-md bg-muted">
+                <useCase.icon className="h-5 w-5 text-foreground" />
               </div>
 
               {/* Role */}
-              <h3 className="mb-2 text-2xl font-bold">{useCase.role}</h3>
+              <h3 className="mb-2 text-lg font-semibold text-foreground">{useCase.role}</h3>
 
               {/* Challenge */}
-              <p className="mb-4 text-sm font-medium text-muted-foreground">
-                <span className="text-red-500">Challenge:</span> {useCase.challenge}
+              <p className="mb-3 text-sm text-muted-foreground">
+                <span className="text-destructive">Challenge:</span> {useCase.challenge}
               </p>
 
               {/* Solution */}
-              <p className="mb-6 text-sm text-muted-foreground">
+              <p className="mb-5 text-sm text-muted-foreground">
                 <span className="font-medium text-foreground">Solution:</span>{" "}
                 {useCase.solution}
               </p>
 
               {/* Results */}
-              <div className="space-y-2 rounded-xl bg-muted/50 p-4">
+              <div className="space-y-2 rounded-md bg-muted/50 p-3">
                 <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   Typical Results
                 </div>
@@ -98,7 +90,7 @@ export function UseCasesSection() {
                       key={result}
                       className="flex items-start gap-2 text-sm text-foreground"
                     >
-                      <span className="mt-1 text-green-500">✓</span>
+                      <span className="mt-0.5 text-primary">✓</span>
                       {result}
                     </li>
                   ))}

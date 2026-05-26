@@ -91,7 +91,7 @@ function ProfilesPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <section className="border-b bg-gradient-to-br from-pink-50 via-violet-50 to-background py-16">
+      <section className="border-b bg-muted/30 py-16">
         <div className="mx-auto max-w-7xl px-4 text-center">
           <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
             Discover TikTok Creators
@@ -215,7 +215,7 @@ function ProfileCard({
             className="mb-4 h-20 w-20 rounded-full object-cover"
           />
         ) : (
-          <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-violet-500 text-2xl font-bold text-white">
+          <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary text-2xl font-bold text-white">
             {profile.handle.charAt(0).toUpperCase()}
           </div>
         )}

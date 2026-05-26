@@ -72,8 +72,8 @@ function SidebarFooter() {
             className="h-7 w-7 rounded-full"
           />
         ) : (
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-violet-500">
-            <span className="text-xs font-semibold text-white">
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted">
+            <span className="text-xs font-semibold text-muted-foreground">
               {session.user.name?.charAt(0) || "U"}
             </span>
           </div>
@@ -104,29 +104,27 @@ export function Sidebar() {
   const location = useLocation();
 
   return (
-    <div className="flex h-screen w-44 flex-col border-r bg-background">
+    <div className="flex h-screen w-48 flex-col border-r bg-muted/30">
       {/* Logo */}
-      <div className="flex h-14 items-center gap-2 border-b px-3">
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-pink-500 to-violet-500">
-          <BarChart3 className="h-4 w-4 text-white" />
+      <div className="flex h-14 items-center gap-2.5 border-b px-4">
+        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
+          <BarChart3 className="h-4 w-4 text-primary-foreground" />
         </div>
-        <span className="text-sm font-bold">
-          <span className="bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">Viewlify</span>.app
-        </span>
+        <span className="text-sm font-semibold text-foreground">Viewlify</span>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 p-3">
+      <nav className="flex-1 space-y-0.5 p-2">
         {navigation.map((item) => {
           const isActive = location.pathname === item.href;
           return (
             <Link
               key={item.name}
               to={item.href}
-              className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors ${
+              className={`flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors ${
                 isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? "bg-muted font-medium text-foreground"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
               }`}
             >
               <item.icon className="h-4 w-4" />
@@ -137,19 +135,19 @@ export function Sidebar() {
       </nav>
 
       {/* Quota Summary */}
-      <div className="px-3 pb-3">
+      <div className="px-2 pb-2">
         <QuotaSummaryCard />
       </div>
 
       {/* Contact */}
-      <div className="px-3 pb-3">
+      <div className="px-2 pb-2">
         <a
           href="https://wa.me/33651774359?text=Hey%20I%20have%20a%20question%20or%20need%20help%20on%20Viewlify.app"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
         >
-          <MessageCircle className="h-4 w-4 text-[#25D366]" />
+          <MessageCircle className="h-4 w-4" />
           Contact us
         </a>
       </div>

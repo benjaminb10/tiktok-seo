@@ -43,7 +43,7 @@ export function TrustBar() {
                 className="flex items-center gap-2 text-center md:text-left"
               >
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-background">
-                  <metric.icon className="h-5 w-5 text-violet-500" />
+                  <metric.icon className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <div className="text-lg font-bold">{metric.value}</div>

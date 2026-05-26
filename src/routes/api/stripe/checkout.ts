@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getServerSession } from "#/lib/auth.server";
 import { createCheckoutSession } from "#/lib/stripe/stripe.server";
-import { TIER_CONFIG, getPriceIdForTier, type SubscriptionTier } from "#/lib/stripe/stripe.config";
+import { TIER_CONFIG, type SubscriptionTier } from "#/lib/stripe/stripe.config";
+import { getPriceIdForTier } from "#/lib/stripe/stripe.price.server";
 import { db } from "#/db";
 import { user } from "#/db/schema";
 import { eq } from "drizzle-orm";

@@ -55,7 +55,7 @@ function ThumbnailCell({ videoId, hasUrl, onClick }: { videoId: string; hasUrl: 
           onError={() => setImgError(true)}
         />
       ) : (
-        <div className="h-12 w-12 rounded bg-gradient-to-br from-pink-500/10 to-violet-500/10 flex items-center justify-center hover:opacity-80 transition-opacity">
+        <div className="h-12 w-12 rounded bg-muted flex items-center justify-center hover:opacity-80 transition-opacity">
           <Play className="h-4 w-4 text-muted-foreground/50" />
         </div>
       )}

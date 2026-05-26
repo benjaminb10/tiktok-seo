@@ -13,7 +13,7 @@ export const Route = createFileRoute("/privacy")({
 
 function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-violet-50 to-slate-50">
+    <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-3xl px-6 py-16">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Privacy Policy</h1>
         <p className="text-sm text-gray-500 mb-8">Last updated: May 2025</p>

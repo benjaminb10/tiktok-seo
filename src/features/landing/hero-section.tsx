@@ -1,113 +1,110 @@
-import { ArrowRight, CheckCircle2, Play, Sparkles } from "lucide-react";
+import { ArrowRight, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "#/components/ui/button";
-import { AppScreenshot } from "./app-screenshot";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden pt-20">
-      {/* Optimized Background gradient */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-pink-50/50 via-violet-50/50 to-background dark:from-pink-950/20 dark:via-violet-950/20" />
-
-      {/* Grid pattern overlay */}
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-
-      {/* Single optimized blur orb */}
-      <div className="absolute left-1/2 top-20 h-96 w-96 -translate-x-1/2 rounded-full bg-violet-400 opacity-10 blur-3xl" />
-
-      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:py-24">
-        <div className="mx-auto max-w-4xl text-center">
-          {/* Badge - SEO optimized */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border bg-background/80 px-4 py-1.5 text-sm backdrop-blur-sm">
-            <Sparkles className="h-4 w-4 text-violet-500" />
-            <span className="font-medium text-muted-foreground">
-              #1 TikTok Analytics Tool Used by 5,000+ Creators
-            </span>
-          </div>
-
-          {/* Title - SEO optimized H1 */}
-          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl xl:text-7xl">
-            TikTok Analytics Tool That Reveals{" "}
-            <span className="bg-gradient-to-r from-pink-500 via-violet-500 to-purple-500 bg-clip-text text-transparent">
-              Why Videos Go Viral
-            </span>
-          </h1>
-
-          {/* Subtitle - Key value props */}
-          <p className="mb-10 text-lg text-muted-foreground sm:text-xl lg:text-2xl">
-            Analyze any TikTok profile in 30 seconds. Get AI-powered insights on
-            viral hooks, engagement patterns, and content strategies that generate{" "}
-            <span className="font-semibold text-foreground">10M+ views</span>.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="mb-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link to="/app">
-              <Button size="lg" className="group h-14 px-8 text-lg shadow-lg">
-                Analyze Your First Profile Free
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
-            <Link to="#features">
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-14 gap-2 px-8 text-lg"
-              >
-                <Play className="h-5 w-5" />
-                See How It Works
-              </Button>
-            </Link>
-          </div>
-
-          {/* Trust indicators */}
-          <div className="mb-4 flex flex-wrap items-center justify-center gap-6 text-sm">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
-              <span className="text-muted-foreground">
-                <span className="font-semibold text-foreground">5,000+</span>{" "}
-                creators & agencies
-              </span>
-            </div>
-            <div className="h-4 w-px bg-border" />
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
-              <span className="text-muted-foreground">
-                <span className="font-semibold text-foreground">500,000+</span>{" "}
-                videos analyzed
-              </span>
-            </div>
-            <div className="h-4 w-px bg-border" />
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
-              <span className="font-medium text-foreground">
-                No credit card required
-              </span>
-            </div>
-          </div>
+    <section className="relative py-20 lg:py-32">
+      <div className="mx-auto max-w-4xl px-4 text-center">
+        {/* Badge - honest positioning */}
+        <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm">
+          <Zap className="h-3.5 w-3.5 text-primary" />
+          <span className="text-foreground">
+            Free TikTok analytics tool
+          </span>
         </div>
 
-        {/* Screenshot preview - Enhanced */}
-        <div className="mt-16 sm:mt-20">
-          <div className="relative mx-auto max-w-6xl">
-            {/* Glow effect - optimized */}
-            <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-pink-500/10 via-violet-500/10 to-purple-500/10 blur-2xl" />
+        {/* Title - Clear value proposition */}
+        <h1 className="mb-6 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+          Understand why some TikToks
+          <br />
+          <span className="text-primary">go viral</span>
+        </h1>
 
-            {/* Screenshot */}
-            <div className="overflow-hidden rounded-2xl border-2 border-border bg-background shadow-2xl">
-              <div className="aspect-video w-full bg-gradient-to-br from-muted/50 to-background p-4 sm:p-8">
-                <AppScreenshot />
+        {/* Subtitle - Specific benefit */}
+        <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground lg:text-xl">
+          Analyze any TikTok profile in seconds. See which videos perform best,
+          discover content patterns, and get ideas for your next viral video.
+        </p>
+
+        {/* CTA - Single clear action */}
+        <div className="mb-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <Link to="/app">
+            <Button size="lg" className="h-12 px-8 text-base">
+              Analyze a profile for free
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+          <p className="text-sm text-muted-foreground">
+            No signup required
+          </p>
+        </div>
+
+        {/* Screenshot - Clean presentation */}
+        <div className="relative mx-auto max-w-4xl">
+          <div className="overflow-hidden rounded-xl border bg-background shadow-2xl shadow-primary/5">
+            <div className="border-b bg-muted/50 px-4 py-3">
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1.5">
+                  <div className="h-3 w-3 rounded-full bg-red-400" />
+                  <div className="h-3 w-3 rounded-full bg-yellow-400" />
+                  <div className="h-3 w-3 rounded-full bg-green-400" />
+                </div>
+                <div className="ml-4 flex-1 rounded-md bg-background px-3 py-1 text-xs text-muted-foreground">
+                  viewlify.app
+                </div>
               </div>
             </div>
+            <div className="p-6 lg:p-8">
+              {/* Mini app preview */}
+              <div className="space-y-6">
+                {/* Search bar mockup */}
+                <div className="mx-auto flex max-w-xl items-center gap-3 rounded-lg border bg-background p-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                    MB
+                  </div>
+                  <span className="text-sm font-medium text-foreground">@mrbeast</span>
+                  <div className="ml-auto rounded-md bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground">
+                    Analyze
+                  </div>
+                </div>
 
-            {/* Floating badges */}
-            <div className="absolute -left-4 top-1/4 hidden rounded-xl border bg-background p-4 shadow-lg lg:block">
-              <div className="mb-1 text-2xl font-bold text-green-500">+350%</div>
-              <div className="text-xs text-muted-foreground">Avg Growth</div>
-            </div>
-            <div className="absolute -right-4 top-1/3 hidden rounded-xl border bg-background p-4 shadow-lg lg:block">
-              <div className="mb-1 text-2xl font-bold text-violet-500">10M+</div>
-              <div className="text-xs text-muted-foreground">Videos Analyzed</div>
+                {/* Stats grid */}
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {[
+                    { label: "Videos", value: "847" },
+                    { label: "Avg Views", value: "52M" },
+                    { label: "Engagement", value: "4.8%" },
+                    { label: "Top Video", value: "312M" },
+                  ].map((stat) => (
+                    <div key={stat.label} className="rounded-lg border bg-background p-4 text-center">
+                      <div className="text-2xl font-semibold text-foreground">{stat.value}</div>
+                      <div className="text-xs text-muted-foreground">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Video list mockup */}
+                <div className="space-y-2">
+                  {[
+                    { title: "$456,000 Squid Game In Real Life!", views: "312M" },
+                    { title: "I Built 100 Wells In Africa", views: "187M" },
+                    { title: "Ages 1-100 Decide Who Wins $250,000", views: "156M" },
+                  ].map((video) => (
+                    <div key={video.title} className="flex items-center gap-3 rounded-lg border bg-background p-3">
+                      <div className="h-12 w-12 shrink-0 rounded-md bg-gradient-to-br from-muted to-muted/50" />
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-medium text-foreground">{video.title}</div>
+                        <div className="text-xs text-muted-foreground">TikTok video</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-semibold text-foreground">{video.views}</div>
+                        <div className="text-xs text-muted-foreground">views</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

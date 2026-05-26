@@ -35,7 +35,7 @@ function ProfileWithData({ username, data }: { username: string; data: ProfileDe
         </Link>
 
         {/* Profile Header */}
-        <div className="mb-8 rounded-2xl border bg-gradient-to-br from-pink-50 via-violet-50 to-background p-8">
+        <div className="mb-8 rounded-2xl border bg-muted/30 p-8">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-4">
               {/* Avatar */}
@@ -46,7 +46,7 @@ function ProfileWithData({ username, data }: { username: string; data: ProfileDe
                   className="h-20 w-20 shrink-0 rounded-full object-cover"
                 />
               ) : (
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-violet-500 text-2xl font-bold text-white">
+                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary text-2xl font-bold text-white">
                   {username.charAt(0).toUpperCase()}
                 </div>
               )}
@@ -119,9 +119,9 @@ function ProfileWithData({ username, data }: { username: string; data: ProfileDe
         </Card>
 
         {/* CTA Section */}
-        <div className="mt-8 rounded-2xl border bg-gradient-to-r from-pink-500 via-violet-500 to-purple-500 p-8 text-center text-white">
+        <div className="mt-8 rounded-lg border bg-primary p-8 text-center text-primary-foreground">
           <h2 className="mb-4 text-2xl font-bold">Want deeper insights?</h2>
-          <p className="mb-6 text-white/90">
+          <p className="mb-6 text-primary-foreground/90">
             Analyze this profile with AI-powered insights, competitor tracking, and more.
           </p>
           <Link to="/app">
@@ -146,11 +146,11 @@ function ProfileComingSoon({ username }: { username: string }) {
         </Link>
 
         {/* Profile Header */}
-        <div className="mb-8 rounded-2xl border bg-gradient-to-br from-pink-50 via-violet-50 to-background p-8">
+        <div className="mb-8 rounded-2xl border bg-muted/30 p-8">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-4">
               {/* Avatar placeholder */}
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-violet-500 text-2xl font-bold text-white">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary text-2xl font-bold text-white">
                 {username.charAt(0).toUpperCase()}
               </div>
 

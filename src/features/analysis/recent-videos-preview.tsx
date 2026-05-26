@@ -67,7 +67,7 @@ function VideoThumbnail({ video, onClick }: VideoThumbnailProps) {
           onError={() => setImgError(true)}
         />
       ) : (
-        <div className="aspect-[9/16] w-full bg-gradient-to-br from-pink-500/10 to-violet-500/10 flex items-center justify-center">
+        <div className="aspect-[9/16] w-full bg-muted flex items-center justify-center">
           <Play className="h-8 w-8 text-muted-foreground/50" />
         </div>
       )}

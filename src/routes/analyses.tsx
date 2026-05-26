@@ -98,7 +98,7 @@ function AnalysesPage() {
     return (
       <div className="flex h-full items-center justify-center p-8">
         <div className="text-center">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-violet-500">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary">
             <LogIn className="h-10 w-10 text-white" />
           </div>
           <h1 className="text-3xl font-bold mb-2">Sign in to view your analyses</h1>
@@ -145,18 +145,18 @@ function AnalysesPage() {
         </div>
 
         {isLimitedHistory && (
-          <Alert className="mb-6 border-pink-500/20 bg-pink-500/5">
-            <Info className="h-4 w-4 text-pink-500" />
+          <Alert className="mb-6 border-primary/20 bg-primary/5">
+            <Info className="h-4 w-4 text-primary" />
             <AlertDescription className="flex items-center justify-between">
               <span>
-                Historique limité aux {historyDays} derniers jours.
-                {quota?.tier === "free" && " Passez à Creator pour 90 jours d'historique."}
+                History limited to the last {historyDays} days.
+                {quota?.tier === "free" && " Upgrade to Creator for 90 days of history."}
               </span>
               {quota?.tier === "free" && (
                 <Link to="/pricing">
                   <Button variant="outline" size="sm" className="ml-4">
                     <Sparkles className="h-3 w-3 mr-1" />
-                    Voir les offres
+                    View plans
                   </Button>
                 </Link>
               )}
@@ -174,7 +174,7 @@ function AnalysesPage() {
                     src={run.handle && run.avatarUrl ? getAvatarUrl(run.handle) : undefined}
                     alt={run.handle || run.input}
                   />
-                  <AvatarFallback className="bg-gradient-to-br from-pink-500 to-violet-500 text-white text-lg font-semibold">
+                  <AvatarFallback className="bg-primary text-white text-lg font-semibold">
                     {getInitials(run.handle || run.input)}
                   </AvatarFallback>
                 </Avatar>

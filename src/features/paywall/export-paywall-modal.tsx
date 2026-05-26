@@ -23,8 +23,8 @@ export function ExportPaywallModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-violet-500/10">
-            <FileSpreadsheet className="h-6 w-6 text-violet-500" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <FileSpreadsheet className="h-6 w-6 text-primary" />
           </div>
           <DialogTitle className="text-center text-xl">
             Export your data
@@ -42,15 +42,15 @@ export function ExportPaywallModal({
             </h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
-                <Download className="h-4 w-4 text-violet-500" />
+                <Download className="h-4 w-4 text-primary" />
                 <span>Download all analyzed videos</span>
               </li>
               <li className="flex items-center gap-2">
-                <Download className="h-4 w-4 text-violet-500" />
+                <Download className="h-4 w-4 text-primary" />
                 <span>Complete stats: views, likes, engagement...</span>
               </li>
               <li className="flex items-center gap-2">
-                <Download className="h-4 w-4 text-violet-500" />
+                <Download className="h-4 w-4 text-primary" />
                 <span>Transcriptions and hashtags included</span>
               </li>
             </ul>
@@ -58,7 +58,7 @@ export function ExportPaywallModal({
         </div>
 
         <DialogFooter className="flex-col gap-2 sm:flex-col">
-          <Button asChild className="w-full bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600">
+          <Button asChild className="w-full">
             <Link to="/pricing">
               <Sparkles className="mr-2 h-4 w-4" />
               Upgrade to Creator - $29/mo

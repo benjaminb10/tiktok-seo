@@ -16,11 +16,11 @@ export function QuotaBadge({ used, limit, label, className }: QuotaBadgeProps) {
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+        "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium",
         isExceeded
-          ? "bg-red-500/10 text-red-600 dark:text-red-400"
+          ? "bg-destructive/10 text-destructive"
           : isWarning
-          ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+          ? "bg-amber-500/10 text-amber-600"
           : "bg-muted text-muted-foreground",
         className
       )}
@@ -28,7 +28,7 @@ export function QuotaBadge({ used, limit, label, className }: QuotaBadgeProps) {
       <span>{label}</span>
       <span className="font-semibold">
         {isUnlimited ? (
-          <span className="text-green-600 dark:text-green-400">Unlimited</span>
+          <span className="text-green-600">Unlimited</span>
         ) : (
           `${used}/${limit}`
         )}

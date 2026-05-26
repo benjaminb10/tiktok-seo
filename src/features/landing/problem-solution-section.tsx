@@ -32,16 +32,12 @@ const solutions = [
 
 export function ProblemSolutionSection() {
   return (
-    <section className="py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-4">
+    <section className="py-24">
+      <div className="mx-auto max-w-6xl px-4">
         {/* Header */}
         <div className="mx-auto mb-16 max-w-3xl text-center">
-          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            Why Do Some TikTok Videos Get{" "}
-            <span className="bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent">
-              10M Views
-            </span>{" "}
-            While Yours Get 100?
+          <h2 className="mb-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            Why Do Some TikTok Videos Get 10M Views While Yours Get 100?
           </h2>
           <p className="text-lg text-muted-foreground">
             Most creators are flying blind. Here's why that's a problem.
@@ -49,20 +45,20 @@ export function ProblemSolutionSection() {
         </div>
 
         {/* Problem vs Solution Grid */}
-        <div className="grid gap-8 lg:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2">
           {/* Problems */}
-          <div className="rounded-2xl border border-red-200 bg-red-50/50 p-8 dark:border-red-900/50 dark:bg-red-950/20">
+          <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6">
             <div className="mb-6">
-              <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-700 dark:bg-red-900/50 dark:text-red-300">
+              <div className="mb-2 inline-flex items-center gap-2 rounded-md bg-destructive/10 px-3 py-1 text-sm font-medium text-destructive">
                 <AlertCircle className="h-4 w-4" />
                 The Problem
               </div>
-              <h3 className="text-2xl font-bold">Without proper analytics</h3>
+              <h3 className="text-xl font-semibold text-foreground">Without proper analytics</h3>
             </div>
             <ul className="space-y-4">
               {problems.map((problem) => (
                 <li key={problem.text} className="flex items-start gap-3">
-                  <problem.icon className="mt-1 h-5 w-5 flex-shrink-0 text-red-500" />
+                  <problem.icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive" />
                   <span className="text-muted-foreground">{problem.text}</span>
                 </li>
               ))}
@@ -70,18 +66,18 @@ export function ProblemSolutionSection() {
           </div>
 
           {/* Solutions */}
-          <div className="rounded-2xl border border-green-200 bg-green-50/50 p-8 dark:border-green-900/50 dark:bg-green-950/20">
+          <div className="rounded-lg border border-green-200 bg-green-50 p-6">
             <div className="mb-6">
-              <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700 dark:bg-green-900/50 dark:text-green-300">
+              <div className="mb-2 inline-flex items-center gap-2 rounded-md bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
                 <CheckCircle2 className="h-4 w-4" />
                 The Solution
               </div>
-              <h3 className="text-2xl font-bold">With Viewlify.app</h3>
+              <h3 className="text-xl font-semibold text-foreground">With Viewlify</h3>
             </div>
             <ul className="space-y-4">
               {solutions.map((solution) => (
                 <li key={solution.text} className="flex items-start gap-3">
-                  <solution.icon className="mt-1 h-5 w-5 flex-shrink-0 text-green-500" />
+                  <solution.icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600" />
                   <span className="text-muted-foreground">{solution.text}</span>
                 </li>
               ))}
@@ -91,7 +87,7 @@ export function ProblemSolutionSection() {
 
         {/* Bottom CTA */}
         <div className="mt-12 text-center">
-          <p className="text-lg font-medium">
+          <p className="text-lg font-medium text-foreground">
             Stop guessing. Start growing.
           </p>
         </div>

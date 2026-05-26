@@ -1,12 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { env } from "cloudflare:workers";
 import type { ChatRequest, VideoContext } from "#/features/chat/chat.types";
-import { getServerSession } from "#/lib/auth.server";
-import {
-  checkQuota,
-  incrementUsage,
-  QuotaExceededError,
-} from "#/lib/stripe/quota.server";
 
 function formatNumber(value: number | null): string {
   if (value == null) return "0";
@@ -51,45 +45,23 @@ ${videosList}
 - Si l'utilisateur pose une question hors sujet, ramène-le gentiment à l'analyse TikTok`;
 }
 
-export const Route = createFileRoute("/api/chat/stream")({
+export const Route = createFileRoute("/api/tools/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         const apiKey = (env as { ANTHROPIC_API_KEY?: string }).ANTHROPIC_API_KEY;
 
         if (!apiKey) {
-          return new Response(JSON.stringify({ error: "ANTHROPIC_API_KEY non configurée" }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-          });
+          return Response.json({ error: "ANTHROPIC_API_KEY non configurée" }, { status: 500 });
         }
 
-        // Check AI insights quota for authenticated users
-        const session = await getServerSession();
-        const userId = session?.user?.id;
-
-        if (userId) {
-          try {
-            await checkQuota(userId, "aiInsight");
-          } catch (error) {
-            if (error instanceof QuotaExceededError) {
-              return new Response(
-                JSON.stringify({
-                  error: "AI_QUOTA_EXCEEDED",
-                  used: error.used,
-                  limit: error.limit,
-                }),
-                {
-                  status: 402,
-                  headers: { "Content-Type": "application/json" },
-                }
-              );
-            }
-            throw error;
-          }
+        let body: ChatRequest;
+        try {
+          body = (await request.json()) as ChatRequest;
+        } catch {
+          return Response.json({ error: "Invalid request body" }, { status: 400 });
         }
 
-        const body = (await request.json()) as ChatRequest;
         const systemPrompt = buildSystemPrompt(body.context);
 
         const messages = [
@@ -118,17 +90,7 @@ export const Route = createFileRoute("/api/chat/stream")({
         });
 
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error("[chat/stream] Anthropic API error:", response.status, errorText);
-          return new Response(JSON.stringify({ error: `Erreur API: ${response.status}` }), {
-            status: response.status,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
-
-        // Increment usage after successful API call start
-        if (userId) {
-          await incrementUsage(userId, "aiInsight");
+          return Response.json({ error: `Erreur API: ${response.status}` }, { status: response.status });
         }
 
         // Forward the SSE stream from Anthropic

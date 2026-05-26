@@ -32,8 +32,8 @@ export function AnalysisLimitModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-pink-500/10">
-            <Lock className="h-6 w-6 text-pink-500" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+            <Lock className="h-6 w-6 text-muted-foreground" />
           </div>
           <DialogTitle className="text-center text-xl">
             {isAuthenticated
@@ -64,15 +64,15 @@ export function AnalysisLimitModal({
             </h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
-                <Zap className="h-4 w-4 text-pink-500" />
+                <Zap className="h-4 w-4 text-primary" />
                 <span>20 analyses per month</span>
               </li>
               <li className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-pink-500" />
+                <TrendingUp className="h-4 w-4 text-primary" />
                 <span>200 videos per analysis</span>
               </li>
               <li className="flex items-center gap-2">
-                <Crown className="h-4 w-4 text-pink-500" />
+                <Crown className="h-4 w-4 text-primary" />
                 <span>Unlimited CSV export</span>
               </li>
             </ul>
@@ -82,7 +82,7 @@ export function AnalysisLimitModal({
         <DialogFooter className="flex-col gap-2 sm:flex-col">
           {isAuthenticated ? (
             <>
-              <Button asChild className="w-full bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600">
+              <Button asChild className="w-full">
                 <Link to="/pricing">
                   <Zap className="mr-2 h-4 w-4" />
                   View plans
@@ -98,7 +98,7 @@ export function AnalysisLimitModal({
             </>
           ) : (
             <>
-              <Button asChild className="w-full bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600">
+              <Button asChild className="w-full">
                 <a href="/api/auth/signin/google">
                   Create free account
                 </a>

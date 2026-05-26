@@ -6,9 +6,9 @@ import { useQuotaDisplay } from "#/lib/stripe/quota-context";
 
 const TIER_COLORS = {
   free: "text-muted-foreground",
-  creator: "text-pink-500",
-  pro: "text-violet-500",
-  agency: "text-amber-500",
+  creator: "text-primary",
+  pro: "text-primary",
+  agency: "text-primary",
 } as const;
 
 const TIER_LABELS = {
@@ -100,7 +100,7 @@ export function QuotaSummaryCard() {
           asChild
           variant={showUpgrade ? "default" : "outline"}
           size="sm"
-          className={`mt-3 w-full text-xs ${showUpgrade ? "bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600" : ""}`}
+          className="mt-3 w-full text-xs"
         >
           <Link to="/pricing">
             <Sparkles className="mr-1 h-3 w-3" />

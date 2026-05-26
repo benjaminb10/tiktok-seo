@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback, memo } from "react";
 import { Send, MessageSquare, Trash2, Sparkles } from "lucide-react";
 import { Button } from "#/components/ui/button";
 import { Input } from "#/components/ui/input";
@@ -22,12 +22,23 @@ export function ChatSidebar() {
     }
   }, [messages]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
     send(input);
     setInput("");
-  };
+  }, [input, isLoading, send]);
+
+  // Memoized handlers for suggested questions
+  const handleSuggest1 = useCallback(() => {
+    send("What are my best performing videos?");
+  }, [send]);
+  const handleSuggest2 = useCallback(() => {
+    send("Which hashtags work best?");
+  }, [send]);
+  const handleSuggest3 = useCallback(() => {
+    send("How can I improve my engagement?");
+  }, [send]);
 
   return (
     <div className="flex h-full w-[400px] flex-col border-l bg-background">
@@ -75,33 +86,35 @@ export function ChatSidebar() {
               <div className="mt-2 space-y-1.5">
                 <SuggestedQuestion
                   text="What are my best performing videos?"
-                  onClick={() => send("What are my best performing videos?")}
+                  onClick={handleSuggest1}
                 />
                 <SuggestedQuestion
                   text="Which hashtags work best?"
-                  onClick={() => send("Which hashtags work best?")}
+                  onClick={handleSuggest2}
                 />
                 <SuggestedQuestion
                   text="How can I improve my engagement?"
-                  onClick={() => send("How can I improve my engagement?")}
+                  onClick={handleSuggest3}
                 />
               </div>
             </div>
           ) : (
-            messages.map((message) => (
-              <ChatMessage key={message.id} message={message} />
-            ))
-          )}
-          {isLoading && messages.length > 0 && messages[messages.length - 1].content === "" && (
-            <div className="flex justify-start">
-              <div className="max-w-[85%] rounded-lg bg-muted px-3 py-2">
-                <div className="flex gap-1">
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/50 [animation-delay:-0.3s]" />
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/50 [animation-delay:-0.15s]" />
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/50" />
+            <>
+              {messages.map((message) => (
+                <ChatMessage key={message.id} message={message} />
+              ))}
+              {isLoading && messages.length > 0 && messages[messages.length - 1].content === "" && (
+                <div className="flex justify-start">
+                  <div className="max-w-[85%] rounded-lg bg-muted px-3 py-2">
+                    <div className="flex gap-1">
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/50 [animation-delay:-0.3s]" />
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/50 [animation-delay:-0.15s]" />
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/50" />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -146,7 +159,7 @@ export function ChatSidebar() {
   );
 }
 
-function SuggestedQuestion({
+const SuggestedQuestion = memo(function SuggestedQuestion({
   text,
   onClick,
 }: {
@@ -162,4 +175,4 @@ function SuggestedQuestion({
       {text}
     </button>
   );
-}
+});

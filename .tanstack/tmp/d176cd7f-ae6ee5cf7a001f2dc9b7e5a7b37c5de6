@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProfilesRouteImport } from './routes/profiles'
@@ -21,7 +22,11 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as AnalysesRouteImport } from './routes/analyses'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ToolsHashtagGeneratorRouteImport } from './routes/tools/hashtag-generator'
+import { Route as ToolsHashtagExtractorRouteImport } from './routes/tools/hashtag-extractor'
+import { Route as ToolsEngagementCalculatorRouteImport } from './routes/tools/engagement-calculator'
 import { Route as ProfileUsernameRouteImport } from './routes/profile.$username'
+import { Route as ApiToolsGenerateHashtagsRouteImport } from './routes/api/tools/generate-hashtags'
 import { Route as ApiThumbnailVideoIdRouteImport } from './routes/api/thumbnail/$videoId'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 import { Route as ApiStripePortalRouteImport } from './routes/api/stripe/portal'
@@ -36,6 +41,11 @@ import { Route as ApiSidecarJobsJobIdProgressRouteImport } from './routes/api/si
 import { Route as ApiSidecarJobsJobIdFailRouteImport } from './routes/api/sidecar/jobs/$jobId/fail'
 import { Route as ApiSidecarJobsJobIdCompleteRouteImport } from './routes/api/sidecar/jobs/$jobId/complete'
 
+const ToolsRoute = ToolsRouteImport.update({
+  id: '/tools',
+  path: '/tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -96,11 +106,33 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ToolsHashtagGeneratorRoute = ToolsHashtagGeneratorRouteImport.update({
+  id: '/hashtag-generator',
+  path: '/hashtag-generator',
+  getParentRoute: () => ToolsRoute,
+} as any)
+const ToolsHashtagExtractorRoute = ToolsHashtagExtractorRouteImport.update({
+  id: '/hashtag-extractor',
+  path: '/hashtag-extractor',
+  getParentRoute: () => ToolsRoute,
+} as any)
+const ToolsEngagementCalculatorRoute =
+  ToolsEngagementCalculatorRouteImport.update({
+    id: '/engagement-calculator',
+    path: '/engagement-calculator',
+    getParentRoute: () => ToolsRoute,
+  } as any)
 const ProfileUsernameRoute = ProfileUsernameRouteImport.update({
   id: '/profile/$username',
   path: '/profile/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiToolsGenerateHashtagsRoute =
+  ApiToolsGenerateHashtagsRouteImport.update({
+    id: '/api/tools/generate-hashtags',
+    path: '/api/tools/generate-hashtags',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiThumbnailVideoIdRoute = ApiThumbnailVideoIdRouteImport.update({
   id: '/api/thumbnail/$videoId',
   path: '/api/thumbnail/$videoId',
@@ -182,7 +214,11 @@ export interface FileRoutesByFullPath {
   '/profiles': typeof ProfilesRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/tools': typeof ToolsRouteWithChildren
   '/profile/$username': typeof ProfileUsernameRoute
+  '/tools/engagement-calculator': typeof ToolsEngagementCalculatorRoute
+  '/tools/hashtag-extractor': typeof ToolsHashtagExtractorRoute
+  '/tools/hashtag-generator': typeof ToolsHashtagGeneratorRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$handle': typeof ApiAvatarHandleRoute
   '/api/chat/stream': typeof ApiChatStreamRoute
@@ -192,6 +228,7 @@ export interface FileRoutesByFullPath {
   '/api/stripe/portal': typeof ApiStripePortalRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/api/thumbnail/$videoId': typeof ApiThumbnailVideoIdRoute
+  '/api/tools/generate-hashtags': typeof ApiToolsGenerateHashtagsRoute
   '/api/og/profile/$username': typeof ApiOgProfileUsernameRoute
   '/api/sidecar/jobs/$jobId/complete': typeof ApiSidecarJobsJobIdCompleteRoute
   '/api/sidecar/jobs/$jobId/fail': typeof ApiSidecarJobsJobIdFailRoute
@@ -210,7 +247,11 @@ export interface FileRoutesByTo {
   '/profiles': typeof ProfilesRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/tools': typeof ToolsRouteWithChildren
   '/profile/$username': typeof ProfileUsernameRoute
+  '/tools/engagement-calculator': typeof ToolsEngagementCalculatorRoute
+  '/tools/hashtag-extractor': typeof ToolsHashtagExtractorRoute
+  '/tools/hashtag-generator': typeof ToolsHashtagGeneratorRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$handle': typeof ApiAvatarHandleRoute
   '/api/chat/stream': typeof ApiChatStreamRoute
@@ -220,6 +261,7 @@ export interface FileRoutesByTo {
   '/api/stripe/portal': typeof ApiStripePortalRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/api/thumbnail/$videoId': typeof ApiThumbnailVideoIdRoute
+  '/api/tools/generate-hashtags': typeof ApiToolsGenerateHashtagsRoute
   '/api/og/profile/$username': typeof ApiOgProfileUsernameRoute
   '/api/sidecar/jobs/$jobId/complete': typeof ApiSidecarJobsJobIdCompleteRoute
   '/api/sidecar/jobs/$jobId/fail': typeof ApiSidecarJobsJobIdFailRoute
@@ -239,7 +281,11 @@ export interface FileRoutesById {
   '/profiles': typeof ProfilesRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/tools': typeof ToolsRouteWithChildren
   '/profile/$username': typeof ProfileUsernameRoute
+  '/tools/engagement-calculator': typeof ToolsEngagementCalculatorRoute
+  '/tools/hashtag-extractor': typeof ToolsHashtagExtractorRoute
+  '/tools/hashtag-generator': typeof ToolsHashtagGeneratorRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$handle': typeof ApiAvatarHandleRoute
   '/api/chat/stream': typeof ApiChatStreamRoute
@@ -249,6 +295,7 @@ export interface FileRoutesById {
   '/api/stripe/portal': typeof ApiStripePortalRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/api/thumbnail/$videoId': typeof ApiThumbnailVideoIdRoute
+  '/api/tools/generate-hashtags': typeof ApiToolsGenerateHashtagsRoute
   '/api/og/profile/$username': typeof ApiOgProfileUsernameRoute
   '/api/sidecar/jobs/$jobId/complete': typeof ApiSidecarJobsJobIdCompleteRoute
   '/api/sidecar/jobs/$jobId/fail': typeof ApiSidecarJobsJobIdFailRoute
@@ -269,7 +316,11 @@ export interface FileRouteTypes {
     | '/profiles'
     | '/settings'
     | '/terms'
+    | '/tools'
     | '/profile/$username'
+    | '/tools/engagement-calculator'
+    | '/tools/hashtag-extractor'
+    | '/tools/hashtag-generator'
     | '/api/auth/$'
     | '/api/avatar/$handle'
     | '/api/chat/stream'
@@ -279,6 +330,7 @@ export interface FileRouteTypes {
     | '/api/stripe/portal'
     | '/api/stripe/webhook'
     | '/api/thumbnail/$videoId'
+    | '/api/tools/generate-hashtags'
     | '/api/og/profile/$username'
     | '/api/sidecar/jobs/$jobId/complete'
     | '/api/sidecar/jobs/$jobId/fail'
@@ -297,7 +349,11 @@ export interface FileRouteTypes {
     | '/profiles'
     | '/settings'
     | '/terms'
+    | '/tools'
     | '/profile/$username'
+    | '/tools/engagement-calculator'
+    | '/tools/hashtag-extractor'
+    | '/tools/hashtag-generator'
     | '/api/auth/$'
     | '/api/avatar/$handle'
     | '/api/chat/stream'
@@ -307,6 +363,7 @@ export interface FileRouteTypes {
     | '/api/stripe/portal'
     | '/api/stripe/webhook'
     | '/api/thumbnail/$videoId'
+    | '/api/tools/generate-hashtags'
     | '/api/og/profile/$username'
     | '/api/sidecar/jobs/$jobId/complete'
     | '/api/sidecar/jobs/$jobId/fail'
@@ -325,7 +382,11 @@ export interface FileRouteTypes {
     | '/profiles'
     | '/settings'
     | '/terms'
+    | '/tools'
     | '/profile/$username'
+    | '/tools/engagement-calculator'
+    | '/tools/hashtag-extractor'
+    | '/tools/hashtag-generator'
     | '/api/auth/$'
     | '/api/avatar/$handle'
     | '/api/chat/stream'
@@ -335,6 +396,7 @@ export interface FileRouteTypes {
     | '/api/stripe/portal'
     | '/api/stripe/webhook'
     | '/api/thumbnail/$videoId'
+    | '/api/tools/generate-hashtags'
     | '/api/og/profile/$username'
     | '/api/sidecar/jobs/$jobId/complete'
     | '/api/sidecar/jobs/$jobId/fail'
@@ -354,6 +416,7 @@ export interface RootRouteChildren {
   ProfilesRoute: typeof ProfilesRoute
   SettingsRoute: typeof SettingsRoute
   TermsRoute: typeof TermsRoute
+  ToolsRoute: typeof ToolsRouteWithChildren
   ProfileUsernameRoute: typeof ProfileUsernameRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAvatarHandleRoute: typeof ApiAvatarHandleRoute
@@ -364,6 +427,7 @@ export interface RootRouteChildren {
   ApiStripePortalRoute: typeof ApiStripePortalRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
   ApiThumbnailVideoIdRoute: typeof ApiThumbnailVideoIdRoute
+  ApiToolsGenerateHashtagsRoute: typeof ApiToolsGenerateHashtagsRoute
   ApiOgProfileUsernameRoute: typeof ApiOgProfileUsernameRoute
   ApiSidecarJobsJobIdCompleteRoute: typeof ApiSidecarJobsJobIdCompleteRoute
   ApiSidecarJobsJobIdFailRoute: typeof ApiSidecarJobsJobIdFailRoute
@@ -372,6 +436,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tools': {
+      id: '/tools'
+      path: '/tools'
+      fullPath: '/tools'
+      preLoaderRoute: typeof ToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -456,11 +527,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tools/hashtag-generator': {
+      id: '/tools/hashtag-generator'
+      path: '/hashtag-generator'
+      fullPath: '/tools/hashtag-generator'
+      preLoaderRoute: typeof ToolsHashtagGeneratorRouteImport
+      parentRoute: typeof ToolsRoute
+    }
+    '/tools/hashtag-extractor': {
+      id: '/tools/hashtag-extractor'
+      path: '/hashtag-extractor'
+      fullPath: '/tools/hashtag-extractor'
+      preLoaderRoute: typeof ToolsHashtagExtractorRouteImport
+      parentRoute: typeof ToolsRoute
+    }
+    '/tools/engagement-calculator': {
+      id: '/tools/engagement-calculator'
+      path: '/engagement-calculator'
+      fullPath: '/tools/engagement-calculator'
+      preLoaderRoute: typeof ToolsEngagementCalculatorRouteImport
+      parentRoute: typeof ToolsRoute
+    }
     '/profile/$username': {
       id: '/profile/$username'
       path: '/profile/$username'
       fullPath: '/profile/$username'
       preLoaderRoute: typeof ProfileUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/tools/generate-hashtags': {
+      id: '/api/tools/generate-hashtags'
+      path: '/api/tools/generate-hashtags'
+      fullPath: '/api/tools/generate-hashtags'
+      preLoaderRoute: typeof ApiToolsGenerateHashtagsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/thumbnail/$videoId': {
@@ -557,6 +656,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ToolsRouteChildren {
+  ToolsEngagementCalculatorRoute: typeof ToolsEngagementCalculatorRoute
+  ToolsHashtagExtractorRoute: typeof ToolsHashtagExtractorRoute
+  ToolsHashtagGeneratorRoute: typeof ToolsHashtagGeneratorRoute
+}
+
+const ToolsRouteChildren: ToolsRouteChildren = {
+  ToolsEngagementCalculatorRoute: ToolsEngagementCalculatorRoute,
+  ToolsHashtagExtractorRoute: ToolsHashtagExtractorRoute,
+  ToolsHashtagGeneratorRoute: ToolsHashtagGeneratorRoute,
+}
+
+const ToolsRouteWithChildren = ToolsRoute._addFileChildren(ToolsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -570,6 +683,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfilesRoute: ProfilesRoute,
   SettingsRoute: SettingsRoute,
   TermsRoute: TermsRoute,
+  ToolsRoute: ToolsRouteWithChildren,
   ProfileUsernameRoute: ProfileUsernameRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAvatarHandleRoute: ApiAvatarHandleRoute,
@@ -580,6 +694,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiStripePortalRoute: ApiStripePortalRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
   ApiThumbnailVideoIdRoute: ApiThumbnailVideoIdRoute,
+  ApiToolsGenerateHashtagsRoute: ApiToolsGenerateHashtagsRoute,
   ApiOgProfileUsernameRoute: ApiOgProfileUsernameRoute,
   ApiSidecarJobsJobIdCompleteRoute: ApiSidecarJobsJobIdCompleteRoute,
   ApiSidecarJobsJobIdFailRoute: ApiSidecarJobsJobIdFailRoute,

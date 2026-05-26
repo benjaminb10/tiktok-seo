@@ -30,8 +30,8 @@ export function AiQuotaModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-violet-500/10">
-            <Bot className="h-6 w-6 text-violet-500" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <Bot className="h-6 w-6 text-primary" />
           </div>
           <DialogTitle className="text-center text-xl">
             AI insights limit reached
@@ -59,15 +59,15 @@ export function AiQuotaModal({
             </h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-violet-500" />
+                <Sparkles className="h-4 w-4 text-primary" />
                 <span>Unlimited AI analyses</span>
               </li>
               <li className="flex items-center gap-2">
-                <Zap className="h-4 w-4 text-violet-500" />
+                <Zap className="h-4 w-4 text-primary" />
                 <span>Personalized insights for your videos</span>
               </li>
               <li className="flex items-center gap-2">
-                <Bot className="h-4 w-4 text-violet-500" />
+                <Bot className="h-4 w-4 text-primary" />
                 <span>Tips to improve your engagement</span>
               </li>
             </ul>
@@ -75,7 +75,7 @@ export function AiQuotaModal({
         </div>
 
         <DialogFooter className="flex-col gap-2 sm:flex-col">
-          <Button asChild className="w-full bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600">
+          <Button asChild className="w-full">
             <Link to="/pricing">
               <Sparkles className="mr-2 h-4 w-4" />
               Upgrade to Creator - $29/mo

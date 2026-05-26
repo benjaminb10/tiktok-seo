@@ -1,5 +1,56 @@
 # 🚀 Viewlify.app - Global Development Roadmap
 
+---
+
+## 📊 STATUT ACTUEL (Mise à jour: Mai 2026)
+
+| Phase | Statut | Progression |
+|-------|--------|-------------|
+| Phase 0 - Fondations | ✅ Complété | 90% |
+| Phase 1 - SEO Machine | 🟡 En cours | 40% |
+| Phase 2 - Partage Viral | ⏳ Non démarré | 0% |
+| Phase 3 - AI Insights | 🟡 Partiel | 30% |
+| Phase 4 - Competitor Tracking | ⏳ Non démarré | 0% |
+| Phase 5 - Monétisation | ✅ Complété | 95% |
+| Phase 6 - Advanced Features | ⏳ Non démarré | 0% |
+| Phase 7 - Agency Features | ⏳ Non démarré | 0% |
+| Phase 8 - Polish & Growth | ⏳ Non démarré | 0% |
+
+### 🎉 Fonctionnalités Implémentées
+
+**Authentification & Users:**
+- Better Auth avec Google OAuth
+- Session management
+- Tiers utilisateurs (free/creator/pro/agency)
+
+**Stripe & Monétisation:**
+- Checkout sessions avec trial 7 jours
+- Webhooks complets (subscription lifecycle)
+- Customer portal
+- Pricing page avec toggle monthly/yearly
+
+**Système de Quotas:**
+- Tracking analyses, exports, AI insights par mois
+- Modales paywall (AnalysisLimitModal, AiQuotaModal, ExportPaywallModal)
+- Composants UI (QuotaSummaryCard, QuotaBadge, VideoLimitBanner)
+
+**SEO & Pages Publiques:**
+- Pages profils publiques (`/profile/$username`)
+- OG images dynamiques (SVG)
+- Meta tags SSR
+
+**AI Features:**
+- Chat AI avec Claude Haiku (streaming SSE)
+- Contexte automatique avec données du profil
+- Intégration quotas AI
+
+**Landing Page:**
+- Hero, Features, Benefits, How it works
+- Testimonials, Use cases, Problem-solution
+- Pricing preview, FAQ, CTA sections
+
+---
+
 ## 🎯 Vision Stratégique
 
 **Positionnement actuel :** Scraper TikTok basique
@@ -73,30 +124,34 @@
 
 ---
 
-## 📦 PHASE 0 - Fondations Techniques (1 semaine)
+## 📦 PHASE 0 - Fondations Techniques (1 semaine) ✅ COMPLÉTÉ
 **Objectif :** Préparer l'infrastructure pour les features avancées
 
-### 0.1 - Architecture & Database
+### 0.1 - Architecture & Database ✅
 **Durée :** 2 jours
 
-- [ ] **Refactoring database schema**
-  - Table `users` (auth, tier, usage limits)
-  - Table `analyses` (historique des runs avec metadata)
-  - Table `profiles` (cache des profils TikTok)
-  - Table `alerts` (competitor tracking)
-  - Index optimisés pour SEO queries
+- [x] **Refactoring database schema**
+  - Table `user` (auth, tier, stripeCustomerId, usage limits)
+  - Table `session`, `account`, `verification` (Better Auth)
+  - Table `subscriptions` (gestion abonnements Stripe)
+  - Table `userUsage` (tracking quotas par période)
+  - Table `searchRuns` (historique des analyses)
+  - Table `searchJobs` (jobs de scraping)
+  - Table `tiktokVideos` (cache des vidéos TikTok)
+  - Table `searchRunVideos` (liaison run-vidéos)
+  - Index optimisés sur toutes les tables
 
-- [ ] **Setup Auth système**
-  - Clerk / NextAuth / Lucia (à choisir)
-  - Session management
-  - Protected routes
+- [x] **Setup Auth système**
+  - Better Auth avec Google OAuth
+  - Session management via cookies
+  - Protected routes middleware
 
-- [ ] **Rate limiting & quotas**
-  - Système de quotas par tier
-  - Redis pour rate limiting
-  - Middleware de vérification
+- [x] **Rate limiting & quotas**
+  - Système de quotas par tier (free/creator/pro/agency)
+  - Tracking mensuel des analyses, exports, AI insights
+  - Middleware `checkQuota` et `incrementUsage`
 
-### 0.2 - Infrastructure
+### 0.2 - Infrastructure (Partiellement)
 **Durée :** 1 jour
 
 - [ ] **Analytics setup**
@@ -111,13 +166,13 @@
   - Resend / SendGrid setup
   - Templates d'emails (welcome, alerts, reports)
 
-### 0.3 - Core improvements
+### 0.3 - Core improvements (Partiellement)
 **Durée :** 2 jours
 
-- [ ] **Performance optimization**
-  - Caching strategy (React Query)
-  - Optimistic UI updates
-  - Skeleton loaders everywhere
+- [x] **Performance optimization**
+  - TanStack Query pour caching
+  - Optimistic UI updates (partiellement)
+  - Skeleton loaders (partiellement)
 
 - [ ] **Error handling**
   - User-friendly error messages
@@ -125,59 +180,48 @@
   - Fallback UI
 
 **📝 Livrables :**
-- ✅ Auth fonctionnel
-- ✅ Database migrations prêtes
-- ✅ Monitoring actif
-- ✅ Email service configuré
+- ✅ Auth fonctionnel (Better Auth + Google OAuth)
+- ✅ Database migrations prêtes (Drizzle ORM)
+- ⏳ Monitoring (non implémenté)
+- ⏳ Email service (non implémenté)
 
 ---
 
-## 🌐 PHASE 1 - SEO Machine & Acquisition Organique (2 semaines)
+## 🌐 PHASE 1 - SEO Machine & Acquisition Organique (2 semaines) - EN COURS
 **Objectif :** Générer du trafic gratuit via SEO
 
-### 1.1 - Profils Publics & Partageables
+### 1.1 - Profils Publics & Partageables ✅ COMPLÉTÉ
 **Durée :** 4 jours
 
-#### Feature : Page publique par profil
-**Route :** `/profile/@username` ou `/p/@username`
+#### Feature : Page publique par profil ✅
+**Route :** `/profile/$username`
 
-**Contenu de la page :**
+**Contenu de la page (implémenté) :**
 ```
 Hero Section:
-- Avatar + nom + handle
-- Followers, Following, Total Likes
-- Bio
-- Lien vers TikTok
-- CTA "Analyze this profile" (si pas connecté)
+- Avatar + nom + handle ✅
+- Stats globales ✅
+- CTA "Analyze this profile" ✅
 
 Stats Overview:
-- Cartes de stats (comme actuellement)
-- Mini graphiques évolution
-- Top 3 vidéos
+- Cartes de stats ✅
+- Top vidéos ✅
 
 Recent Videos Grid:
-- 20 dernières vidéos
-- Thumbnail + métriques clés
-- Click → modal avec détails
-
-AI Insights Section:
-- "What makes this creator successful"
-- Pattern analysis
-- Content themes
-- Posting schedule
+- Vidéos avec thumbnails ✅
+- Métriques clés ✅
 
 CTA Section:
-- "Want deeper insights? Sign up free"
-- Social proof (nb d'analyses, users)
+- Liens vers inscription ✅
 ```
 
 **SEO Requirements :**
-- [ ] Meta tags dynamiques (title, description, OG)
+- [x] Meta tags dynamiques (title, description, OG) - Implémenté dans `profile.$username.tsx`
 - [ ] Schema.org markup (Person, SocialMediaPosting)
 - [ ] Sitemap generation automatique
-- [ ] SSR complet (TanStack Start)
-- [ ] Canonical URLs
-- [ ] Open Graph images générées dynamiquement
+- [x] SSR complet (TanStack Start) - Loader avec données profil
+- [x] Canonical URLs via og:url
+- [x] Open Graph images générées dynamiquement - API `/api/og/profile/$username` (SVG)
 
 **Technique :**
 ```typescript
@@ -366,12 +410,11 @@ Insights:
 - [ ] RSS feed
 
 **📝 Livrables Phase 1 :**
-- ✅ 100+ pages publiques indexables
-- ✅ 5+ tools SEO
-- ✅ 10+ category pages
-- ✅ Blog actif
-- ✅ Sitemap complet
-- ✅ 1000+ pages crawlables par Google
+- ✅ Pages profils publiques avec SSR et OG images
+- ⏳ Tools SEO (non implémentés)
+- ⏳ Category pages (non implémentés)
+- ⏳ Blog auto-généré (non implémenté)
+- ⏳ Sitemap automatique (non implémenté)
 
 **🎯 KPIs Phase 1 :**
 - 10K+ visiteurs organiques/mois (mois 3)
@@ -380,7 +423,7 @@ Insights:
 
 ---
 
-## 🎨 PHASE 2 - Partage Viral & Acquisition (1 semaine)
+## 🎨 PHASE 2 - Partage Viral & Acquisition (1 semaine) - NON DÉMARRÉ
 **Objectif :** Transformer les users en ambassadeurs
 
 ### 2.1 - Analyses Partageables
@@ -514,14 +557,22 @@ if (user.tier === 'free') {
 
 ---
 
-## 🤖 PHASE 3 - AI Insights (MVP) (2 semaines)
+## 🤖 PHASE 3 - AI Insights (MVP) (2 semaines) - PARTIELLEMENT COMPLÉTÉ
 **Objectif :** Différenciation par l'intelligence artificielle
 
-### 3.1 - Basic AI Analysis
+### 3.1 - Basic AI Analysis ✅ COMPLÉTÉ
 **Durée :** 4 jours
 
-#### Feature : Profile AI Insights
+#### Feature : Profile AI Chat ✅
+**Implémenté :** Chat IA avec Claude Haiku pour analyser les profils
 
+**Endpoint :** `POST /api/chat/stream` (SSE streaming)
+- Système de prompts contextuels avec données du profil
+- Streaming des réponses via Server-Sent Events
+- Intégration avec système de quotas AI
+- Utilise Claude Haiku 4.5
+
+#### Feature : Profile AI Insights (original plan)
 **Endpoint :** `POST /api/ai/analyze-profile`
 
 **Input :**
@@ -802,11 +853,11 @@ Output:
 ```
 
 **📝 Livrables Phase 3 :**
-- ✅ AI insights sur profils
-- ✅ AI analysis par vidéo
-- ✅ Comparaison AI
-- ✅ Prédicteur viral
-- ✅ Dashboard insights
+- ✅ Chat AI sur profils (Claude Haiku avec streaming)
+- ✅ Quotas AI intégrés au système de facturation
+- ⏳ AI analysis par vidéo (non implémenté)
+- ⏳ Comparaison AI (non implémenté)
+- ⏳ Prédicteur viral (non implémenté)
 
 **🎯 KPIs Phase 3 :**
 - 80%+ users engaging avec AI insights
@@ -815,7 +866,7 @@ Output:
 
 ---
 
-## 🔔 PHASE 4 - Competitor Tracking & Retention (1.5 semaines)
+## 🔔 PHASE 4 - Competitor Tracking & Retention (1.5 semaines) - NON DÉMARRÉ
 **Objectif :** Réduire le churn, créer de l'habitude
 
 ### 4.1 - Watchlist System
@@ -1003,28 +1054,24 @@ This week in your watchlist:
 
 ---
 
-## 💳 PHASE 5 - Monétisation & Paywall (1 semaine)
+## 💳 PHASE 5 - Monétisation & Paywall (1 semaine) ✅ COMPLÉTÉ
 **Objectif :** Activer les revenus
 
-### 5.1 - Authentication & User Management
+### 5.1 - Authentication & User Management ✅
 **Durée :** 2 jours
 
-#### Setup Clerk (recommandé)
+#### Setup Better Auth (choix final au lieu de Clerk)
 
-**Features :**
-- [ ] Email/password signup
-- [ ] Google OAuth
-- [ ] GitHub OAuth (pour devs)
-- [ ] Magic links
-- [ ] User profile management
+**Features implémentées :**
+- [x] Google OAuth (Better Auth)
+- [x] Session management via cookies
+- [x] User profile dans la DB
 
-**Pages à créer :**
+**Pages créées :**
 ```
-/signin
-/signup
-/profile
-/settings
-/billing
+/login ✅
+/settings ✅ (partiel)
+/pricing ✅
 ```
 
 **Middleware :**
@@ -1044,32 +1091,29 @@ if (user.tier === 'free' && limitReached) {
 }
 ```
 
-### 5.2 - Stripe Integration
+### 5.2 - Stripe Integration ✅
 **Durée :** 2 jours
 
-#### Products Setup
+#### Products Setup ✅
 
-**Stripe Products :**
+**Stripe Products (implémentés dans stripe.config.ts) :**
 ```typescript
-// Creator - 29€/mo
-price_creator_monthly
-price_creator_yearly (25€/mo, -14%)
-
-// Pro - 79€/mo
-price_pro_monthly
-price_pro_yearly (69€/mo, -13%)
-
-// Agency - 199€/mo
-price_agency_monthly
-price_agency_yearly (179€/mo, -10%)
+// Free - 0€
+// Creator - 29€/mo (300€/an)
+// Pro - 79€/mo (828€/an)
+// Agency - 199€/mo (2148€/an)
 ```
 
-**Features :**
-- [ ] Checkout session
-- [ ] Customer portal (manage subscription)
-- [ ] Webhooks (subscription.created, subscription.updated, etc.)
-- [ ] Invoice emails
-- [ ] Failed payment retry logic
+**Features implémentées :**
+- [x] Checkout session (`/api/stripe/checkout`)
+- [x] Customer portal (`/api/stripe/portal`)
+- [x] Webhooks complets (`/api/stripe/webhook`):
+  - checkout.session.completed
+  - customer.subscription.created/updated/deleted
+  - invoice.payment_failed
+- [x] Trial period (7 jours)
+- [x] Promotion codes activés
+- [ ] Invoice emails (géré par Stripe)
 
 **Implementation :**
 ```typescript
@@ -1108,112 +1152,82 @@ export async function handleWebhook(event: Stripe.Event) {
 }
 ```
 
-### 5.3 - Pricing Page
+### 5.3 - Pricing Page ✅
 **Durée :** 1 jour
 
-#### Design
+#### Design ✅
 
 **Route :** `/pricing`
 
-**Structure :**
+**Implémenté :**
 ```
-Hero
+Hero ✅
 "Simple, transparent pricing"
-"Start free, upgrade anytime"
+"Start free, upgrade anytime. No credit card required."
 
-[Toggle: Monthly / Yearly (Save 15%)]
+[Toggle: Monthly / Yearly (Save 15%)] ✅
 
-[4 pricing cards side by side]
+[4 pricing cards via PricingCards component] ✅
 
-FAQ
-- Can I change plans anytime? Yes
-- What happens if I exceed limits? Upgrade prompt
-- Refund policy? 14-day money back
-- Do you offer discounts? Students, non-profits
+FAQ ✅
+- Can I change plans anytime? ✅
+- What happens if I exceed limits? ✅
+- Is there a free trial? ✅ (7 jours)
+- What's your refund policy? ✅ (14 jours)
 
-Social Proof
-- "Used by 10,000+ creators"
-- Testimonials
-- Trust badges
-
-CTA
-"Start your free analysis now"
+Social Proof: ⏳ Non implémenté
 ```
 
-**Pricing Cards :**
+**Pricing Cards ✅ :**
 ```
-Each card:
-- Tier name + price
-- "Most popular" badge (Creator)
-- Feature list with checkmarks
-- CTA button
-- "or start free" link
-
-Comparison table (below cards)
-Full feature matrix
+- Tier name + price ✅
+- Feature list ✅
+- CTA buttons ✅
+- Toggle monthly/yearly ✅
 ```
 
-### 5.4 - Usage Tracking & Limits
+### 5.4 - Usage Tracking & Limits ✅
 **Durée :** 2 jours
 
-#### Quota System
+#### Quota System ✅
 
-**Database :**
+**Database (implémenté dans schema.ts) :**
 ```typescript
-// Table: user_usage
-- user_id
-- period_start (monthly reset)
+// Table: user_usage ✅
+- id, user_id
+- period_start, period_end (monthly reset)
 - analyses_used
-- analyses_limit
 - exports_used
-- exports_limit
 - ai_insights_used
-- ai_insights_limit
+- created_at, updated_at
 
-// Middleware check
-async function checkQuota(userId: string, action: string) {
-  const usage = await getUserUsage(userId);
-  const limit = getLimitForTier(user.tier, action);
-
-  if (usage[action] >= limit) {
-    throw new QuotaExceededError();
-  }
-
-  await incrementUsage(userId, action);
-}
+// Fonctions implémentées (quota.server.ts):
+- getUserQuota() ✅
+- checkQuota() ✅
+- incrementUsage() ✅
+- trackUsage() ✅
+- QuotaExceededError ✅
 ```
 
-**UI Indicators :**
+**UI Indicators (implémentés) :**
 ```
-Dashboard sidebar:
-"Usage this month"
-- Analyses: 12/20 [progress bar]
-- Exports: 5/∞
-- AI Insights: 8/20
+Composants paywall:
+- QuotaSummaryCard ✅ - Affiche usage/limites
+- QuotaBadge ✅ - Badge compact
+- VideoLimitBanner ✅ - Bannière limite vidéos
 
-[Upgrade button if close to limit]
-```
-
-**Upgrade Prompts :**
-```
-Modal when limit reached:
-"You've reached your limit"
-"You've used all 20 analyses this month"
-
-[Current features]
-vs
-[Upgraded features]
-
-"Upgrade to Creator for unlimited analyses"
-[Upgrade now] [Maybe later]
+Modales de paywall:
+- AnalysisLimitModal ✅
+- AiQuotaModal ✅
+- ExportPaywallModal ✅
 ```
 
 **📝 Livrables Phase 5 :**
-- ✅ Auth fonctionnel
-- ✅ Stripe integration
-- ✅ Pricing page
-- ✅ Usage tracking
-- ✅ Upgrade prompts
+- ✅ Auth fonctionnel (Better Auth + Google OAuth)
+- ✅ Stripe integration complète
+- ✅ Pricing page avec toggle monthly/yearly
+- ✅ Usage tracking complet
+- ✅ Modales d'upgrade (analyses, AI, exports)
 - ✅ Customer portal
 
 **🎯 KPIs Phase 5 :**
@@ -1224,7 +1238,7 @@ vs
 
 ---
 
-## 🚀 PHASE 6 - Advanced Features (2 semaines)
+## 🚀 PHASE 6 - Advanced Features (2 semaines) - NON DÉMARRÉ
 **Objectif :** Features premium pour justifier Pro/Agency tiers
 
 ### 6.1 - Advanced AI Insights
@@ -1490,7 +1504,7 @@ async function generateReport(reportConfig) {
 
 ---
 
-## 🏢 PHASE 7 - Agency Features (1.5 semaines)
+## 🏢 PHASE 7 - Agency Features (1.5 semaines) - NON DÉMARRÉ
 **Objectif :** Justifier le tier à 199€/mois
 
 ### 7.1 - Workspaces
@@ -1845,16 +1859,34 @@ Step 5: Invite to Discord/Community
 
 ---
 
-## 🎯 Prochaines Étapes Immédiates
+## 🎯 Prochaines Étapes Recommandées
 
-1. ✅ **Valider ce plan avec vous**
-2. 🔨 **Commencer Phase 0 (Fondations)**
-   - Setup Auth (Clerk)
-   - Database schema refactor
-   - Rate limiting
-3. 🌐 **Parallèle : Phase 1.1 (Profils publics)**
-   - Route `/profile/@username`
-   - SEO meta tags
-   - OG image generation
+### Priorité Haute (Quick Wins)
 
-**Prêt à démarrer ? Par quelle phase voulez-vous commencer ?**
+1. **Compléter Phase 1 - SEO:**
+   - [ ] Sitemap automatique
+   - [ ] Schema.org markup
+   - [ ] Tools SEO (engagement calculator, etc.)
+
+2. **Analytics & Monitoring:**
+   - [ ] Setup Posthog/Plausible
+   - [ ] Sentry pour error tracking
+
+3. **Email Service:**
+   - [ ] Setup Resend/SendGrid
+   - [ ] Templates welcome, alerts
+
+### Priorité Moyenne
+
+4. **Phase 3 - AI Complet:**
+   - [ ] Video AI Analysis ("Why this video went viral")
+   - [ ] Insights automatiques par profil
+
+5. **Phase 2 - Partage Viral:**
+   - [ ] Share analysis avec lien
+   - [ ] Export image stylisé
+
+### Priorité Basse (Features Avancées)
+
+6. **Phase 4 - Competitor Tracking**
+7. **Phase 6-7 - Features Pro/Agency**

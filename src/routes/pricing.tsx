@@ -14,7 +14,7 @@ function PricingPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <section className="border-b bg-gradient-to-br from-pink-50 via-violet-50 to-background py-16">
+      <section className="border-b bg-muted/30 py-16">
         <div className="mx-auto max-w-7xl px-4 text-center">
           <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
             Simple, transparent pricing
