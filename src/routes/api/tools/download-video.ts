@@ -32,7 +32,7 @@ async function resolveShortUrl(url: string): Promise<string> {
   }
 }
 
-// Get video data using TikWM API
+// Try multiple APIs to get video data
 async function getVideoData(videoId: string, originalUrl: string): Promise<{
   downloadUrl: string | null;
   thumbnail: string | null;
@@ -40,49 +40,97 @@ async function getVideoData(videoId: string, originalUrl: string): Promise<{
   author: string | null;
   error?: string;
 }> {
+  const errors: string[] = [];
+
+  // Method 1: Try tikcdn.io API
+  try {
+    const response = await fetch(`https://tikcdn.io/ssstik/${videoId}`, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      },
+    });
+
+    if (response.ok && response.headers.get("content-type")?.includes("video")) {
+      // This API returns the video directly, so we return the URL
+      return {
+        downloadUrl: `https://tikcdn.io/ssstik/${videoId}`,
+        thumbnail: null,
+        description: null,
+        author: null,
+      };
+    }
+  } catch (error) {
+    errors.push(`tikcdn: ${error}`);
+  }
+
+  // Method 2: Try TikWM API
   try {
     const formData = new URLSearchParams();
     formData.append("url", originalUrl);
     formData.append("hd", "1");
-
-    console.log("[TikWM] Fetching video data for:", originalUrl);
 
     const response = await fetch("https://www.tikwm.com/api/", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         "Accept": "application/json",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       },
       body: formData.toString(),
     });
 
-    console.log("[TikWM] Response status:", response.status);
-
-    if (!response.ok) {
-      const text = await response.text();
-      console.error("[TikWM] Error response:", text);
-      return { downloadUrl: null, thumbnail: null, description: null, author: null, error: `HTTP ${response.status}` };
+    if (response.ok) {
+      const data = await response.json();
+      if (data.code === 0 && data.data) {
+        const videoData = data.data;
+        return {
+          downloadUrl: videoData.hdplay || videoData.play || null,
+          thumbnail: videoData.cover || videoData.origin_cover || null,
+          description: videoData.title || null,
+          author: videoData.author?.unique_id || null,
+        };
+      }
+      errors.push(`tikwm: ${data.msg}`);
     }
-
-    const data = await response.json();
-    console.log("[TikWM] Response code:", data.code, "msg:", data.msg);
-
-    if (data.code === 0 && data.data) {
-      const videoData = data.data;
-      return {
-        downloadUrl: videoData.hdplay || videoData.play || null,
-        thumbnail: videoData.cover || videoData.origin_cover || null,
-        description: videoData.title || null,
-        author: videoData.author?.unique_id || null,
-      };
-    }
-
-    return { downloadUrl: null, thumbnail: null, description: null, author: null, error: data.msg || "Unknown error" };
   } catch (error) {
-    console.error("[TikWM] Exception:", error);
-    return { downloadUrl: null, thumbnail: null, description: null, author: null, error: String(error) };
+    errors.push(`tikwm: ${error}`);
   }
+
+  // Method 3: Try ttsave.app API
+  try {
+    const response = await fetch("https://ttsave.app/download", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept": "application/json",
+      },
+      body: `query=${encodeURIComponent(originalUrl)}&language_id=1`,
+    });
+
+    if (response.ok) {
+      const html = await response.text();
+      // Extract download URL from response
+      const hdMatch = html.match(/href="([^"]+)"[^>]*>.*?Without watermark.*?HD/s) ||
+                      html.match(/href="([^"]+)"[^>]*>.*?Without watermark/s);
+      if (hdMatch) {
+        return {
+          downloadUrl: hdMatch[1],
+          thumbnail: null,
+          description: null,
+          author: null,
+        };
+      }
+    }
+  } catch (error) {
+    errors.push(`ttsave: ${error}`);
+  }
+
+  return {
+    downloadUrl: null,
+    thumbnail: null,
+    description: null,
+    author: null,
+    error: errors.join("; ") || "All APIs failed"
+  };
 }
 
 export const Route = createFileRoute("/api/tools/download-video")({
