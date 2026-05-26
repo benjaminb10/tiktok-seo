@@ -7,7 +7,7 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ArrowUpDown, Download, Lock, Music, Plus } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Download, Lock, Music, Play, Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
@@ -28,13 +28,39 @@ import {
 } from "#/features/tiktok/formatters";
 import { VideoLimitBanner } from "#/features/paywall/video-limit-banner";
 import { useQuota } from "#/lib/stripe/quota-context";
-import type { UnifiedVideo, UnifiedVideoExtended } from "./types";
+import { getThumbnailUrl, type UnifiedVideo, type UnifiedVideoExtended } from "./types";
 
 function engagementRate(video: UnifiedVideo): number | null {
   if (!video.viewCount) return null;
   const interactions =
     (video.likeCount ?? 0) + (video.commentCount ?? 0) + (video.repostCount ?? 0);
   return interactions / video.viewCount;
+}
+
+function ThumbnailCell({ videoId, hasUrl, onClick }: { videoId: string; hasUrl: boolean; onClick: () => void }) {
+  const [imgError, setImgError] = useState(false);
+  const thumbnailUrl = getThumbnailUrl(videoId);
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="cursor-pointer"
+    >
+      {hasUrl && !imgError ? (
+        <img
+          src={thumbnailUrl}
+          alt=""
+          className="h-12 w-12 rounded object-cover hover:opacity-80 transition-opacity"
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <div className="h-12 w-12 rounded bg-gradient-to-br from-pink-500/10 to-violet-500/10 flex items-center justify-center hover:opacity-80 transition-opacity">
+          <Play className="h-4 w-4 text-muted-foreground/50" />
+        </div>
+      )}
+    </button>
+  );
 }
 
 function exportToCSV(videos: UnifiedVideo[], filename: string) {
@@ -154,21 +180,11 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
         header: "Video",
         size: 50,
         cell: ({ row }) => (
-          <button
-            type="button"
+          <ThumbnailCell
+            videoId={row.original.id}
+            hasUrl={!!row.original.thumbnailUrl}
             onClick={() => handleThumbnailClick(row.original)}
-            className="cursor-pointer"
-          >
-            {row.original.thumbnailUrl ? (
-              <img
-                src={row.original.thumbnailUrl}
-                alt=""
-                className="h-12 w-12 rounded object-cover hover:opacity-80 transition-opacity"
-              />
-            ) : (
-              <div className="h-12 w-12 rounded bg-muted hover:bg-muted/80 transition-colors" />
-            )}
-          </button>
+          />
         ),
       },
       {

@@ -1,7 +1,8 @@
-import { Eye, Heart } from "lucide-react";
+import { useState } from "react";
+import { Eye, Heart, Play } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "#/components/ui/card";
 import { formatNumber } from "#/features/tiktok/formatters";
-import type { UnifiedVideo } from "./types";
+import { getThumbnailUrl, type UnifiedVideo } from "./types";
 
 type RecentVideosPreviewProps = {
   videos: UnifiedVideo[];
@@ -46,6 +47,9 @@ type VideoThumbnailProps = {
 };
 
 function VideoThumbnail({ video, onClick }: VideoThumbnailProps) {
+  const [imgError, setImgError] = useState(false);
+  const thumbnailUrl = getThumbnailUrl(video.id);
+
   const handleClick = () => {
     if (onClick) {
       onClick(video);
@@ -55,14 +59,17 @@ function VideoThumbnail({ video, onClick }: VideoThumbnailProps) {
   const content = (
     <>
       {/* Thumbnail */}
-      {video.thumbnailUrl ? (
+      {video.thumbnailUrl && !imgError ? (
         <img
-          src={video.thumbnailUrl}
+          src={thumbnailUrl}
           alt={video.description || video.title || "TikTok video"}
           className="aspect-[9/16] w-full object-cover"
+          onError={() => setImgError(true)}
         />
       ) : (
-        <div className="aspect-[9/16] w-full bg-gradient-to-br from-pink-100 to-violet-100" />
+        <div className="aspect-[9/16] w-full bg-gradient-to-br from-pink-500/10 to-violet-500/10 flex items-center justify-center">
+          <Play className="h-8 w-8 text-muted-foreground/50" />
+        </div>
       )}
 
       {/* Video stats overlay */}

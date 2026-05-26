@@ -29,7 +29,6 @@ import { Route as ApiStripeCheckoutRouteImport } from './routes/api/stripe/check
 import { Route as ApiSidecarLeaseRouteImport } from './routes/api/sidecar/lease'
 import { Route as ApiSidecarHeartbeatRouteImport } from './routes/api/sidecar/heartbeat'
 import { Route as ApiChatStreamRouteImport } from './routes/api/chat/stream'
-import { Route as ApiAvatarHandleRouteImport } from './routes/api/avatar/$handle'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiOgProfileUsernameRouteImport } from './routes/api/og/profile.$username'
 import { Route as ApiSidecarJobsJobIdProgressRouteImport } from './routes/api/sidecar/jobs/$jobId/progress'
@@ -136,11 +135,6 @@ const ApiChatStreamRoute = ApiChatStreamRouteImport.update({
   path: '/api/chat/stream',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAvatarHandleRoute = ApiAvatarHandleRouteImport.update({
-  id: '/api/avatar/$handle',
-  path: '/api/avatar/$handle',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -184,7 +178,6 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/avatar/$handle': typeof ApiAvatarHandleRoute
   '/api/chat/stream': typeof ApiChatStreamRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
   '/api/sidecar/lease': typeof ApiSidecarLeaseRoute
@@ -212,7 +205,6 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/avatar/$handle': typeof ApiAvatarHandleRoute
   '/api/chat/stream': typeof ApiChatStreamRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
   '/api/sidecar/lease': typeof ApiSidecarLeaseRoute
@@ -241,7 +233,6 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/avatar/$handle': typeof ApiAvatarHandleRoute
   '/api/chat/stream': typeof ApiChatStreamRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
   '/api/sidecar/lease': typeof ApiSidecarLeaseRoute
@@ -271,7 +262,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/profile/$username'
     | '/api/auth/$'
-    | '/api/avatar/$handle'
     | '/api/chat/stream'
     | '/api/sidecar/heartbeat'
     | '/api/sidecar/lease'
@@ -299,7 +289,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/profile/$username'
     | '/api/auth/$'
-    | '/api/avatar/$handle'
     | '/api/chat/stream'
     | '/api/sidecar/heartbeat'
     | '/api/sidecar/lease'
@@ -327,7 +316,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/profile/$username'
     | '/api/auth/$'
-    | '/api/avatar/$handle'
     | '/api/chat/stream'
     | '/api/sidecar/heartbeat'
     | '/api/sidecar/lease'
@@ -356,7 +344,6 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   ProfileUsernameRoute: typeof ProfileUsernameRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
-  ApiAvatarHandleRoute: typeof ApiAvatarHandleRoute
   ApiChatStreamRoute: typeof ApiChatStreamRoute
   ApiSidecarHeartbeatRoute: typeof ApiSidecarHeartbeatRoute
   ApiSidecarLeaseRoute: typeof ApiSidecarLeaseRoute
@@ -512,13 +499,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatStreamRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/avatar/$handle': {
-      id: '/api/avatar/$handle'
-      path: '/api/avatar/$handle'
-      fullPath: '/api/avatar/$handle'
-      preLoaderRoute: typeof ApiAvatarHandleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -572,7 +552,6 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   ProfileUsernameRoute: ProfileUsernameRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
-  ApiAvatarHandleRoute: ApiAvatarHandleRoute,
   ApiChatStreamRoute: ApiChatStreamRoute,
   ApiSidecarHeartbeatRoute: ApiSidecarHeartbeatRoute,
   ApiSidecarLeaseRoute: ApiSidecarLeaseRoute,

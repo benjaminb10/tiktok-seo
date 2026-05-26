@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { LandingNavbar } from "#/components/landing-navbar";
 import { Sidebar } from "#/components/sidebar";
+import { WhatsAppButton } from "#/components/whatsapp-button";
 import { ChatProvider } from "#/features/chat/chat-context";
 import { ChatSidebar } from "#/features/chat/chat-sidebar";
 import { QuotaProvider } from "#/lib/stripe/quota-context";
@@ -53,6 +54,7 @@ function RootComponent() {
                 </main>
                 {showChatSidebar && <ChatSidebar />}
               </div>
+              <WhatsAppButton />
             </ChatProvider>
           </QuotaProvider>
           <Scripts />
@@ -69,6 +71,7 @@ function RootComponent() {
       <body>
         <LandingNavbar />
         <Outlet />
+        <WhatsAppButton />
         <Scripts />
       </body>
     </html>

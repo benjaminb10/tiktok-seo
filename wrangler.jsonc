@@ -11,6 +11,12 @@
       "database_id": "568d5db9-099a-4b00-9a72-94e6149bfea6"
     }
   ],
+  "r2_buckets": [
+    {
+      "binding": "IMAGES",
+      "bucket_name": "viewlify-images"
+    }
+  ],
   "vars": {
     "STRIPE_PRICE_CREATOR_MONTHLY": "price_1TZCjrGwnuulckdJE0e223r5",
     "STRIPE_PRICE_CREATOR_YEARLY": "price_1TZCjrGwnuulckdJ0fYm7Xms",

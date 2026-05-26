@@ -1,4 +1,21 @@
 /**
+ * Get the proxied thumbnail URL for a video.
+ * Uses our R2 cache proxy to avoid TikTok CDN URL expiration issues.
+ */
+export function getThumbnailUrl(videoId: string): string {
+  return `/api/thumbnail/${videoId}`;
+}
+
+/**
+ * Get the proxied avatar URL for a TikTok handle.
+ * Uses our R2 cache proxy to avoid TikTok CDN URL expiration issues.
+ */
+export function getAvatarUrl(handle: string): string {
+  const normalizedHandle = handle.replace(/^@/, "").toLowerCase();
+  return `/api/avatar/${normalizedHandle}`;
+}
+
+/**
  * Unified video type compatible with both ProfileVideo and RunVideoRow.
  * Used by shared analysis components (stats cards, videos table, etc.)
  */

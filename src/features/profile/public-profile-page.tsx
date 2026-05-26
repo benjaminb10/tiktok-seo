@@ -7,6 +7,7 @@ import { formatNumber } from "#/features/tiktok/formatters";
 import { UnifiedStatsCards } from "#/features/analysis/unified-stats-cards";
 import { RecentVideosPreview } from "#/features/analysis/recent-videos-preview";
 import { UnifiedVideosTable } from "#/features/analysis/unified-videos-table";
+import { getAvatarUrl } from "#/features/analysis/types";
 
 type PublicProfilePageProps = {
   username: string;
@@ -40,7 +41,7 @@ function ProfileWithData({ username, data }: { username: string; data: ProfileDe
               {/* Avatar */}
               {data.avatarUrl ? (
                 <img
-                  src={data.avatarUrl}
+                  src={getAvatarUrl(username)}
                   alt={`@${username}`}
                   className="h-20 w-20 shrink-0 rounded-full object-cover"
                 />
