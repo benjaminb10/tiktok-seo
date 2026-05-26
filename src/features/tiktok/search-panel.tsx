@@ -46,23 +46,23 @@ export function SearchPanel({
   return (
     <section className="mx-auto flex w-full flex-col gap-6">
       {currentHandle && hasResults && (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-12 w-12 border-2 border-border">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            <Avatar className="h-12 w-12 shrink-0 border-2 border-border">
               <AvatarImage src={avatarUrl ? getAvatarUrl(currentHandle) : undefined} alt={currentHandle} />
               <AvatarFallback className="bg-primary text-white font-semibold">
                 {getInitials(currentHandle)}
               </AvatarFallback>
             </Avatar>
-            <div>
-              <h2 className="text-2xl font-bold">{currentHandle}</h2>
+            <div className="min-w-0">
+              <h2 className="text-xl font-bold truncate sm:text-2xl">{currentHandle}</h2>
               <p className="text-sm text-muted-foreground">Analysis in progress</p>
             </div>
           </div>
           <Button
             variant="outline"
             onClick={onNewAnalysis}
-            className="gap-2"
+            className="gap-2 shrink-0 self-start sm:self-auto"
           >
             <Plus className="h-4 w-4" />
             New analysis

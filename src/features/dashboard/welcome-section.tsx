@@ -71,7 +71,7 @@ export function WelcomeSection({ user }: WelcomeSectionProps) {
               <div className="text-xs text-muted-foreground">Example profile</div>
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
             {[
               { label: "Videos", value: "847" },
               { label: "Avg Views", value: "52M" },

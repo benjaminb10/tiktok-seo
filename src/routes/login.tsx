@@ -63,7 +63,7 @@ function LoginPage() {
             onClick={() =>
               signIn.social({
                 provider: "google",
-                callbackURL: "/app",
+                callbackURL: "/dashboard",
               })
             }
           >
