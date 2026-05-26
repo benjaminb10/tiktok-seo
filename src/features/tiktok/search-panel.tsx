@@ -1,4 +1,4 @@
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, Loader2 } from "lucide-react";
 import type { FormEvent } from "react";
 import { Button } from "#/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
@@ -115,6 +115,14 @@ export function SearchPanel({
               <span className="font-medium text-primary">{statusView.progress.percentage}%</span>
             </div>
             <Progress value={statusView.progress.percentage} className="h-2" />
+          </div>
+        ) : statusView.isBusy ? (
+          <div className="flex items-center gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+            <Loader2 className="h-5 w-5 animate-spin text-primary" />
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-foreground">{statusView.title}</span>
+              <span className="text-sm text-muted-foreground">{statusView.description}</span>
+            </div>
           </div>
         ) : (
           <p aria-live="polite" className="text-sm text-muted-foreground">
