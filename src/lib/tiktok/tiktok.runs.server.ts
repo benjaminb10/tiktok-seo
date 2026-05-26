@@ -1,10 +1,17 @@
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import * as schema from "#/db/schema";
 import { normalizeTikTokInput } from "./tiktok.logic";
 import type { TikTokDb } from "./tiktok.db.server";
 import { getRunVideos } from "./tiktok.videos.server";
 import type { RunDetails } from "./tiktok.types";
+import {
+  checkQuota,
+  incrementUsage,
+  getUserQuota,
+  QuotaExceededError,
+} from "#/lib/stripe/quota.server";
+import { TIER_CONFIG } from "#/lib/stripe/stripe.config";
 
 export async function createMetadataRun(
   database: TikTokDb,
@@ -12,6 +19,11 @@ export async function createMetadataRun(
   userId?: string | null,
   now = new Date(),
 ): Promise<{ runId: string; jobId: string }> {
+  // Check quota before creating run (for authenticated users)
+  if (userId) {
+    await checkQuota(userId, "analysis");
+  }
+
   const normalized = normalizeTikTokInput(input);
   const runId = nanoid();
   const jobId = nanoid();
@@ -45,8 +57,16 @@ export async function createMetadataRun(
     updatedAt: timestamp,
   });
 
+  // Increment usage after successful creation
+  if (userId) {
+    await incrementUsage(userId, "analysis");
+  }
+
   return { runId, jobId };
 }
+
+// Re-export QuotaExceededError for use in functions.ts
+export { QuotaExceededError };
 
 export async function getRunDetails(
   database: TikTokDb,
@@ -170,6 +190,27 @@ export async function listAllRuns(database: TikTokDb) {
 }
 
 export async function listUserRuns(database: TikTokDb, userId: string) {
+  // Get user's tier to determine history limit
+  const quota = await getUserQuota(userId);
+  const historyDays = TIER_CONFIG[quota.tier].limits.historyDays;
+
+  // Build query with optional history filter
+  if (historyDays !== -1) {
+    const cutoffTimestamp = Date.now() - historyDays * 24 * 60 * 60 * 1000;
+    const runs = await database
+      .select(runSelectFields)
+      .from(schema.searchRuns)
+      .where(
+        and(
+          eq(schema.searchRuns.userId, userId),
+          gte(schema.searchRuns.createdAt, cutoffTimestamp)
+        )
+      )
+      .orderBy(desc(schema.searchRuns.createdAt));
+    return runs;
+  }
+
+  // Unlimited history
   const runs = await database
     .select(runSelectFields)
     .from(schema.searchRuns)

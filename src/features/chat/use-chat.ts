@@ -2,10 +2,16 @@ import { useState, useCallback, useRef } from "react";
 import { nanoid } from "nanoid";
 import type { ChatMessage, VideoContext } from "./chat.types";
 
+export type QuotaExceededState = {
+  used: number;
+  limit: number;
+} | null;
+
 export function useChat(context: VideoContext | null) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [quotaExceeded, setQuotaExceeded] = useState<QuotaExceededState>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const send = useCallback(
@@ -53,8 +59,25 @@ export function useChat(context: VideoContext | null) {
         });
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error((errorData as { error?: string }).error || `Erreur: ${response.status}`);
+          const errorData = await response.json().catch(() => ({})) as {
+            error?: string;
+            used?: number;
+            limit?: number;
+          };
+
+          // Handle quota exceeded error
+          if (errorData.error === "AI_QUOTA_EXCEEDED") {
+            setQuotaExceeded({
+              used: errorData.used ?? 0,
+              limit: errorData.limit ?? 1,
+            });
+            // Remove the empty AI message
+            setMessages((prev) => prev.filter((m) => m.id !== aiMessageId));
+            setIsLoading(false);
+            return;
+          }
+
+          throw new Error(errorData.error || `Erreur: ${response.status}`);
         }
 
         const reader = response.body?.getReader();
@@ -125,14 +148,21 @@ export function useChat(context: VideoContext | null) {
     }
     setMessages([]);
     setError(null);
+    setQuotaExceeded(null);
+  }, []);
+
+  const clearQuotaExceeded = useCallback(() => {
+    setQuotaExceeded(null);
   }, []);
 
   return {
     messages,
     isLoading,
     error,
+    quotaExceeded,
     send,
     clear,
+    clearQuotaExceeded,
     hasContext: !!context,
   };
 }

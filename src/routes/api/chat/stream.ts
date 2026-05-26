@@ -1,6 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { env } from "cloudflare:workers";
 import type { ChatRequest, VideoContext } from "#/features/chat/chat.types";
+import { getServerSession } from "#/lib/auth.server";
+import {
+  checkQuota,
+  incrementUsage,
+  QuotaExceededError,
+} from "#/lib/stripe/quota.server";
 
 function formatNumber(value: number | null): string {
   if (value == null) return "0";
@@ -58,6 +64,31 @@ export const Route = createFileRoute("/api/chat/stream")({
           });
         }
 
+        // Check AI insights quota for authenticated users
+        const session = await getServerSession();
+        const userId = session?.user?.id;
+
+        if (userId) {
+          try {
+            await checkQuota(userId, "aiInsight");
+          } catch (error) {
+            if (error instanceof QuotaExceededError) {
+              return new Response(
+                JSON.stringify({
+                  error: "AI_QUOTA_EXCEEDED",
+                  used: error.used,
+                  limit: error.limit,
+                }),
+                {
+                  status: 402,
+                  headers: { "Content-Type": "application/json" },
+                }
+              );
+            }
+            throw error;
+          }
+        }
+
         const body = (await request.json()) as ChatRequest;
         const systemPrompt = buildSystemPrompt(body.context);
 
@@ -93,6 +124,11 @@ export const Route = createFileRoute("/api/chat/stream")({
             status: response.status,
             headers: { "Content-Type": "application/json" },
           });
+        }
+
+        // Increment usage after successful API call start
+        if (userId) {
+          await incrementUsage(userId, "aiInsight");
         }
 
         // Forward the SSE stream from Anthropic

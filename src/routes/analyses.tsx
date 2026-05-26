@@ -8,7 +8,10 @@ import { Button } from "#/components/ui/button";
 import { Badge } from "#/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
 import { Card } from "#/components/ui/card";
-import { PlayCircle, Clock, CheckCircle2, XCircle, Ban, Eye, LogIn } from "lucide-react";
+import { Alert, AlertDescription } from "#/components/ui/alert";
+import { PlayCircle, Clock, CheckCircle2, XCircle, Ban, Eye, LogIn, Info, Sparkles } from "lucide-react";
+import { useQuota } from "#/lib/stripe/quota-context";
+import { TIER_CONFIG } from "#/lib/stripe/stripe.config";
 
 type RunRow = {
   id: string;
@@ -40,6 +43,9 @@ function AnalysesPage() {
   const [runs, setRuns] = useState<RunRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(true);
+  const { quota, getHistoryDays } = useQuota();
+  const historyDays = getHistoryDays();
+  const isLimitedHistory = historyDays !== Infinity;
 
   useEffect(() => {
     async function fetchRuns() {
@@ -136,6 +142,26 @@ function AnalysesPage() {
             <Button size="lg">New analysis</Button>
           </Link>
         </div>
+
+        {isLimitedHistory && (
+          <Alert className="mb-6 border-pink-500/20 bg-pink-500/5">
+            <Info className="h-4 w-4 text-pink-500" />
+            <AlertDescription className="flex items-center justify-between">
+              <span>
+                Historique limité aux {historyDays} derniers jours.
+                {quota?.tier === "free" && " Passez à Creator pour 90 jours d'historique."}
+              </span>
+              {quota?.tier === "free" && (
+                <Link to="/pricing">
+                  <Button variant="outline" size="sm" className="ml-4">
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    Voir les offres
+                  </Button>
+                </Link>
+              )}
+            </AlertDescription>
+          </Alert>
+        )}
 
         <div className="grid gap-4">
           {runs.map((run) => (

@@ -14,6 +14,7 @@ import {
   getRunDetails,
   listAllRuns,
   listUserRuns,
+  QuotaExceededError,
 } from "./tiktok.runs.server";
 import {
   getAnalyzedProfiles,
@@ -26,12 +27,31 @@ import {
   videoDownloadSchema,
 } from "./tiktok.schemas";
 
+export type CreateRunResult =
+  | { success: true; runId: string; jobId: string }
+  | { success: false; error: "QUOTA_EXCEEDED"; used: number; limit: number }
+  | { success: false; error: "UNKNOWN"; message: string };
+
 export const createMetadataRunFn = createServerFn({ method: "POST" })
   .inputValidator((input) => createRunSchema.parse(input))
-  .handler(async ({ data }) => {
+  .handler(async ({ data }): Promise<CreateRunResult> => {
     const session = await getServerSession();
     const userId = session?.user?.id ?? null;
-    return createMetadataRun(db, data.input, userId);
+
+    try {
+      const result = await createMetadataRun(db, data.input, userId);
+      return { success: true, ...result };
+    } catch (error) {
+      if (error instanceof QuotaExceededError) {
+        return {
+          success: false,
+          error: "QUOTA_EXCEEDED",
+          used: error.used,
+          limit: error.limit,
+        };
+      }
+      throw error;
+    }
   });
 
 export const getRunDetailsFn = createServerFn({ method: "GET" })

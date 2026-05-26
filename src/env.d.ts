@@ -7,5 +7,8 @@ declare namespace Cloudflare {
     BETTER_AUTH_SECRET: string;
     GOOGLE_CLIENT_ID: string;
     GOOGLE_CLIENT_SECRET: string;
+    STRIPE_SECRET_KEY: string;
+    STRIPE_WEBHOOK_SECRET: string;
+    STRIPE_PUBLISHABLE_KEY: string;
   }
 }

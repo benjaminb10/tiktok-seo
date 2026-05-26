@@ -1,9 +1,11 @@
-import { Search, Plus, User } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import type { FormEvent } from "react";
 import { Button } from "#/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
 import { InputGroup, InputGroupInput } from "#/components/ui/input-group";
 import { Progress } from "#/components/ui/progress";
+import { QuotaBadge } from "#/features/paywall/quota-badge";
+import { useQuotaDisplay } from "#/lib/stripe/quota-context";
 import type { RunStatusView } from "#/lib/tiktok/tiktok.ui";
 
 type SearchPanelProps = {
@@ -33,6 +35,8 @@ export function SearchPanel({
   onCancel,
   onNewAnalysis,
 }: SearchPanelProps) {
+  const quotaDisplay = useQuotaDisplay();
+
   const getInitials = (handle: string) => {
     const cleaned = handle.replace(/^@/, "").trim();
     return cleaned.slice(0, 2).toUpperCase();
@@ -77,6 +81,13 @@ export function SearchPanel({
             autoFocus
           />
           <div className="flex items-center gap-2 pr-2">
+            {!quotaDisplay.analyses.isUnlimited && (
+              <QuotaBadge
+                used={quotaDisplay.analyses.used}
+                limit={quotaDisplay.analyses.limit}
+                label="Analyses"
+              />
+            )}
             {isMetadataBusy && (
               <Button
                 type="button"

@@ -17,6 +17,11 @@ import {
   shouldPollRunDetails,
 } from "#/lib/tiktok/tiktok.ui";
 
+export type QuotaExceededInfo = {
+  used: number;
+  limit: number;
+};
+
 export function useTikTokAnalyzer(searchRunId?: string | null) {
   const navigate = useNavigate({ from: "/app" });
   const createRun = useServerFn(createMetadataRunFn);
@@ -36,6 +41,7 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
   const [queueingVideoIds, setQueueingVideoIds] = useState<Set<string>>(
     () => new Set(),
   );
+  const [quotaExceeded, setQuotaExceeded] = useState<QuotaExceededInfo | null>(null);
 
   const refreshRun = useCallback(
     async (nextRunId: string) => {
@@ -124,19 +130,35 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
   async function analyze(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setQuotaExceeded(null);
     setIsAnalyzing(true);
     try {
-      const created = await createRun({ data: { input } });
+      const result = await createRun({ data: { input } });
+
+      // Handle quota exceeded error
+      if (!result.success) {
+        if (result.error === "QUOTA_EXCEEDED") {
+          setQuotaExceeded({ used: result.used, limit: result.limit });
+          return;
+        }
+        setError(result.message);
+        return;
+      }
+
       setDetails(null);
-      setRunId(created.runId);
-      window.sessionStorage.setItem("tiktok:lastRunId", created.runId);
-      void navigate({ to: "/app", search: { runId: created.runId }, replace: true });
-      await refreshRun(created.runId);
+      setRunId(result.runId);
+      window.sessionStorage.setItem("tiktok:lastRunId", result.runId);
+      void navigate({ to: "/app", search: { runId: result.runId }, replace: true });
+      await refreshRun(result.runId);
     } catch (caught) {
       setError(errorMessage(caught));
     } finally {
       setIsAnalyzing(false);
     }
+  }
+
+  function clearQuotaExceeded() {
+    setQuotaExceeded(null);
   }
 
   async function requestVideoDownload(video: RunVideoRow) {
@@ -210,12 +232,14 @@ export function useTikTokAnalyzer(searchRunId?: string | null) {
     currentHandle: details?.run.handle ?? null,
     avatarUrl: details?.run.avatarUrl ?? null,
     hasResults: videos.length > 0,
+    quotaExceeded,
     setInput,
     analyze,
     cancelRun,
     loadMore,
     newAnalysis,
     requestVideoDownload,
+    clearQuotaExceeded,
   };
 }
 

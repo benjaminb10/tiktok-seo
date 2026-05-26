@@ -9,6 +9,7 @@ import { LandingNavbar } from "#/components/landing-navbar";
 import { Sidebar } from "#/components/sidebar";
 import { ChatProvider } from "#/features/chat/chat-context";
 import { ChatSidebar } from "#/features/chat/chat-sidebar";
+import { QuotaProvider } from "#/lib/stripe/quota-context";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -43,15 +44,17 @@ function RootComponent() {
           <HeadContent />
         </head>
         <body>
-          <ChatProvider>
-            <div className="flex h-screen overflow-hidden">
-              <Sidebar />
-              <main className="flex-1 overflow-auto">
-                <Outlet />
-              </main>
-              {showChatSidebar && <ChatSidebar />}
-            </div>
-          </ChatProvider>
+          <QuotaProvider>
+            <ChatProvider>
+              <div className="flex h-screen overflow-hidden">
+                <Sidebar />
+                <main className="flex-1 overflow-auto">
+                  <Outlet />
+                </main>
+                {showChatSidebar && <ChatSidebar />}
+              </div>
+            </ChatProvider>
+          </QuotaProvider>
           <Scripts />
         </body>
       </html>

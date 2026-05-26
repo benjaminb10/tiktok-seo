@@ -1,14 +1,20 @@
+import type { SubscriptionTier } from "#/lib/stripe/stripe.config";
+
 export type PricingTier = {
+  id: SubscriptionTier;
   name: string;
   price: string;
+  yearlyPrice?: string;
   description: string;
   features: string[];
   cta: string;
   highlighted: boolean;
+  isContactSales?: boolean;
 };
 
 export const pricingTiers: PricingTier[] = [
   {
+    id: "free",
     name: "Free",
     price: "0",
     description: "Perfect for trying out Viewlify.app",
@@ -23,8 +29,10 @@ export const pricingTiers: PricingTier[] = [
     highlighted: false,
   },
   {
+    id: "creator",
     name: "Creator",
     price: "29",
+    yearlyPrice: "25",
     description: "For solo creators and influencers",
     features: [
       "20 analyses per month",
@@ -39,8 +47,10 @@ export const pricingTiers: PricingTier[] = [
     highlighted: true,
   },
   {
+    id: "pro",
     name: "Pro",
     price: "79",
+    yearlyPrice: "69",
     description: "For agencies and brands",
     features: [
       "Unlimited analyses",
@@ -56,8 +66,10 @@ export const pricingTiers: PricingTier[] = [
     highlighted: false,
   },
   {
+    id: "agency",
     name: "Agency",
     price: "199",
+    yearlyPrice: "179",
     description: "For large teams and agencies",
     features: [
       "Everything in Pro",
@@ -71,5 +83,6 @@ export const pricingTiers: PricingTier[] = [
     ],
     cta: "Contact sales",
     highlighted: false,
+    isContactSales: true,
   },
 ];

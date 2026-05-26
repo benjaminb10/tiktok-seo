@@ -20,6 +20,10 @@ export const user = sqliteTable("user", {
     .notNull()
     .default(false),
   image: text("image"),
+  stripeCustomerId: text("stripe_customer_id"),
+  tier: text("tier", { enum: ["free", "creator", "pro", "agency"] })
+    .notNull()
+    .default("free"),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
@@ -63,6 +67,86 @@ export const verification = sqliteTable("verification", {
   createdAt: integer("created_at", { mode: "timestamp" }),
   updatedAt: integer("updated_at", { mode: "timestamp" }),
 });
+
+// ============================================================================
+// Subscription Tables
+// ============================================================================
+
+export const subscriptions = sqliteTable(
+  "subscriptions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    stripeSubscriptionId: text("stripe_subscription_id").notNull().unique(),
+    stripePriceId: text("stripe_price_id").notNull(),
+    stripeCustomerId: text("stripe_customer_id").notNull(),
+    status: text("status", {
+      enum: [
+        "active",
+        "canceled",
+        "incomplete",
+        "incomplete_expired",
+        "past_due",
+        "paused",
+        "trialing",
+        "unpaid",
+      ],
+    }).notNull(),
+    currentPeriodStart: integer("current_period_start", {
+      mode: "timestamp",
+    }).notNull(),
+    currentPeriodEnd: integer("current_period_end", {
+      mode: "timestamp",
+    }).notNull(),
+    cancelAtPeriodEnd: integer("cancel_at_period_end", { mode: "boolean" })
+      .notNull()
+      .default(false),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [
+    index("subscriptions_user_idx").on(table.userId),
+    index("subscriptions_stripe_sub_idx").on(table.stripeSubscriptionId),
+    index("subscriptions_status_idx").on(table.status),
+  ],
+);
+
+export const userUsage = sqliteTable(
+  "user_usage",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    periodStart: integer("period_start", { mode: "timestamp" }).notNull(),
+    periodEnd: integer("period_end", { mode: "timestamp" }).notNull(),
+    analysesUsed: integer("analyses_used").notNull().default(0),
+    exportsUsed: integer("exports_used").notNull().default(0),
+    aiInsightsUsed: integer("ai_insights_used").notNull().default(0),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [
+    index("user_usage_user_idx").on(table.userId),
+    index("user_usage_period_idx").on(table.userId, table.periodStart),
+  ],
+);
+
+export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+  user: one(user, {
+    fields: [subscriptions.userId],
+    references: [user.id],
+  }),
+}));
+
+export const userUsageRelations = relations(userUsage, ({ one }) => ({
+  user: one(user, {
+    fields: [userUsage.userId],
+    references: [user.id],
+  }),
+}));
 
 // ============================================================================
 // App Tables
@@ -193,6 +277,8 @@ export const searchRunVideos = sqliteTable(
 
 export const userRelations = relations(user, ({ many }) => ({
   searchRuns: many(searchRuns),
+  subscriptions: many(subscriptions),
+  usage: many(userUsage),
 }));
 
 export const searchRunsRelations = relations(searchRuns, ({ one, many }) => ({

@@ -11,5 +11,12 @@
       "database_id": "568d5db9-099a-4b00-9a72-94e6149bfea6"
     }
   ],
-  "vars": {}
+  "vars": {
+    "STRIPE_PRICE_CREATOR_MONTHLY": "price_1TZCjrGwnuulckdJE0e223r5",
+    "STRIPE_PRICE_CREATOR_YEARLY": "price_1TZCjrGwnuulckdJ0fYm7Xms",
+    "STRIPE_PRICE_PRO_MONTHLY": "price_1TZCjsGwnuulckdJt5uq9auy",
+    "STRIPE_PRICE_PRO_YEARLY": "price_1TZCjsGwnuulckdJaLBXtiRs",
+    "STRIPE_PRICE_AGENCY_MONTHLY": "price_1TZCjsGwnuulckdJl7DzELR2",
+    "STRIPE_PRICE_AGENCY_YEARLY": "price_1TZCjtGwnuulckdJ2PH7rqg4"
+  }
 }

@@ -7,7 +7,7 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ArrowUpDown, Download, Music, Plus } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Download, Lock, Music, Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
@@ -26,6 +26,8 @@ import {
   formatNumber,
   formatPercent,
 } from "#/features/tiktok/formatters";
+import { VideoLimitBanner } from "#/features/paywall/video-limit-banner";
+import { useQuota } from "#/lib/stripe/quota-context";
 import type { UnifiedVideo, UnifiedVideoExtended } from "./types";
 
 function engagementRate(video: UnifiedVideo): number | null {
@@ -103,6 +105,9 @@ type UnifiedVideosTableProps<T extends UnifiedVideo> = {
   // Configuration
   exportFilename?: string;
   title?: string;
+  // Paywall props
+  videoLimit?: number;
+  onExportBlocked?: () => void;
 };
 
 export function UnifiedVideosTable<T extends UnifiedVideo>({
@@ -113,8 +118,26 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
   onVideoClick,
   exportFilename = "viewlify-export.csv",
   title = "Available videos",
+  videoLimit,
+  onExportBlocked,
 }: UnifiedVideosTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const { quota, canExport, getVideoLimit } = useQuota();
+
+  // Use prop limit or get from quota context
+  const effectiveLimit = videoLimit ?? getVideoLimit();
+  const isLimitedView = effectiveLimit !== Infinity && videos.length > effectiveLimit;
+  const visibleVideos = isLimitedView ? videos.slice(0, effectiveLimit) : videos;
+  const hiddenCount = isLimitedView ? videos.length - effectiveLimit : 0;
+
+  // Export handling with paywall check
+  const handleExport = useCallback(() => {
+    if (!canExport()) {
+      onExportBlocked?.();
+      return;
+    }
+    exportToCSV(visibleVideos, exportFilename);
+  }, [canExport, visibleVideos, exportFilename, onExportBlocked]);
 
   const handleThumbnailClick = useCallback((video: T) => {
     if (onVideoClick) {
@@ -257,7 +280,7 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
   );
 
   const table = useReactTable({
-    data: videos,
+    data: visibleVideos,
     columns,
     state: { sorting },
     onSortingChange: setSorting,
@@ -266,10 +289,18 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
     getSortedRowModel: getSortedRowModel(),
   });
 
+  const exportDisabled = !canExport();
+
   return (
     <section className="grid gap-4">
       <div className="flex items-center gap-4">
-        <h2>{title} ({videos.length})</h2>
+        <h2>
+          {title} ({visibleVideos.length}
+          {hiddenCount > 0 && (
+            <span className="text-muted-foreground"> / {videos.length}</span>
+          )}
+          )
+        </h2>
         {canLoadMore && onLoadMore && (
           <Button type="button" variant="outline" onClick={onLoadMore}>
             Load more videos
@@ -277,9 +308,23 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
         )}
         {videos.length > 0 && (
           <>
-            <Button type="button" variant="outline" onClick={() => exportToCSV(videos, exportFilename)}>
-              <Download className="h-4 w-4 mr-2" />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleExport}
+              className={exportDisabled ? "opacity-75" : ""}
+            >
+              {exportDisabled ? (
+                <Lock className="h-4 w-4 mr-2" />
+              ) : (
+                <Download className="h-4 w-4 mr-2" />
+              )}
               Export CSV
+              {exportDisabled && (
+                <Badge variant="secondary" className="ml-2 text-xs">
+                  Pro
+                </Badge>
+              )}
             </Button>
             {onNewAnalysis && (
               <Button type="button" variant="outline" onClick={onNewAnalysis}>
@@ -346,7 +391,13 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
           </TableBody>
         </Table>
       </div>
-      {canLoadMore && onLoadMore && (
+      {hiddenCount > 0 && (
+        <VideoLimitBanner
+          hiddenCount={hiddenCount}
+          tier={quota?.tier ?? "free"}
+        />
+      )}
+      {canLoadMore && onLoadMore && !isLimitedView && (
         <div className="flex justify-start">
           <Button type="button" variant="outline" onClick={onLoadMore}>
             Load more videos

@@ -2,6 +2,7 @@ import { BarChart3, Compass, FileDown, HelpCircle, LayoutDashboard, ListVideo, L
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Button } from "#/components/ui/button";
+import { QuotaSummaryCard } from "#/features/paywall/quota-summary-card";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -134,6 +135,11 @@ export function Sidebar() {
           );
         })}
       </nav>
+
+      {/* Quota Summary */}
+      <div className="px-3 pb-3">
+        <QuotaSummaryCard />
+      </div>
 
       {/* Footer */}
       <SidebarFooter />
