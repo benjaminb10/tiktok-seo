@@ -32,47 +32,69 @@ async function resolveShortUrl(url: string): Promise<string> {
   }
 }
 
-// Use tikwm.com API to get video info (reliable third-party service)
-async function getVideoFromTikwm(url: string): Promise<{
+// Try multiple APIs to get video info
+async function getVideoData(url: string): Promise<{
   downloadUrl: string | null;
   thumbnail: string | null;
   description: string | null;
   author: string | null;
 }> {
+  // Try TikWM API first (POST method)
   try {
-    const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`;
-    const response = await fetch(apiUrl, {
+    const formData = new URLSearchParams();
+    formData.append("url", url);
+    formData.append("hd", "1");
+
+    const response = await fetch("https://www.tikwm.com/api/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept": "application/json",
+      },
+      body: formData.toString(),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.code === 0 && data.data) {
+        const videoData = data.data;
+        return {
+          downloadUrl: videoData.hdplay || videoData.play || null,
+          thumbnail: videoData.cover || videoData.origin_cover || null,
+          description: videoData.title || null,
+          author: videoData.author?.unique_id || null,
+        };
+      }
+    }
+  } catch (error) {
+    console.error("TikWM API error:", error);
+  }
+
+  // Fallback: Try ssstik API
+  try {
+    const response = await fetch(`https://ssstik.io/api/v1/fetch?url=${encodeURIComponent(url)}`, {
       headers: {
         "Accept": "application/json",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
       },
     });
 
-    if (!response.ok) {
-      throw new Error("TikWM API request failed");
+    if (response.ok) {
+      const data = await response.json();
+      if (data.video) {
+        return {
+          downloadUrl: data.video || null,
+          thumbnail: data.thumbnail || null,
+          description: data.description || null,
+          author: data.author || null,
+        };
+      }
     }
-
-    const data = await response.json();
-
-    if (data.code !== 0 || !data.data) {
-      throw new Error(data.msg || "Failed to get video data");
-    }
-
-    const videoData = data.data;
-
-    // Prefer HD version, fallback to regular play URL
-    const downloadUrl = videoData.hdplay || videoData.play;
-
-    return {
-      downloadUrl: downloadUrl || null,
-      thumbnail: videoData.cover || videoData.origin_cover || null,
-      description: videoData.title || null,
-      author: videoData.author?.unique_id || null,
-    };
   } catch (error) {
-    console.error("TikWM API error:", error);
-    return { downloadUrl: null, thumbnail: null, description: null, author: null };
+    console.error("SSStiK API error:", error);
   }
+
+  return { downloadUrl: null, thumbnail: null, description: null, author: null };
 }
 
 export const Route = createFileRoute("/api/tools/download-video")({
@@ -94,8 +116,8 @@ export const Route = createFileRoute("/api/tools/download-video")({
             );
           }
 
-          // Get video data from TikWM API
-          const videoData = await getVideoFromTikwm(resolvedUrl);
+          // Get video data from external APIs
+          const videoData = await getVideoData(resolvedUrl);
 
           if (!videoData.downloadUrl) {
             return Response.json(
