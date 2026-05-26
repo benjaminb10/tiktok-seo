@@ -46,6 +46,17 @@ function RootComponent() {
       <html lang="en">
         <head>
           <HeadContent />
+          <script async src="https://www.googletagmanager.com/gtag/js?id=G-01C4J3CLW8" />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-01C4J3CLW8');
+              `,
+            }}
+          />
         </head>
         <body>
           <QuotaProvider>
@@ -69,6 +80,17 @@ function RootComponent() {
     <html lang="en">
       <head>
         <HeadContent />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-01C4J3CLW8" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-01C4J3CLW8');
+            `,
+          }}
+        />
       </head>
       <body>
         <LandingNavbar />
