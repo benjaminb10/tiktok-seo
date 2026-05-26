@@ -30,6 +30,7 @@ import { Route as ToolsTiktokHashtagExtractorRouteImport } from './routes/tools/
 import { Route as ToolsTiktokEngagementCalculatorRouteImport } from './routes/tools/tiktok-engagement-calculator'
 import { Route as ToolsTiktokCharacterCounterRouteImport } from './routes/tools/tiktok-character-counter'
 import { Route as ProfileUsernameRouteImport } from './routes/profile.$username'
+import { Route as ApiSitemapRouteImport } from './routes/api/sitemap'
 import { Route as ApiToolsGenerateUsernamesRouteImport } from './routes/api/tools/generate-usernames'
 import { Route as ApiToolsGenerateHashtagsRouteImport } from './routes/api/tools/generate-hashtags'
 import { Route as ApiToolsChatRouteImport } from './routes/api/tools/chat'
@@ -157,6 +158,11 @@ const ProfileUsernameRoute = ProfileUsernameRouteImport.update({
   path: '/profile/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSitemapRoute = ApiSitemapRouteImport.update({
+  id: '/api/sitemap',
+  path: '/api/sitemap',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiToolsGenerateUsernamesRoute =
   ApiToolsGenerateUsernamesRouteImport.update({
     id: '/api/tools/generate-usernames',
@@ -251,6 +257,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRouteWithChildren
+  '/api/sitemap': typeof ApiSitemapRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/tools/tiktok-character-counter': typeof ToolsTiktokCharacterCounterRoute
   '/tools/tiktok-engagement-calculator': typeof ToolsTiktokEngagementCalculatorRoute
@@ -288,6 +295,7 @@ export interface FileRoutesByTo {
   '/profiles': typeof ProfilesRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/api/sitemap': typeof ApiSitemapRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/tools/tiktok-character-counter': typeof ToolsTiktokCharacterCounterRoute
   '/tools/tiktok-engagement-calculator': typeof ToolsTiktokEngagementCalculatorRoute
@@ -327,6 +335,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRouteWithChildren
+  '/api/sitemap': typeof ApiSitemapRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/tools/tiktok-character-counter': typeof ToolsTiktokCharacterCounterRoute
   '/tools/tiktok-engagement-calculator': typeof ToolsTiktokEngagementCalculatorRoute
@@ -367,6 +376,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/terms'
     | '/tools'
+    | '/api/sitemap'
     | '/profile/$username'
     | '/tools/tiktok-character-counter'
     | '/tools/tiktok-engagement-calculator'
@@ -404,6 +414,7 @@ export interface FileRouteTypes {
     | '/profiles'
     | '/settings'
     | '/terms'
+    | '/api/sitemap'
     | '/profile/$username'
     | '/tools/tiktok-character-counter'
     | '/tools/tiktok-engagement-calculator'
@@ -442,6 +453,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/terms'
     | '/tools'
+    | '/api/sitemap'
     | '/profile/$username'
     | '/tools/tiktok-character-counter'
     | '/tools/tiktok-engagement-calculator'
@@ -481,6 +493,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   TermsRoute: typeof TermsRoute
   ToolsRoute: typeof ToolsRouteWithChildren
+  ApiSitemapRoute: typeof ApiSitemapRoute
   ProfileUsernameRoute: typeof ProfileUsernameRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAvatarHandleRoute: typeof ApiAvatarHandleRoute
@@ -648,6 +661,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/sitemap': {
+      id: '/api/sitemap'
+      path: '/api/sitemap'
+      fullPath: '/api/sitemap'
+      preLoaderRoute: typeof ApiSitemapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/tools/generate-usernames': {
       id: '/api/tools/generate-usernames'
       path: '/api/tools/generate-usernames'
@@ -792,6 +812,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   TermsRoute: TermsRoute,
   ToolsRoute: ToolsRouteWithChildren,
+  ApiSitemapRoute: ApiSitemapRoute,
   ProfileUsernameRoute: ProfileUsernameRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAvatarHandleRoute: ApiAvatarHandleRoute,

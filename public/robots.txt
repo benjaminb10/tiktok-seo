@@ -1,0 +1,16 @@
+# Viewlify.app - TikTok Analytics Platform
+# https://viewlify.app
+
+User-agent: *
+Allow: /
+
+# Private areas
+Disallow: /app/
+Disallow: /admin/
+Disallow: /settings/
+Disallow: /exports/
+Disallow: /analyses/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://viewlify.app/api/sitemap
