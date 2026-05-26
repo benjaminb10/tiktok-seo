@@ -1,6 +1,4 @@
-import { Link } from "@tanstack/react-router";
-import { ArrowRight, Search, BarChart3, Sparkles } from "lucide-react";
-import { Button } from "#/components/ui/button";
+import { Search, BarChart3, Sparkles } from "lucide-react";
 import { Card } from "#/components/ui/card";
 
 type User = {
@@ -33,20 +31,8 @@ const steps = [
 ];
 
 export function WelcomeSection({ user }: WelcomeSectionProps) {
-  const firstName = user.name?.split(" ")[0] || "there";
-
   return (
-    <div className="space-y-8">
-      {/* Welcome Header */}
-      <div className="text-center">
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-          Welcome to Viewlify, {firstName}!
-        </h1>
-        <p className="mt-3 text-lg text-muted-foreground">
-          Let's analyze your first TikTok profile
-        </p>
-      </div>
-
+    <div className="space-y-6">
       {/* How it works */}
       <Card className="p-6">
         <h2 className="mb-6 text-center text-sm font-medium text-muted-foreground uppercase tracking-wide">
@@ -69,19 +55,6 @@ export function WelcomeSection({ user }: WelcomeSectionProps) {
           ))}
         </div>
       </Card>
-
-      {/* CTA */}
-      <div className="text-center">
-        <Link to="/app">
-          <Button size="lg" className="h-12 px-8 text-base">
-            Analyze my first profile
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </Link>
-        <p className="mt-3 text-sm text-muted-foreground">
-          It only takes a few seconds
-        </p>
-      </div>
 
       {/* Example Preview */}
       <Card className="overflow-hidden">

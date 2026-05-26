@@ -1,19 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, BarChart3, Eye, Heart, Video, Clock } from "lucide-react";
+import { BarChart3, Eye, Heart, Video, Clock } from "lucide-react";
 import { Button } from "#/components/ui/button";
 import { Card } from "#/components/ui/card";
 import { QuotaSummaryCard } from "#/features/paywall/quota-summary-card";
 import type { DashboardStats } from "#/lib/tiktok/tiktok.runs.server";
 
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  image?: string | null;
-};
-
 type StatsSectionProps = {
-  user: User;
   stats: DashboardStats;
 };
 
@@ -37,9 +29,7 @@ function timeAgo(timestamp: number): string {
   return `${weeks}w ago`;
 }
 
-export function StatsSection({ user, stats }: StatsSectionProps) {
-  const firstName = user.name?.split(" ")[0] || "there";
-
+export function StatsSection({ stats }: StatsSectionProps) {
   const statCards = [
     {
       icon: BarChart3,
@@ -65,24 +55,6 @@ export function StatsSection({ user, stats }: StatsSectionProps) {
 
   return (
     <div className="space-y-6">
-      {/* Welcome Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Welcome back, {firstName}!
-          </h1>
-          <p className="mt-1 text-muted-foreground">
-            Here's your analytics overview
-          </p>
-        </div>
-        <Link to="/app">
-          <Button>
-            New analysis
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </Link>
-      </div>
-
       {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => (
@@ -157,11 +129,6 @@ export function StatsSection({ user, stats }: StatsSectionProps) {
       <Card className="p-4">
         <div className="mb-3 text-sm text-muted-foreground">Quick actions</div>
         <div className="flex flex-wrap gap-2">
-          <Link to="/app">
-            <Button variant="outline" size="sm">
-              New analysis
-            </Button>
-          </Link>
           <Link to="/analyses">
             <Button variant="outline" size="sm">
               View all analyses

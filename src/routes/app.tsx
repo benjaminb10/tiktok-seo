@@ -4,6 +4,7 @@ import { TikTokAnalyzerPage } from "#/features/tiktok/tiktok-analyzer-page";
 
 const appSearchSchema = z.object({
   runId: z.string().optional().catch(undefined),
+  input: z.string().optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/app")({
@@ -13,5 +14,5 @@ export const Route = createFileRoute("/app")({
 
 function AppPage() {
   const search = Route.useSearch();
-  return <TikTokAnalyzerPage searchRunId={search.runId} />;
+  return <TikTokAnalyzerPage searchRunId={search.runId} initialInput={search.input} />;
 }

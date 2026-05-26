@@ -50,7 +50,7 @@ function AuthButtons() {
   if (session) {
     return (
       <>
-        <Link to="/app">
+        <Link to="/dashboard">
           <Button variant="ghost" size="sm" className="gap-2">
             {session.user.image && (
               <img

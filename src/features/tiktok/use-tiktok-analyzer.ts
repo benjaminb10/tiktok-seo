@@ -22,14 +22,14 @@ export type QuotaExceededInfo = {
   limit: number;
 };
 
-export function useTikTokAnalyzer(searchRunId?: string | null) {
+export function useTikTokAnalyzer(searchRunId?: string | null, initialInput?: string | null) {
   const navigate = useNavigate({ from: "/app" });
   const createRun = useServerFn(createMetadataRunFn);
   const getRunDetails = useServerFn(getRunDetailsFn);
   const createVideoDownloadJob = useServerFn(createVideoDownloadJobFn);
   const cancelRunServer = useServerFn(cancelRunFn);
   const continueRun = useServerFn(continueMetadataRunFn);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(initialInput ?? "");
   const [runId, setRunId] = useState<string | null>(() => {
     if (searchRunId) return searchRunId;
     if (typeof window === "undefined") return null;

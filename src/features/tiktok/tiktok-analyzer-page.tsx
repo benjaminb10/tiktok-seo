@@ -14,10 +14,11 @@ import type { RunVideoRow } from "#/lib/tiktok/tiktok.types";
 
 type TikTokAnalyzerPageProps = {
   searchRunId?: string | null;
+  initialInput?: string | null;
 };
 
-export function TikTokAnalyzerPage({ searchRunId }: TikTokAnalyzerPageProps) {
-  const analyzer = useTikTokAnalyzer(searchRunId);
+export function TikTokAnalyzerPage({ searchRunId, initialInput }: TikTokAnalyzerPageProps) {
+  const analyzer = useTikTokAnalyzer(searchRunId, initialInput);
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const { setVideoContext } = useChatContext();
   const { isAuthenticated, quota, getVideoLimit, canPerformAction, incrementAnonUsage, refetch } = useQuota();
