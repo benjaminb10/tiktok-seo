@@ -144,6 +144,15 @@ async function upsertSubscription(
   const priceId = subscription.items.data[0]?.price.id;
   const tier = priceId ? getTierFromPriceId(priceId) : null;
 
+  console.log(`[Webhook] Processing subscription:`, {
+    subscriptionId: subscription.id,
+    userId,
+    customerId,
+    priceId,
+    tier,
+    status: subscription.status,
+  });
+
   const now = new Date();
 
   // Check if subscription exists

@@ -11,5 +11,11 @@ declare namespace Cloudflare {
     STRIPE_SECRET_KEY: string;
     STRIPE_WEBHOOK_SECRET: string;
     STRIPE_PUBLISHABLE_KEY: string;
+    STRIPE_PRICE_CREATOR_MONTHLY: string;
+    STRIPE_PRICE_CREATOR_YEARLY: string;
+    STRIPE_PRICE_PRO_MONTHLY: string;
+    STRIPE_PRICE_PRO_YEARLY: string;
+    STRIPE_PRICE_AGENCY_MONTHLY: string;
+    STRIPE_PRICE_AGENCY_YEARLY: string;
   }
 }
