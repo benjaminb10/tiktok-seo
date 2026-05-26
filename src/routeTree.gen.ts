@@ -16,6 +16,7 @@ import { Route as ProfilesRouteImport } from './routes/profiles'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as ExportsRouteImport } from './routes/exports'
 import { Route as DiscoverRouteImport } from './routes/discover'
@@ -44,6 +45,7 @@ import { Route as ApiSidecarLeaseRouteImport } from './routes/api/sidecar/lease'
 import { Route as ApiSidecarHeartbeatRouteImport } from './routes/api/sidecar/heartbeat'
 import { Route as ApiAvatarHandleRouteImport } from './routes/api/avatar/$handle'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiAdminRefreshAvatarRouteImport } from './routes/api/admin/refresh-avatar'
 import { Route as ApiOgProfileUsernameRouteImport } from './routes/api/og/profile.$username'
 import { Route as ApiSidecarJobsJobIdProgressRouteImport } from './routes/api/sidecar/jobs/$jobId/progress'
 import { Route as ApiSidecarJobsJobIdFailRouteImport } from './routes/api/sidecar/jobs/$jobId/fail'
@@ -82,6 +84,11 @@ const PricingRoute = PricingRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeaderboardRoute = LeaderboardRouteImport.update({
+  id: '/leaderboard',
+  path: '/leaderboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HelpRoute = HelpRouteImport.update({
@@ -232,6 +239,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminRefreshAvatarRoute = ApiAdminRefreshAvatarRouteImport.update({
+  id: '/api/admin/refresh-avatar',
+  path: '/api/admin/refresh-avatar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiOgProfileUsernameRoute = ApiOgProfileUsernameRouteImport.update({
   id: '/api/og/profile/$username',
   path: '/api/og/profile/$username',
@@ -264,6 +276,7 @@ export interface FileRoutesByFullPath {
   '/discover': typeof DiscoverRoute
   '/exports': typeof ExportsRoute
   '/help': typeof HelpRoute
+  '/leaderboard': typeof LeaderboardRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -280,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/tools/tiktok-money-calculator': typeof ToolsTiktokMoneyCalculatorRoute
   '/tools/tiktok-username-generator': typeof ToolsTiktokUsernameGeneratorRoute
   '/tools/': typeof ToolsIndexRoute
+  '/api/admin/refresh-avatar': typeof ApiAdminRefreshAvatarRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$handle': typeof ApiAvatarHandleRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
@@ -305,6 +319,7 @@ export interface FileRoutesByTo {
   '/discover': typeof DiscoverRoute
   '/exports': typeof ExportsRoute
   '/help': typeof HelpRoute
+  '/leaderboard': typeof LeaderboardRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -320,6 +335,7 @@ export interface FileRoutesByTo {
   '/tools/tiktok-money-calculator': typeof ToolsTiktokMoneyCalculatorRoute
   '/tools/tiktok-username-generator': typeof ToolsTiktokUsernameGeneratorRoute
   '/tools': typeof ToolsIndexRoute
+  '/api/admin/refresh-avatar': typeof ApiAdminRefreshAvatarRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$handle': typeof ApiAvatarHandleRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
@@ -346,6 +362,7 @@ export interface FileRoutesById {
   '/discover': typeof DiscoverRoute
   '/exports': typeof ExportsRoute
   '/help': typeof HelpRoute
+  '/leaderboard': typeof LeaderboardRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -362,6 +379,7 @@ export interface FileRoutesById {
   '/tools/tiktok-money-calculator': typeof ToolsTiktokMoneyCalculatorRoute
   '/tools/tiktok-username-generator': typeof ToolsTiktokUsernameGeneratorRoute
   '/tools/': typeof ToolsIndexRoute
+  '/api/admin/refresh-avatar': typeof ApiAdminRefreshAvatarRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$handle': typeof ApiAvatarHandleRoute
   '/api/sidecar/heartbeat': typeof ApiSidecarHeartbeatRoute
@@ -389,6 +407,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/exports'
     | '/help'
+    | '/leaderboard'
     | '/login'
     | '/pricing'
     | '/privacy'
@@ -405,6 +424,7 @@ export interface FileRouteTypes {
     | '/tools/tiktok-money-calculator'
     | '/tools/tiktok-username-generator'
     | '/tools/'
+    | '/api/admin/refresh-avatar'
     | '/api/auth/$'
     | '/api/avatar/$handle'
     | '/api/sidecar/heartbeat'
@@ -430,6 +450,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/exports'
     | '/help'
+    | '/leaderboard'
     | '/login'
     | '/pricing'
     | '/privacy'
@@ -445,6 +466,7 @@ export interface FileRouteTypes {
     | '/tools/tiktok-money-calculator'
     | '/tools/tiktok-username-generator'
     | '/tools'
+    | '/api/admin/refresh-avatar'
     | '/api/auth/$'
     | '/api/avatar/$handle'
     | '/api/sidecar/heartbeat'
@@ -470,6 +492,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/exports'
     | '/help'
+    | '/leaderboard'
     | '/login'
     | '/pricing'
     | '/privacy'
@@ -486,6 +509,7 @@ export interface FileRouteTypes {
     | '/tools/tiktok-money-calculator'
     | '/tools/tiktok-username-generator'
     | '/tools/'
+    | '/api/admin/refresh-avatar'
     | '/api/auth/$'
     | '/api/avatar/$handle'
     | '/api/sidecar/heartbeat'
@@ -512,6 +536,7 @@ export interface RootRouteChildren {
   DiscoverRoute: typeof DiscoverRoute
   ExportsRoute: typeof ExportsRoute
   HelpRoute: typeof HelpRoute
+  LeaderboardRoute: typeof LeaderboardRoute
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -521,6 +546,7 @@ export interface RootRouteChildren {
   ToolsRoute: typeof ToolsRouteWithChildren
   ApiSitemapRoute: typeof ApiSitemapRoute
   ProfileUsernameRoute: typeof ProfileUsernameRoute
+  ApiAdminRefreshAvatarRoute: typeof ApiAdminRefreshAvatarRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAvatarHandleRoute: typeof ApiAvatarHandleRoute
   ApiSidecarHeartbeatRoute: typeof ApiSidecarHeartbeatRoute
@@ -587,6 +613,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leaderboard': {
+      id: '/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof LeaderboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/help': {
@@ -785,6 +818,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/refresh-avatar': {
+      id: '/api/admin/refresh-avatar'
+      path: '/api/admin/refresh-avatar'
+      fullPath: '/api/admin/refresh-avatar'
+      preLoaderRoute: typeof ApiAdminRefreshAvatarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/og/profile/$username': {
       id: '/api/og/profile/$username'
       path: '/api/og/profile/$username'
@@ -847,6 +887,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiscoverRoute: DiscoverRoute,
   ExportsRoute: ExportsRoute,
   HelpRoute: HelpRoute,
+  LeaderboardRoute: LeaderboardRoute,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
@@ -856,6 +897,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToolsRoute: ToolsRouteWithChildren,
   ApiSitemapRoute: ApiSitemapRoute,
   ProfileUsernameRoute: ProfileUsernameRoute,
+  ApiAdminRefreshAvatarRoute: ApiAdminRefreshAvatarRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAvatarHandleRoute: ApiAvatarHandleRoute,
   ApiSidecarHeartbeatRoute: ApiSidecarHeartbeatRoute,

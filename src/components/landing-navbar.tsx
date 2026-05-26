@@ -89,7 +89,7 @@ export function LandingNavbar() {
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
             <BarChart3 className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="text-base font-semibold text-foreground">Viewlify</span>
+          <span className="text-base font-semibold text-foreground">Viewlify<span className="text-sm font-medium text-muted-foreground">.app</span></span>
         </Link>
 
         {/* Navigation */}
@@ -105,6 +105,12 @@ export function LandingNavbar() {
             className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             Discover
+          </Link>
+          <Link
+            to="/leaderboard"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Leaderboard
           </Link>
           <Link
             to="/tools"
