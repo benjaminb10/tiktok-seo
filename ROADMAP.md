@@ -6,15 +6,15 @@
 
 | Phase | Statut | Progression |
 |-------|--------|-------------|
-| Phase 0 - Fondations | ✅ Complété | 90% |
-| Phase 1 - SEO Machine | 🟡 En cours | 40% |
-| Phase 2 - Partage Viral | ⏳ Non démarré | 0% |
+| Phase 0 - Fondations | ✅ Complété | 95% |
+| Phase 1 - SEO Machine | ✅ Complété | 95% |
+| Phase 2 - Partage Viral | ✅ Complété | 80% |
 | Phase 3 - AI Insights | 🟡 Partiel | 30% |
 | Phase 4 - Competitor Tracking | ⏳ Non démarré | 0% |
 | Phase 5 - Monétisation | ✅ Complété | 95% |
 | Phase 6 - Advanced Features | ⏳ Non démarré | 0% |
 | Phase 7 - Agency Features | ⏳ Non démarré | 0% |
-| Phase 8 - Polish & Growth | ⏳ Non démarré | 0% |
+| Phase 8 - Polish & Growth | 🟡 Partiel | 35% |
 
 ### 🎉 Fonctionnalités Implémentées
 
@@ -48,6 +48,51 @@
 - Hero, Features, Benefits, How it works
 - Testimonials, Use cases, Problem-solution
 - Pricing preview, FAQ, CTA sections
+
+**Dashboard & Onboarding (Nouveau):**
+- Page `/dashboard` avec stats utilisateur
+- Welcome section (onboarding) pour nouveaux users
+- Stats section avec métriques agrégées
+- Quick actions et dernière analyse
+
+**SEO Tools (6 outils):**
+- `/tools` - Page index des outils
+- `/tools/tiktok-engagement-calculator` - Calculateur d'engagement
+- `/tools/tiktok-character-counter` - Compteur de caractères bio/caption
+- `/tools/tiktok-money-calculator` - Estimateur de revenus
+- `/tools/tiktok-hashtag-extractor` - Extracteur de hashtags
+- `/tools/tiktok-hashtag-generator` - Générateur de hashtags (AI)
+- `/tools/tiktok-username-generator` - Générateur de usernames (AI)
+
+**SEO Infrastructure:**
+- `/api/sitemap` - Sitemap XML dynamique (pages statiques + profils)
+- `/robots.txt` - Robots.txt optimisé
+- Schema.org JSON-LD sur les pages tools et leaderboard
+
+**Leaderboard & Discovery:**
+- `/leaderboard` - Leaderboard public avec charts interactifs
+  - Scatter charts (Views vs Engagement, Likes vs Views)
+  - Bar chart top creators
+  - Distribution cards
+  - Ranking tables (Most Engaging, Rising Stars, Full Leaderboard)
+- `/discover` - Page discover dans l'app (browse profiles)
+- `/profiles` - Page publique des profils analysés
+
+**Partage Viral (Nouveau):**
+- `/share/:id` - Page de partage publique d'analyse
+- OG image dynamique pour partage social
+- Boutons partage (X/Twitter, LinkedIn, WhatsApp, Copy link)
+- Stats card pour réseaux sociaux
+
+**Video Downloader (Nouveau):**
+- `/tools/tiktok-video-downloader` - Téléchargement vidéos TikTok
+- API endpoint pour extraction vidéo
+- Support URLs courtes (vm.tiktok.com, vt.tiktok.com)
+
+**UX/Responsive:**
+- Layout responsive avec sidebars mobile-friendly
+- Header mobile avec hamburger menu
+- Chat sidebar toggle sur tablette
 
 ---
 
@@ -246,86 +291,73 @@ CTA Section:
 
 **SEO :** Même approche que profils
 
-### 1.2 - Landing Pages Tools (SEO)
+### 1.2 - Landing Pages Tools (SEO) ✅ PARTIELLEMENT COMPLÉTÉ
 **Durée :** 3 jours
 
-#### Tools à créer :
+#### Tools implémentés (6/8) :
 
-**1. TikTok Engagement Rate Calculator**
-Route : `/tools/engagement-calculator`
+**1. TikTok Engagement Rate Calculator ✅**
+Route : `/tools/tiktok-engagement-calculator`
+- Input: Likes, Comments, Shares, Views
+- Output: Engagement rate %, benchmarks, interprétation
+- CTA vers analyse complète
 
-```
-Input:
-- Likes
-- Comments
-- Shares
-- Views
+**2. TikTok Character Counter ✅**
+Route : `/tools/tiktok-character-counter`
+- Compteur bio (80 chars) et caption (4000 chars)
+- Validation en temps réel
 
-Output:
-- Engagement rate %
-- Benchmark par industrie
-- Interprétation (excellent/good/poor)
-- CTA "Analyze your full profile"
-```
+**3. TikTok Money Calculator ✅**
+Route : `/tools/tiktok-money-calculator`
+- Estimateur de revenus TikTok
+- Basé sur vues et engagement
 
-**2. TikTok Best Posting Time Calculator**
+**4. TikTok Hashtag Extractor ✅**
+Route : `/tools/tiktok-hashtag-extractor`
+- Extraction de hashtags depuis texte
+- Liste formatée
+
+**5. TikTok Hashtag Generator (AI) ✅**
+Route : `/tools/tiktok-hashtag-generator`
+- Génération AI de hashtags pertinents
+- Basé sur niche/description
+
+**6. TikTok Username Generator (AI) ✅**
+Route : `/tools/tiktok-username-generator`
+- Génération AI de usernames créatifs
+- Vérification disponibilité (à améliorer)
+
+#### Tools restants à créer :
+
+**7. TikTok Best Posting Time Calculator** ⏳
 Route : `/tools/best-posting-time`
+- Heatmap par jour/heure
+- Recommandations par niche
 
-```
-Input:
-- Your niche/category
-- Target country
-- Your follower count
-
-Output:
-- Recommended posting times
-- Heatmap by day/hour
-- Reasoning
-```
-
-**3. TikTok Profile Analyzer (Free)**
-Route : `/tools/profile-analyzer` (public version simple)
-
-```
-Input: @username
-Output:
-- Basic stats
-- Top 3 videos
-- Engagement rate
-- CTA "Get full analysis"
-```
-
-**4. TikTok Hashtag Research**
-Route : `/tools/hashtag-research`
-
-```
-Input: Main keyword
-Output:
-- Related hashtags
-- Popularity scores
-- Trending status
-```
-
-**5. TikTok Video Downloader** (bonus, viral)
+**8. TikTok Video Downloader** ⏳ (bonus, viral)
 Route : `/tools/video-downloader`
-
-```
-Input: Video URL
-Output: Download MP4 (no watermark)
-Note: Énorme trafic, acquisition massive
-```
+- Énorme potentiel trafic
 
 **SEO Requirements :**
+- [x] Pages avec meta tags SSR
+- [x] Schema.org JSON-LD (WebApplication)
 - [ ] Blog-style content autour de chaque tool
 - [ ] "How to" guides
-- [ ] FAQ sections
-- [ ] Internal linking
-- [ ] Backlink strategy
+- [ ] FAQ sections par tool
+- [ ] Internal linking amélioré
 
-### 1.3 - Category Pages & Leaderboards
+### 1.3 - Category Pages & Leaderboards ✅ PARTIELLEMENT COMPLÉTÉ
 **Durée :** 3 jours
 
-#### Category Pages
+#### Leaderboard Global ✅
+**Route :** `/leaderboard`
+- Scatter charts (Views vs Engagement, Likes vs Views)
+- Bar chart top creators by views
+- Distribution cards (views, engagement, videos)
+- Ranking tables (Most Engaging, Rising Stars, Full Leaderboard)
+- JSON-LD Schema.org
+
+#### Category Pages (à faire)
 **Route :** `/category/:niche`
 
 **Niches à couvrir :**
@@ -411,10 +443,12 @@ Insights:
 
 **📝 Livrables Phase 1 :**
 - ✅ Pages profils publiques avec SSR et OG images
-- ⏳ Tools SEO (non implémentés)
-- ⏳ Category pages (non implémentés)
+- ✅ Tools SEO (6/8 implémentés)
+- ✅ Sitemap XML dynamique (`/api/sitemap`)
+- ✅ Robots.txt optimisé
+- ✅ Leaderboard page avec charts (`/leaderboard`)
+- ⏳ Category pages par niche (non implémentés)
 - ⏳ Blog auto-généré (non implémenté)
-- ⏳ Sitemap automatique (non implémenté)
 
 **🎯 KPIs Phase 1 :**
 - 10K+ visiteurs organiques/mois (mois 3)
@@ -1682,32 +1716,32 @@ Agency:
 
 ---
 
-## 🎨 PHASE 8 - Polish & Growth (Ongoing)
+## 🎨 PHASE 8 - Polish & Growth (Ongoing) - PARTIELLEMENT DÉMARRÉ
 
-### 8.1 - Onboarding Flow
+### 8.1 - Onboarding Flow ✅ PARTIELLEMENT COMPLÉTÉ
 **Durée :** 2 jours
 
-**New user flow :**
-```
-Step 1: Welcome
-"Let's get you set up"
+**Implémenté:**
+- ✅ Dashboard `/dashboard` avec welcome section
+- ✅ Onboarding visuel "How it works" (3 étapes)
+- ✅ Exemple d'analyse (preview @mrbeast)
+- ✅ Stats agrégées pour utilisateurs existants
+- ✅ Quick actions et dernière analyse
 
-Step 2: Use case
+**Restant à implémenter:**
+```
+Step 2: Use case selection
 "What brings you here?"
 - [ ] I'm a creator
 - [ ] I manage social media
 - [ ] I run an agency
 - [ ] Just exploring
 
-Step 3: First analysis
-"Let's analyze your first profile"
-[Input] @username
-[Analyze]
-
 Step 4: Feature tour
-Interactive walkthrough
+Interactive walkthrough (tooltips)
 
-Step 5: Invite to Discord/Community
+Step 5: Community
+Invite to Discord/Community
 ```
 
 ### 8.2 - Growth Experiments
@@ -1859,34 +1893,50 @@ Step 5: Invite to Discord/Community
 
 ---
 
-## 🎯 Prochaines Étapes Recommandées
+## 🎯 Prochaines Étapes Recommandées (Mise à jour Mai 2026)
 
-### Priorité Haute (Quick Wins)
+### ✅ Récemment Complété
+- Dashboard avec onboarding (`/dashboard`)
+- 7 outils SEO (`/tools/*`) incluant Video Downloader
+- Leaderboard avec charts (`/leaderboard`)
+- Sitemap XML dynamique + robots.txt
+- Responsive mobile/tablet
+- Branding Viewlify.app
+- **Partage viral** (`/share/:id` + OG images + boutons partage)
+- **Video Downloader** (`/tools/tiktok-video-downloader`)
 
-1. **Compléter Phase 1 - SEO:**
-   - [ ] Sitemap automatique
-   - [ ] Schema.org markup
-   - [ ] Tools SEO (engagement calculator, etc.)
+### 🔴 Priorité Haute (Quick Wins)
 
-2. **Analytics & Monitoring:**
-   - [ ] Setup Posthog/Plausible
+1. **Améliorer le Video Downloader:**
+   - [ ] Téléchargement direct sans watermark (infrastructure)
+   - [ ] Support vidéos privées (avec auth)
+
+2. **Best Posting Time Calculator:**
+   - [ ] Outil d'analyse des meilleurs horaires
+
+3. **Analytics & Monitoring:**
+   - [x] Google Analytics (déjà ajouté)
    - [ ] Sentry pour error tracking
 
-3. **Email Service:**
+### 🟡 Priorité Moyenne
+
+4. **Email Service:**
    - [ ] Setup Resend/SendGrid
-   - [ ] Templates welcome, alerts
+   - [ ] Template welcome email
+   - [ ] Email alerte nouvelle vidéo virale
 
-### Priorité Moyenne
-
-4. **Phase 3 - AI Complet:**
+5. **Phase 3 - AI Complet:**
    - [ ] Video AI Analysis ("Why this video went viral")
-   - [ ] Insights automatiques par profil
+   - [ ] Insights structurés (themes, patterns, hooks)
+   - [ ] Améliorer le chat AI avec plus de contexte
 
-5. **Phase 2 - Partage Viral:**
-   - [ ] Share analysis avec lien
-   - [ ] Export image stylisé
+6. **Améliorer conversion:**
+   - [ ] Social proof dynamique (X analyses, X creators)
+   - [ ] Testimonials avec photos/vidéo
+   - [ ] Case studies automatiques
 
-### Priorité Basse (Features Avancées)
+### 🟢 Priorité Basse (Features Avancées)
 
-6. **Phase 4 - Competitor Tracking**
-7. **Phase 6-7 - Features Pro/Agency**
+7. **Phase 4 - Competitor Tracking** (watchlist, alerts email/slack)
+8. **Phase 6 - Advanced Features** (trending sounds, hook detection)
+9. **Phase 7 - Agency Features** (workspaces, white-label, API)

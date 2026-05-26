@@ -17,6 +17,7 @@ type LeaderboardScatterChartProps = {
   xFormatter?: (val: number) => string;
   yFormatter?: (val: number) => string;
   height?: number;
+  logScale?: boolean;
 };
 
 function formatNumber(num: number): string {
@@ -121,8 +122,22 @@ export function LeaderboardScatterChart({
   xFormatter = formatNumber,
   yFormatter = formatNumber,
   height = 400,
+  logScale = false,
 }: LeaderboardScatterChartProps) {
   if (data.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-[400px] text-muted-foreground">
+        No data available
+      </div>
+    );
+  }
+
+  // For log scale, filter out zero values and transform data
+  const chartData = logScale
+    ? data.filter((d) => d.x > 0 && d.y > 0)
+    : data;
+
+  if (chartData.length === 0) {
     return (
       <div className="flex items-center justify-center h-[400px] text-muted-foreground">
         No data available
@@ -139,6 +154,8 @@ export function LeaderboardScatterChart({
           name={xLabel}
           tickFormatter={xFormatter}
           tick={{ fontSize: 12 }}
+          scale={logScale ? "log" : "auto"}
+          domain={logScale ? ["auto", "auto"] : undefined}
           label={{
             value: xLabel,
             position: "bottom",
@@ -152,6 +169,8 @@ export function LeaderboardScatterChart({
           name={yLabel}
           tickFormatter={yFormatter}
           tick={{ fontSize: 12 }}
+          scale={logScale ? "log" : "auto"}
+          domain={logScale ? ["auto", "auto"] : undefined}
           label={{
             value: yLabel,
             angle: -90,
@@ -171,7 +190,7 @@ export function LeaderboardScatterChart({
           }
         />
         <Scatter
-          data={data}
+          data={chartData}
           shape={<CustomDot />}
         />
       </ScatterChart>

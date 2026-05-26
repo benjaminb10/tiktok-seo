@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import { and, eq, lt, or, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import * as schema from "#/db/schema";
@@ -103,13 +104,22 @@ export class TikTokJobService {
       throw new Error("Job metadata attendu.");
     }
 
+    // Get the handle from the run to store avatar with correct filename
+    const [run] = await this.database
+      .select({ handle: schema.searchRuns.handle })
+      .from(schema.searchRuns)
+      .where(eq(schema.searchRuns.id, job.runId))
+      .limit(1);
+
     const uniqueVideos = this.sanitizeUniqueVideos(input.videos);
     for (const video of uniqueVideos) {
       await upsertVideo(this.database, video, timestamp);
     }
 
-    // Extract avatar URL by fetching from TikTok profile page
-    const avatarUrl = await this.extractAvatarUrl(input.videos);
+    // Extract avatar URL and store in R2 immediately (avoids TikTok URL expiration)
+    const avatarUrl = run?.handle
+      ? await this.extractAndStoreAvatar(input.videos, run.handle)
+      : null;
 
     const selected = selectDisplayVideos(uniqueVideos);
     await replaceRunVideos(this.database, job.runId, selected, timestamp);
@@ -621,7 +631,11 @@ export class TikTokJobService {
     return Array.from(byId.values());
   }
 
-  private async extractAvatarUrl(videos: unknown[]): Promise<string | null> {
+  /**
+   * Extract avatar URL from videos and store it in R2 immediately.
+   * Returns the avatar URL for database reference (even if R2 storage fails).
+   */
+  private async extractAndStoreAvatar(videos: unknown[], handle: string): Promise<string | null> {
     // yt-dlp doesn't expose TikTok profile avatars in video metadata
     // We need to fetch it from the profile page directly
     for (const raw of videos) {
@@ -631,13 +645,58 @@ export class TikTokJobService {
       const uploaderUrl = this.readString(record, "uploader_url");
       if (uploaderUrl && uploaderUrl.includes("tiktok.com/@")) {
         try {
-          return await this.fetchProfileAvatarFromWeb(uploaderUrl);
+          const avatarUrl = await this.fetchProfileAvatarFromWeb(uploaderUrl);
+          if (avatarUrl) {
+            // Store in R2 immediately so we don't depend on TikTok URL expiration
+            await this.storeAvatarInR2(avatarUrl, handle);
+            return avatarUrl;
+          }
         } catch (error) {
-          console.error("[extractAvatarUrl] Failed to fetch avatar from profile page:", error);
+          console.error("[extractAndStoreAvatar] Failed to fetch/store avatar:", error);
         }
       }
     }
     return null;
+  }
+
+  /**
+   * Download avatar from TikTok CDN and store it in R2 for permanent caching.
+   */
+  private async storeAvatarInR2(avatarUrl: string, handle: string): Promise<boolean> {
+    try {
+      const normalizedHandle = handle.replace(/^@/, "").toLowerCase();
+      const r2Key = `avatars/${normalizedHandle}`;
+
+      // Download the image from TikTok
+      const imageResponse = await fetch(avatarUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept": "image/webp,image/apng,image/*,*/*;q=0.8",
+          "Referer": "https://www.tiktok.com/",
+        },
+      });
+
+      if (!imageResponse.ok) {
+        console.error(`[storeAvatarInR2] Failed to download avatar: ${imageResponse.status}`);
+        return false;
+      }
+
+      const imageBuffer = await imageResponse.arrayBuffer();
+      const contentType = imageResponse.headers.get("content-type") || "image/jpeg";
+
+      // Store in R2
+      await env.IMAGES.put(r2Key, imageBuffer, {
+        httpMetadata: {
+          contentType,
+        },
+      });
+
+      console.log(`[storeAvatarInR2] Stored avatar for @${normalizedHandle} in R2 (${imageBuffer.byteLength} bytes)`);
+      return true;
+    } catch (error) {
+      console.error("[storeAvatarInR2] Error storing avatar:", error);
+      return false;
+    }
   }
 
   private async fetchProfileAvatarFromWeb(profileUrl: string): Promise<string | null> {

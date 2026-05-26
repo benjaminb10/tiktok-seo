@@ -1,14 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { BarChart3, TrendingUp, Users } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, BarChart3, TrendingUp, Users, Star, Heart } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "#/components/ui/card";
-import { LandingFooter } from "#/components/landing-footer";
 import { ClientOnly } from "#/components/client-only";
-import { LeaderboardScatterChart } from "#/features/leaderboard/scatter-chart";
-import { LeaderboardBarChart } from "#/features/leaderboard/bar-chart";
 import { DistributionCards } from "#/features/leaderboard/distribution-cards";
-import { RankingTable } from "#/features/leaderboard/ranking-table";
+import { StatsLayout } from "#/features/leaderboard/stats-layout";
 import { getAnalyzedProfilesFn } from "#/lib/tiktok/tiktok.functions";
-import type { ProfileSummary } from "#/lib/tiktok/tiktok.profiles.server";
 
 export const Route = createFileRoute("/leaderboard")({
   component: LeaderboardPage,
@@ -18,21 +14,21 @@ export const Route = createFileRoute("/leaderboard")({
   },
   head: () => ({
     meta: [
-      { title: "TikTok Creator Leaderboard | Viewlify" },
+      { title: "TikTok Creator Leaderboard & Statistics | Viewlify" },
       {
         name: "description",
         content:
-          "Compare TikTok creators by views, engagement rate, and performance metrics. See who's leading the pack.",
+          "Explore TikTok creator statistics, rankings, and performance metrics. Compare engagement rates, view counts, and discover rising stars.",
       },
       {
         name: "keywords",
         content:
-          "TikTok leaderboard, TikTok creators ranking, TikTok analytics, creator statistics, engagement comparison",
+          "TikTok leaderboard, TikTok creator rankings, TikTok statistics, creator analytics, TikTok metrics",
       },
-      { property: "og:title", content: "TikTok Creator Leaderboard | Viewlify" },
+      { property: "og:title", content: "TikTok Creator Leaderboard & Statistics | Viewlify" },
       {
         property: "og:description",
-        content: "Compare TikTok creators by views, engagement, and performance metrics.",
+        content: "Explore TikTok creator statistics, rankings, and performance metrics.",
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Viewlify" },
@@ -40,69 +36,56 @@ export const Route = createFileRoute("/leaderboard")({
       { name: "twitter:title", content: "TikTok Creator Leaderboard" },
       {
         name: "twitter:description",
-        content: "See how TikTok creators compare on views, engagement, and more.",
+        content: "Explore TikTok creator statistics and rankings.",
       },
     ],
   }),
 });
 
-function getMedian(numbers: number[]): number {
-  if (numbers.length === 0) return 0;
-  const sorted = [...numbers].sort((a, b) => a - b);
-  const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-}
+const statsLinks = [
+  {
+    href: "/stats/engagement",
+    icon: TrendingUp,
+    title: "Engagement Analysis",
+    description: "See how engagement rate correlates with total views across creators",
+    color: "text-green-500",
+  },
+  {
+    href: "/stats/views-likes",
+    icon: Heart,
+    title: "Likes vs Views",
+    description: "Explore the relationship between total likes and views",
+    color: "text-pink-500",
+  },
+  {
+    href: "/stats/top-creators",
+    icon: Users,
+    title: "Top Creators",
+    description: "Discover the highest performing TikTok creators by views",
+    color: "text-blue-500",
+  },
+  {
+    href: "/stats/rising-stars",
+    icon: Star,
+    title: "Rising Stars",
+    description: "Find creators with high engagement and growing audiences",
+    color: "text-yellow-500",
+  },
+];
 
 function LeaderboardPage() {
   const { profiles } = Route.useLoaderData();
 
-  // Enrich profiles with calculated metrics
-  const enrichedProfiles = profiles.map((p) => ({
-    ...p,
-    engagementRate: p.totalViews > 0 ? (p.totalLikes / p.totalViews) * 100 : 0,
-    avgViewsPerVideo: p.totalVideos > 0 ? p.totalViews / p.totalVideos : 0,
-  }));
-
-  // Calculate rising stars (high engagement, lower views)
-  const medianViews = getMedian(profiles.map((p) => p.totalViews));
-  const risingStars = enrichedProfiles
-    .filter((p) => p.engagementRate > 5 && p.totalViews < medianViews && p.totalViews > 0)
-    .sort((a, b) => b.engagementRate - a.engagementRate);
-
-  // Prepare scatter chart data
-  const scatterViewsEngagement = enrichedProfiles
-    .filter((p) => p.totalViews > 0)
-    .map((p) => ({
-      handle: p.handle,
-      avatarUrl: p.avatarUrl,
-      x: p.totalViews,
-      y: p.engagementRate,
-    }));
-
-  const scatterLikesViews = enrichedProfiles
-    .filter((p) => p.totalViews > 0)
-    .map((p) => ({
-      handle: p.handle,
-      avatarUrl: p.avatarUrl,
-      x: p.totalViews,
-      y: p.totalLikes,
-    }));
-
-  // Prepare bar chart data
-  const barChartData = profiles.map((p) => ({
-    handle: p.handle,
-    avatarUrl: p.avatarUrl,
-    value: p.totalViews,
-  }));
-
-  // Calculate total stats
   const totalViews = profiles.reduce((sum, p) => sum + p.totalViews, 0);
   const totalLikes = profiles.reduce((sum, p) => sum + p.totalLikes, 0);
-  const avgEngagement =
-    totalViews > 0 ? ((totalLikes / totalViews) * 100).toFixed(1) : "0";
+  const avgEngagement = totalViews > 0 ? ((totalLikes / totalViews) * 100).toFixed(1) : "0";
 
   return (
-    <div className="min-h-screen bg-background">
+    <StatsLayout
+      title="TikTok Creator Statistics"
+      description={`Live data from ${profiles.length} analyzed creators`}
+      currentPage="overview"
+    >
       {/* JSON-LD Structured Data */}
       <script
         type="application/ld+json"
@@ -111,8 +94,7 @@ function LeaderboardPage() {
             "@context": "https://schema.org",
             "@type": "WebPage",
             name: "TikTok Creator Leaderboard",
-            description:
-              "Compare TikTok creators by views, engagement rate, and performance metrics.",
+            description: "Compare TikTok creators by views, engagement rate, and performance metrics.",
             creator: {
               "@type": "Organization",
               name: "Viewlify",
@@ -121,149 +103,88 @@ function LeaderboardPage() {
         }}
       />
 
-      {/* Header */}
-      <section className="border-b bg-muted/30 py-12">
-        <div className="mx-auto max-w-7xl px-4 text-center">
-          <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
-            TikTok Creator Statistics
-          </h1>
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Live data from {profiles.length} analyzed creators
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              <span>{profiles.length} creators</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              <span>{(totalViews / 1_000_000).toFixed(1)}M total views</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              <span>{avgEngagement}% avg engagement</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Content */}
-      <div className="mx-auto max-w-7xl px-4 py-12 space-y-12">
-        {/* Distribution Cards */}
-        <ClientOnly fallback={<div className="grid gap-4 md:grid-cols-3"><div className="h-[180px] bg-muted/50 rounded-lg animate-pulse" /><div className="h-[180px] bg-muted/50 rounded-lg animate-pulse" /><div className="h-[180px] bg-muted/50 rounded-lg animate-pulse" /></div>}>
-          {() => <DistributionCards profiles={profiles} />}
-        </ClientOnly>
-
-        {/* Scatter: Views vs Engagement */}
+      {/* Quick Stats */}
+      <div className="mb-8 grid gap-4 sm:grid-cols-3">
         <Card>
-          <CardHeader>
-            <CardTitle>Views vs Engagement Rate</CardTitle>
-            <CardDescription>
-              How engagement correlates with total views
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ClientOnly fallback={<div className="h-[400px] bg-muted/50 rounded-lg animate-pulse" />}>
-              {() => (
-                <LeaderboardScatterChart
-                  data={scatterViewsEngagement}
-                  xLabel="Total Views"
-                  yLabel="Engagement %"
-                  yFormatter={(val) => `${val.toFixed(1)}%`}
-                />
-              )}
-            </ClientOnly>
+          <CardContent className="flex items-center gap-4 p-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <Users className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{profiles.length}</p>
+              <p className="text-sm text-muted-foreground">Creators analyzed</p>
+            </div>
           </CardContent>
         </Card>
-
-        {/* Scatter: Likes vs Views */}
         <Card>
-          <CardHeader>
-            <CardTitle>Likes vs Views</CardTitle>
-            <CardDescription>
-              Relationship between total likes and views
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ClientOnly fallback={<div className="h-[400px] bg-muted/50 rounded-lg animate-pulse" />}>
-              {() => (
-                <LeaderboardScatterChart
-                  data={scatterLikesViews}
-                  xLabel="Total Views"
-                  yLabel="Total Likes"
-                />
-              )}
-            </ClientOnly>
+          <CardContent className="flex items-center gap-4 p-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10">
+              <BarChart3 className="h-6 w-6 text-blue-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{(totalViews / 1_000_000_000).toFixed(1)}B</p>
+              <p className="text-sm text-muted-foreground">Total views</p>
+            </div>
           </CardContent>
         </Card>
-
-        {/* Bar: Top Creators by Views */}
         <Card>
-          <CardHeader>
-            <CardTitle>Top Creators by Views</CardTitle>
-            <CardDescription>
-              Highest performing creators by total views
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ClientOnly fallback={<div className="h-[500px] bg-muted/50 rounded-lg animate-pulse" />}>
-              {() => (
-                <LeaderboardBarChart
-                  data={barChartData}
-                  valueLabel="Total Views"
-                  limit={10}
-                />
-              )}
-            </ClientOnly>
-          </CardContent>
-        </Card>
-
-        {/* Tables Grid */}
-        <div className="grid gap-8 lg:grid-cols-2">
-          {/* Table: Most Engaging */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Most Engaging Creators</CardTitle>
-              <CardDescription>Ranked by engagement rate</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <RankingTable data={profiles} sortBy="engagement" limit={10} />
-            </CardContent>
-          </Card>
-
-          {/* Table: Rising Stars */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Rising Stars</CardTitle>
-              <CardDescription>
-                High engagement with growing audience
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {risingStars.length > 0 ? (
-                <RankingTable data={risingStars} sortBy="engagement" limit={10} />
-              ) : (
-                <div className="flex items-center justify-center py-8 text-muted-foreground">
-                  Not enough data for rising stars
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Table: Top by Views */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Full Leaderboard</CardTitle>
-            <CardDescription>All creators ranked by total views</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <RankingTable data={profiles} sortBy="views" limit={20} />
+          <CardContent className="flex items-center gap-4 p-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/10">
+              <TrendingUp className="h-6 w-6 text-green-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{avgEngagement}%</p>
+              <p className="text-sm text-muted-foreground">Avg engagement</p>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      <LandingFooter />
-    </div>
+      {/* Distribution Cards */}
+      <div className="mb-8">
+        <h2 className="mb-4 text-xl font-semibold">Distribution Overview</h2>
+        <ClientOnly
+          fallback={
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="h-[180px] animate-pulse rounded-lg bg-muted/50" />
+              <div className="h-[180px] animate-pulse rounded-lg bg-muted/50" />
+              <div className="h-[180px] animate-pulse rounded-lg bg-muted/50" />
+            </div>
+          }
+        >
+          {() => <DistributionCards profiles={profiles} />}
+        </ClientOnly>
+      </div>
+
+      {/* Stats Links */}
+      <div>
+        <h2 className="mb-4 text-xl font-semibold">Explore Statistics</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {statsLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link key={link.href} to={link.href}>
+                <Card className="h-full transition-colors hover:bg-muted/50">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center gap-3">
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-full bg-muted`}>
+                        <Icon className={`h-5 w-5 ${link.color}`} />
+                      </div>
+                      <CardTitle className="text-lg">{link.title}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="flex items-center justify-between">
+                      <span>{link.description}</span>
+                      <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </StatsLayout>
   );
 }

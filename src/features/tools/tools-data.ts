@@ -1,4 +1,4 @@
-import { Calculator, Hash, Sparkles, DollarSign, Type, AtSign, type LucideIcon } from "lucide-react";
+import { Calculator, Hash, Sparkles, DollarSign, Type, AtSign, Download, type LucideIcon } from "lucide-react";
 
 export type Tool = {
   id: string;
@@ -9,6 +9,13 @@ export type Tool = {
 };
 
 export const TOOLS: Tool[] = [
+  {
+    id: "tiktok-video-downloader",
+    title: "TikTok Video Downloader",
+    description: "Download TikTok videos without watermark. Fast, free, and easy.",
+    icon: Download,
+    href: "/tools/tiktok-video-downloader",
+  },
   {
     id: "tiktok-engagement-calculator",
     title: "TikTok Engagement Calculator",

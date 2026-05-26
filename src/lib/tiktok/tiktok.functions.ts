@@ -15,6 +15,7 @@ import {
   listAllRuns,
   listUserRuns,
   getDashboardStats,
+  getShareData,
   QuotaExceededError,
 } from "./tiktok.runs.server";
 import {
@@ -143,3 +144,13 @@ export const getDashboardStatsFn = createServerFn({ method: "GET" }).handler(
     return getDashboardStats(db, session.user.id);
   },
 );
+
+const shareIdSchema = z.object({
+  shareId: z.string(),
+});
+
+export const getShareDataFn = createServerFn({ method: "GET" })
+  .inputValidator((input) => shareIdSchema.parse(input))
+  .handler(async ({ data }) => {
+    return getShareData(db, data.shareId);
+  });

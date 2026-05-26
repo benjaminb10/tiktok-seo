@@ -114,7 +114,7 @@ export function Sidebar({ onClose }: SidebarProps) {
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
             <BarChart3 className="h-4 w-4 text-primary-foreground" />
           </div>
-          <span className="text-sm font-semibold text-foreground">Viewlify</span>
+          <span className="text-sm font-semibold text-foreground">Viewlify<span className="text-xs font-medium text-muted-foreground/80">.app</span></span>
         </div>
         {onClose && (
           <Button

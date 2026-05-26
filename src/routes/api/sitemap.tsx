@@ -51,6 +51,8 @@ export const Route = createFileRoute("/api/sitemap")({
           { loc: `${BASE_URL}/tools/tiktok-username-generator`, changefreq: "monthly", priority: 0.8 },
           { loc: `${BASE_URL}/tools/tiktok-engagement-calculator`, changefreq: "monthly", priority: 0.8 },
           { loc: `${BASE_URL}/tools/tiktok-character-counter`, changefreq: "monthly", priority: 0.8 },
+          { loc: `${BASE_URL}/tools/tiktok-video-downloader`, changefreq: "monthly", priority: 0.9 },
+          { loc: `${BASE_URL}/leaderboard`, changefreq: "daily", priority: 0.8, lastmod: today },
           { loc: `${BASE_URL}/login`, changefreq: "monthly", priority: 0.5 },
           { loc: `${BASE_URL}/help`, changefreq: "monthly", priority: 0.6 },
           { loc: `${BASE_URL}/terms`, changefreq: "yearly", priority: 0.3 },

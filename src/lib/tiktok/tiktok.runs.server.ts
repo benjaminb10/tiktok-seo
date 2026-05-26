@@ -235,6 +235,96 @@ export type DashboardStats = {
   } | null;
 };
 
+export type ShareData = {
+  id: string;
+  handle: string | null;
+  avatarUrl: string | null;
+  status: string;
+  createdAt: number;
+  totalVideos: number;
+  totalViews: number;
+  totalLikes: number;
+  avgEngagement: number;
+  topVideos: Array<{
+    id: string;
+    thumbnailUrl: string | null;
+    title: string | null;
+    viewCount: number;
+    likeCount: number;
+  }>;
+};
+
+export async function getShareData(
+  database: TikTokDb,
+  runId: string,
+): Promise<ShareData | null> {
+  // Get run details
+  const [run] = await database
+    .select()
+    .from(schema.searchRuns)
+    .where(eq(schema.searchRuns.id, runId));
+
+  if (!run || run.status !== "completed") {
+    return null;
+  }
+
+  // Get video stats
+  const videoStats = await database
+    .select({
+      totalVideos: sql<number>`COUNT(*)`,
+      totalViews: sql<number>`COALESCE(SUM(${schema.tiktokVideos.viewCount}), 0)`,
+      totalLikes: sql<number>`COALESCE(SUM(${schema.tiktokVideos.likeCount}), 0)`,
+    })
+    .from(schema.searchRunVideos)
+    .innerJoin(
+      schema.tiktokVideos,
+      eq(schema.searchRunVideos.videoId, schema.tiktokVideos.id)
+    )
+    .where(eq(schema.searchRunVideos.runId, runId));
+
+  const stats = videoStats[0] || { totalVideos: 0, totalViews: 0, totalLikes: 0 };
+  const totalViews = Number(stats.totalViews) || 0;
+  const totalLikes = Number(stats.totalLikes) || 0;
+  const avgEngagement = totalViews > 0 ? (totalLikes / totalViews) * 100 : 0;
+
+  // Get top 3 videos
+  const topVideos = await database
+    .select({
+      id: schema.tiktokVideos.id,
+      thumbnailUrl: schema.tiktokVideos.thumbnailUrl,
+      title: schema.tiktokVideos.title,
+      viewCount: schema.tiktokVideos.viewCount,
+      likeCount: schema.tiktokVideos.likeCount,
+    })
+    .from(schema.searchRunVideos)
+    .innerJoin(
+      schema.tiktokVideos,
+      eq(schema.searchRunVideos.videoId, schema.tiktokVideos.id)
+    )
+    .where(eq(schema.searchRunVideos.runId, runId))
+    .orderBy(desc(schema.tiktokVideos.viewCount))
+    .limit(6);
+
+  return {
+    id: run.id,
+    handle: run.handle,
+    avatarUrl: run.avatarUrl,
+    status: run.status,
+    createdAt: run.createdAt,
+    totalVideos: Number(stats.totalVideos) || 0,
+    totalViews,
+    totalLikes,
+    avgEngagement,
+    topVideos: topVideos.map((v) => ({
+      id: v.id,
+      thumbnailUrl: v.thumbnailUrl,
+      title: v.title,
+      viewCount: v.viewCount || 0,
+      likeCount: v.likeCount || 0,
+    })),
+  };
+}
+
 export async function getDashboardStats(
   database: TikTokDb,
   userId: string,

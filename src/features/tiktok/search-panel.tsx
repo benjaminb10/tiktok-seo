@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
 import { InputGroup, InputGroupInput } from "#/components/ui/input-group";
 import { Progress } from "#/components/ui/progress";
 import { QuotaBadge } from "#/features/paywall/quota-badge";
+import { ShareButtons } from "#/features/share/share-buttons";
 import { useQuotaDisplay } from "#/lib/stripe/quota-context";
 import { getAvatarUrl } from "#/features/analysis/types";
 import type { RunStatusView } from "#/lib/tiktok/tiktok.ui";
@@ -14,6 +15,7 @@ type SearchPanelProps = {
   statusView: RunStatusView;
   isAnalyzing: boolean;
   isMetadataBusy: boolean;
+  currentRunId?: string | null;
   currentHandle?: string | null;
   avatarUrl?: string | null;
   hasResults: boolean;
@@ -28,6 +30,7 @@ export function SearchPanel({
   statusView,
   isAnalyzing,
   isMetadataBusy,
+  currentRunId,
   currentHandle,
   avatarUrl,
   hasResults,
@@ -59,14 +62,19 @@ export function SearchPanel({
               <p className="text-sm text-muted-foreground">Analysis in progress</p>
             </div>
           </div>
-          <Button
-            variant="outline"
-            onClick={onNewAnalysis}
-            className="gap-2 shrink-0 self-start sm:self-auto"
-          >
-            <Plus className="h-4 w-4" />
-            New analysis
-          </Button>
+          <div className="flex gap-2 shrink-0 self-start sm:self-auto">
+            {currentRunId && (
+              <ShareButtons runId={currentRunId} handle={currentHandle} />
+            )}
+            <Button
+              variant="outline"
+              onClick={onNewAnalysis}
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              New analysis
+            </Button>
+          </div>
         </div>
       )}
       <form className="flex w-full flex-col gap-4" onSubmit={onAnalyze}>

@@ -5,7 +5,7 @@ export function LandingFooter() {
   return (
     <footer className="border-t bg-muted/30">
       <div className="mx-auto max-w-5xl px-4 py-12">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
           <div>
             <Link to="/" className="mb-4 inline-flex items-center gap-2">
@@ -41,6 +41,33 @@ export function LandingFooter() {
             </ul>
           </div>
 
+          {/* Statistics */}
+          <div>
+            <h3 className="mb-4 text-sm font-semibold text-foreground">Statistics</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link to="/leaderboard" className="text-muted-foreground hover:text-foreground">
+                  Leaderboard
+                </Link>
+              </li>
+              <li>
+                <Link to="/stats/engagement" className="text-muted-foreground hover:text-foreground">
+                  Engagement Analysis
+                </Link>
+              </li>
+              <li>
+                <Link to="/stats/top-creators" className="text-muted-foreground hover:text-foreground">
+                  Top Creators
+                </Link>
+              </li>
+              <li>
+                <Link to="/stats/rising-stars" className="text-muted-foreground hover:text-foreground">
+                  Rising Stars
+                </Link>
+              </li>
+            </ul>
+          </div>
+
           {/* Free Tools */}
           <div>
             <h3 className="mb-4 text-sm font-semibold text-foreground">Free Tools</h3>
@@ -58,11 +85,6 @@ export function LandingFooter() {
               <li>
                 <Link to="/tools/tiktok-hashtag-generator" className="text-muted-foreground hover:text-foreground">
                   AI Hashtag Generator
-                </Link>
-              </li>
-              <li>
-                <Link to="/tools/tiktok-username-generator" className="text-muted-foreground hover:text-foreground">
-                  Username Generator
                 </Link>
               </li>
               <li>

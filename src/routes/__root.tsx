@@ -69,7 +69,7 @@ function AppLayout({ showChatSidebar }: { showChatSidebar: boolean }) {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <span className="text-sm font-semibold">Viewlify</span>
+          <span className="text-sm font-semibold">Viewlify<span className="text-xs font-medium text-muted-foreground/80">.app</span></span>
           {showChatSidebar && (
             <Button
               variant="ghost"

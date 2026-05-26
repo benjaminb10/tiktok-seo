@@ -76,11 +76,11 @@ function CustomYAxisTick(props: {
         <>
           <defs>
             <clipPath id={`yaxis-clip-${item.handle}`}>
-              <circle cx={-70} cy={0} r={12} />
+              <circle cx={-120} cy={0} r={12} />
             </clipPath>
           </defs>
           <image
-            x={-82}
+            x={-132}
             y={-12}
             width={24}
             height={24}
@@ -88,7 +88,7 @@ function CustomYAxisTick(props: {
             clipPath={`url(#yaxis-clip-${item.handle})`}
           />
           <circle
-            cx={-70}
+            cx={-120}
             cy={0}
             r={12}
             fill="none"
@@ -97,16 +97,16 @@ function CustomYAxisTick(props: {
           />
         </>
       ) : (
-        <circle cx={-70} cy={0} r={12} fill="hsl(var(--primary))" />
+        <circle cx={-120} cy={0} r={12} fill="hsl(var(--primary))" />
       )}
       <text
-        x={-50}
+        x={-100}
         y={4}
         textAnchor="start"
         fill="hsl(var(--foreground))"
         fontSize={12}
       >
-        @{item.handle.length > 12 ? `${item.handle.slice(0, 12)}...` : item.handle}
+        @{item.handle.length > 15 ? `${item.handle.slice(0, 15)}...` : item.handle}
       </text>
     </g>
   );
@@ -138,7 +138,7 @@ export function LeaderboardBarChart({
       <BarChart
         data={sortedData}
         layout="vertical"
-        margin={{ top: 10, right: 30, left: 100, bottom: 10 }}
+        margin={{ top: 10, right: 30, left: 150, bottom: 10 }}
       >
         <XAxis
           type="number"
@@ -149,7 +149,7 @@ export function LeaderboardBarChart({
           type="category"
           dataKey="handle"
           tick={<CustomYAxisTick data={sortedData} />}
-          width={100}
+          width={150}
         />
         <Tooltip
           content={

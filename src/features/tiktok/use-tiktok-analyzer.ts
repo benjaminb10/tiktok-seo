@@ -229,6 +229,7 @@ export function useTikTokAnalyzer(searchRunId?: string | null, initialInput?: st
     isVideoWorkBusy,
     canLoadMore,
     queueingVideoIds,
+    currentRunId: details?.run.id ?? null,
     currentHandle: details?.run.handle ?? null,
     avatarUrl: details?.run.avatarUrl ?? null,
     hasResults: videos.length > 0,
