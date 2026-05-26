@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Download, Loader2, AlertCircle, CheckCircle, Link as LinkIcon } from "lucide-react";
+import { Download, ExternalLink, Link as LinkIcon, Copy, Check } from "lucide-react";
 import { Button } from "#/components/ui/button";
 import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
@@ -44,17 +44,27 @@ export const Route = createFileRoute("/tools/tiktok-video-downloader")({
   }),
 });
 
-type DownloadState = "idle" | "loading" | "success" | "error";
+const DOWNLOAD_SERVICES = [
+  {
+    name: "SnapTik",
+    url: "https://snaptik.app",
+    description: "Fast and reliable, no watermark",
+  },
+  {
+    name: "SSSTik",
+    url: "https://ssstik.io",
+    description: "HD quality, multiple formats",
+  },
+  {
+    name: "SaveTik",
+    url: "https://savetik.co",
+    description: "Simple interface, quick downloads",
+  },
+];
 
 function VideoDownloaderPage() {
   const [url, setUrl] = useState("");
-  const [state, setState] = useState<DownloadState>("idle");
-  const [error, setError] = useState<string | null>(null);
-  const [videoInfo, setVideoInfo] = useState<{
-    thumbnail?: string;
-    description?: string;
-    downloadUrl?: string;
-  } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const isValidTikTokUrl = (input: string) => {
     const tiktokPatterns = [
@@ -66,54 +76,18 @@ function VideoDownloaderPage() {
     return tiktokPatterns.some((pattern) => pattern.test(input));
   };
 
-  const handleDownload = async () => {
-    if (!url.trim()) {
-      setError("Please enter a TikTok video URL");
-      setState("error");
-      return;
-    }
-
-    if (!isValidTikTokUrl(url)) {
-      setError("Please enter a valid TikTok video URL");
-      setState("error");
-      return;
-    }
-
-    setState("loading");
-    setError(null);
-
-    try {
-      // Call the download API
-      const response = await fetch("/api/tools/download-video", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to process video");
-      }
-
-      const data = await response.json();
-      setVideoInfo({
-        thumbnail: data.thumbnail,
-        description: data.description,
-        downloadUrl: data.downloadUrl,
-      });
-      setState("success");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to download video");
-      setState("error");
-    }
+  const handleCopy = async () => {
+    if (!url.trim()) return;
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleReset = () => {
-    setUrl("");
-    setState("idle");
-    setError(null);
-    setVideoInfo(null);
+  const openService = (serviceUrl: string) => {
+    window.open(serviceUrl, "_blank", "noopener,noreferrer");
   };
+
+  const isValid = url.trim() && isValidTikTokUrl(url);
 
   return (
     <ToolPageLayout toolId="tiktok-video-downloader">
@@ -143,11 +117,11 @@ function VideoDownloaderPage() {
       />
 
       <div className="space-y-6">
-        {/* Input Section */}
+        {/* Step 1: Paste URL */}
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="video-url" className="text-sm font-medium">
-              TikTok Video URL
+              Step 1: Paste your TikTok video URL
             </Label>
             <div className="flex gap-2">
               <div className="relative flex-1">
@@ -157,84 +131,68 @@ function VideoDownloaderPage() {
                   type="url"
                   placeholder="https://www.tiktok.com/@user/video/..."
                   value={url}
-                  onChange={(e) => {
-                    setUrl(e.target.value);
-                    if (state === "error") setState("idle");
-                  }}
+                  onChange={(e) => setUrl(e.target.value)}
                   className="pl-10"
                 />
               </div>
               <Button
-                onClick={handleDownload}
-                disabled={state === "loading" || !url.trim()}
+                variant="outline"
+                onClick={handleCopy}
+                disabled={!url.trim()}
                 className="gap-2"
               >
-                {state === "loading" ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                {copied ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Copied
+                  </>
                 ) : (
-                  <Download className="h-4 w-4" />
+                  <>
+                    <Copy className="h-4 w-4" />
+                    Copy
+                  </>
                 )}
-                {state === "loading" ? "Processing..." : "Download"}
               </Button>
             </div>
+            {url.trim() && !isValid && (
+              <p className="text-sm text-amber-600">
+                This doesn't look like a valid TikTok URL. Make sure it contains "tiktok.com"
+              </p>
+            )}
           </div>
+        </div>
 
-          {/* Error State */}
-          {state === "error" && error && (
-            <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {/* Success State */}
-          {state === "success" && videoInfo && (
-            <div className="space-y-4 rounded-lg border border-green-200 bg-green-50 p-4">
-              <div className="flex items-center gap-2 text-green-700">
-                <CheckCircle className="h-5 w-5" />
-                <span className="font-medium">Video ready to download!</span>
-              </div>
-
-              <div className="flex flex-col gap-4 sm:flex-row">
-                {videoInfo.thumbnail && (
-                  <img
-                    src={videoInfo.thumbnail}
-                    alt="Video thumbnail"
-                    className="h-32 w-auto rounded-lg object-cover"
-                  />
-                )}
-                <div className="flex-1 space-y-3">
-                  {videoInfo.description && (
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {videoInfo.description}
-                    </p>
-                  )}
-                  <div className="flex flex-wrap gap-2">
-                    {videoInfo.downloadUrl && (
-                      <Button
-                        className="gap-2"
-                        asChild
-                      >
-                        <a
-                          href={`/api/tools/proxy-video?url=${encodeURIComponent(videoInfo.downloadUrl)}`}
-                          download={`tiktok-video-${Date.now()}.mp4`}
-                        >
-                          <Download className="h-4 w-4" />
-                          Download Video
-                        </a>
-                      </Button>
-                    )}
-                    <Button variant="outline" onClick={handleReset}>
-                      Download Another
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Tip: If download doesn't start, right-click the button and select "Save link as..."
-                  </p>
+        {/* Step 2: Choose service */}
+        <div className="space-y-4">
+          <Label className="text-sm font-medium">
+            Step 2: Open a download service and paste your URL
+          </Label>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {DOWNLOAD_SERVICES.map((service) => (
+              <button
+                key={service.name}
+                onClick={() => openService(service.url)}
+                className="group flex flex-col items-start gap-2 rounded-lg border bg-card p-4 text-left transition-all hover:border-primary hover:shadow-md"
+              >
+                <div className="flex w-full items-center justify-between">
+                  <span className="font-semibold">{service.name}</span>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
                 </div>
-              </div>
-            </div>
-          )}
+                <span className="text-sm text-muted-foreground">
+                  {service.description}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick tip */}
+        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+          <h3 className="mb-2 font-semibold text-primary">Quick tip</h3>
+          <p className="text-sm text-muted-foreground">
+            Copy your TikTok URL above, then click on any service. On the service's website,
+            paste your URL and click download. Most services offer HD quality without watermark.
+          </p>
         </div>
 
         {/* Instructions */}
@@ -244,7 +202,8 @@ function VideoDownloaderPage() {
             <li>Open TikTok and find the video you want to download</li>
             <li>Tap the share button and copy the video link</li>
             <li>Paste the link in the field above</li>
-            <li>Click "Download" and save the video</li>
+            <li>Click "Copy" then open one of the download services</li>
+            <li>Paste your URL on the service and download</li>
           </ol>
         </div>
 
@@ -260,7 +219,7 @@ function VideoDownloaderPage() {
 
         {/* Disclaimer */}
         <p className="text-xs text-muted-foreground">
-          This tool is for personal use only. Please respect copyright and the original creators' rights.
+          This tool helps you access video download services. Please respect copyright and the original creators' rights.
           Downloaded content should not be used for commercial purposes without permission.
         </p>
       </div>
