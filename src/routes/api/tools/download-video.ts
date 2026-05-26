@@ -32,91 +32,57 @@ async function resolveShortUrl(url: string): Promise<string> {
   }
 }
 
-// Get video data using Cobalt API (open source, reliable)
+// Get video data using TikWM API
 async function getVideoData(videoId: string, originalUrl: string): Promise<{
   downloadUrl: string | null;
   thumbnail: string | null;
   description: string | null;
   author: string | null;
+  error?: string;
 }> {
-  // Method 1: Try Cobalt API (public instance)
-  const cobaltInstances = [
-    "https://api.cobalt.tools",
-    "https://cobalt-api.kwiatekmiki.com",
-  ];
-
-  for (const instance of cobaltInstances) {
-    try {
-      const response = await fetch(`${instance}/api/json`, {
-        method: "POST",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          url: originalUrl,
-          vCodec: "h264",
-          vQuality: "720",
-          isNoTTWatermark: true,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.status === "stream" || data.status === "redirect") {
-          return {
-            downloadUrl: data.url || null,
-            thumbnail: null,
-            description: null,
-            author: null,
-          };
-        }
-        if (data.status === "picker" && data.picker?.[0]?.url) {
-          return {
-            downloadUrl: data.picker[0].url,
-            thumbnail: data.picker[0].thumb || null,
-            description: null,
-            author: null,
-          };
-        }
-      }
-    } catch (error) {
-      console.error(`Cobalt API error (${instance}):`, error);
-    }
-  }
-
-  // Method 2: Try TikWM as fallback
   try {
     const formData = new URLSearchParams();
     formData.append("url", originalUrl);
     formData.append("hd", "1");
+
+    console.log("[TikWM] Fetching video data for:", originalUrl);
 
     const response = await fetch("https://www.tikwm.com/api/", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         "Accept": "application/json",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       },
       body: formData.toString(),
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      if (data.code === 0 && data.data) {
-        const videoData = data.data;
-        return {
-          downloadUrl: videoData.hdplay || videoData.play || null,
-          thumbnail: videoData.cover || videoData.origin_cover || null,
-          description: videoData.title || null,
-          author: videoData.author?.unique_id || null,
-        };
-      }
-    }
-  } catch (error) {
-    console.error("TikWM API error:", error);
-  }
+    console.log("[TikWM] Response status:", response.status);
 
-  return { downloadUrl: null, thumbnail: null, description: null, author: null };
+    if (!response.ok) {
+      const text = await response.text();
+      console.error("[TikWM] Error response:", text);
+      return { downloadUrl: null, thumbnail: null, description: null, author: null, error: `HTTP ${response.status}` };
+    }
+
+    const data = await response.json();
+    console.log("[TikWM] Response code:", data.code, "msg:", data.msg);
+
+    if (data.code === 0 && data.data) {
+      const videoData = data.data;
+      return {
+        downloadUrl: videoData.hdplay || videoData.play || null,
+        thumbnail: videoData.cover || videoData.origin_cover || null,
+        description: videoData.title || null,
+        author: videoData.author?.unique_id || null,
+      };
+    }
+
+    return { downloadUrl: null, thumbnail: null, description: null, author: null, error: data.msg || "Unknown error" };
+  } catch (error) {
+    console.error("[TikWM] Exception:", error);
+    return { downloadUrl: null, thumbnail: null, description: null, author: null, error: String(error) };
+  }
 }
 
 export const Route = createFileRoute("/api/tools/download-video")({
@@ -144,8 +110,9 @@ export const Route = createFileRoute("/api/tools/download-video")({
           if (!videoData.downloadUrl) {
             return Response.json(
               {
-                error: "Could not extract video download URL. The video might be private or unavailable.",
+                error: `Could not extract video download URL. ${videoData.error || "The video might be private or unavailable."}`,
                 fallbackUrl: resolvedUrl,
+                debug: { videoId, resolvedUrl, apiError: videoData.error },
               },
               { status: 400 }
             );
