@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useState, useEffect } from "react";
-import { desc, eq, sql, count } from "drizzle-orm";
+import { desc, eq, sql, count, gt } from "drizzle-orm";
 import { db } from "#/db";
 import { user, searchRuns, subscriptions } from "#/db/schema";
 import { Button } from "#/components/ui/button";
@@ -31,24 +31,24 @@ const getAdminStatsFn = createServerFn({ method: "GET" }).handler(async () => {
   const totalUsersResult = await db.select({ count: count() }).from(user);
   const totalUsers = totalUsersResult[0]?.count || 0;
 
-  // Get users registered in last 7 days
-  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  // Get users registered in last 7 days (user.createdAt is in seconds via mode: "timestamp")
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   const recentUsersResult = await db
     .select({ count: count() })
     .from(user)
-    .where(sql`${user.createdAt} > ${new Date(sevenDaysAgo)}`);
+    .where(gt(user.createdAt, sevenDaysAgo));
   const recentUsers = recentUsersResult[0]?.count || 0;
 
   // Get total analyses
   const totalAnalysesResult = await db.select({ count: count() }).from(searchRuns);
   const totalAnalyses = totalAnalysesResult[0]?.count || 0;
 
-  // Get analyses in last 24h
-  const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  // Get analyses in last 24h (searchRuns.createdAt is raw integer milliseconds)
+  const oneDayAgoMs = Date.now() - 24 * 60 * 60 * 1000;
   const recentAnalysesResult = await db
     .select({ count: count() })
     .from(searchRuns)
-    .where(sql`${searchRuns.createdAt} > ${oneDayAgo}`);
+    .where(gt(searchRuns.createdAt, oneDayAgoMs));
   const recentAnalyses = recentAnalysesResult[0]?.count || 0;
 
   // Get active subscriptions
