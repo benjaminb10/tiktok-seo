@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { TrendingUp } from "lucide-react";
 import { useState, useEffect } from "react";
-import { LandingFooter } from "#/components/landing-footer";
 import { Button } from "#/components/ui/button";
 import {
   Dialog,
@@ -15,35 +14,30 @@ import { ProfileCard } from "#/features/profiles/profile-card";
 import { deleteProfileFn, getAnalyzedProfilesFn } from "#/lib/tiktok/tiktok.functions";
 import type { ProfileSummary } from "#/lib/tiktok/tiktok.profiles.server";
 
-export const Route = createFileRoute("/profiles")({
-  component: ProfilesPage,
-  loader: async () => {
-    const profiles = await getAnalyzedProfilesFn();
-    return { profiles };
-  },
-  head: () => ({
-    meta: [
-      { title: "Discover TikTok Creators | Viewlify.app" },
-      {
-        name: "description",
-        content: "Browse analyzed TikTok creators. View stats, engagement rates, and viral content patterns from thousands of TikTok profiles.",
-      },
-      { property: "og:title", content: "Discover TikTok Creators | Viewlify.app" },
-      {
-        property: "og:description",
-        content: "Browse analyzed TikTok creators with detailed performance insights",
-      },
-    ],
-  }),
+export const Route = createFileRoute("/discover")({
+  component: DiscoverPage,
 });
 
-function ProfilesPage() {
-  const { profiles } = Route.useLoaderData();
-  const [localProfiles, setLocalProfiles] = useState(profiles);
+function DiscoverPage() {
+  const [localProfiles, setLocalProfiles] = useState<ProfileSummary[]>([]);
+  const [isLoadingProfiles, setIsLoadingProfiles] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [profileToDelete, setProfileToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Fetch profiles client-side to avoid conflicts with QuotaProvider
+  useEffect(() => {
+    getAnalyzedProfilesFn()
+      .then((profiles) => {
+        setLocalProfiles(profiles);
+        setIsLoadingProfiles(false);
+      })
+      .catch((error) => {
+        console.error("Failed to load profiles:", error);
+        setIsLoadingProfiles(false);
+      });
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -86,53 +80,53 @@ function ProfilesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-full overflow-auto">
       {/* Header */}
-      <section className="border-b bg-muted/30 py-16">
-        <div className="mx-auto max-w-7xl px-4 text-center">
-          <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
-            Discover TikTok Creators
-          </h1>
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Browse analyzed profiles and learn from the best performing creators
-          </p>
-          <div className="mt-6 flex items-center justify-center gap-6 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              <span>{localProfiles.length} creators analyzed</span>
-            </div>
+      <div className="border-b bg-muted/30 px-6 py-8">
+        <h1 className="mb-2 text-2xl font-semibold tracking-tight">
+          Discover
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Browse analyzed profiles and learn from the best performing creators
+        </p>
+        {!isLoadingProfiles && (
+          <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+            <TrendingUp className="h-4 w-4" />
+            <span>{localProfiles.length} creators analyzed</span>
           </div>
-        </div>
-      </section>
+        )}
+      </div>
 
       {/* Profiles Grid */}
-      <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4">
-          {localProfiles.length === 0 ? (
-            <div className="rounded-2xl border bg-muted/30 p-12 text-center">
-              <h2 className="mb-4 text-2xl font-bold">No profiles yet</h2>
-              <p className="mb-6 text-muted-foreground">
-                Be the first to analyze a TikTok profile!
-              </p>
-              <Link to="/app">
-                <Button size="lg">Analyze a profile</Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {localProfiles.map((profile) => (
-                <ProfileCard
-                  key={profile.handle}
-                  profile={profile}
-                  isAdmin={isAdmin}
-                  onDelete={handleDeleteProfile}
-                  variant="landing"
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+      <div className="p-6">
+        {isLoadingProfiles ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          </div>
+        ) : localProfiles.length === 0 ? (
+          <div className="rounded-xl border bg-muted/30 p-8 text-center">
+            <h2 className="mb-2 text-lg font-semibold">No profiles yet</h2>
+            <p className="mb-4 text-sm text-muted-foreground">
+              Be the first to analyze a TikTok profile!
+            </p>
+            <Link to="/app">
+              <Button>Analyze a profile</Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {localProfiles.map((profile) => (
+              <ProfileCard
+                key={profile.handle}
+                profile={profile}
+                isAdmin={isAdmin}
+                onDelete={handleDeleteProfile}
+                variant="app"
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Delete confirmation dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
@@ -162,8 +156,6 @@ function ProfilesPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <LandingFooter />
     </div>
   );
 }

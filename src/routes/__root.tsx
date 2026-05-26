@@ -5,12 +5,15 @@ import {
   Scripts,
   useLocation,
 } from "@tanstack/react-router";
+import { useState } from "react";
+import { Menu, MessageSquare, X } from "lucide-react";
 import { LandingNavbar } from "#/components/landing-navbar";
 import { Sidebar } from "#/components/sidebar";
 import { WhatsAppButton } from "#/components/whatsapp-button";
 import { ChatProvider } from "#/features/chat/chat-context";
 import { ChatSidebar } from "#/features/chat/chat-sidebar";
 import { QuotaProvider } from "#/lib/stripe/quota-context";
+import { Button } from "#/components/ui/button";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -32,10 +35,99 @@ export const Route = createRootRoute({
   component: RootComponent,
 });
 
+function AppLayout({ showChatSidebar }: { showChatSidebar: boolean }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+
+  return (
+    <div className="flex h-screen overflow-hidden">
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Left Sidebar - hidden on mobile, shown on lg+ */}
+      <div
+        className={`fixed inset-y-0 left-0 z-50 transform transition-transform duration-200 lg:relative lg:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <Sidebar onClose={() => setSidebarOpen(false)} />
+      </div>
+
+      {/* Main content */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Mobile header */}
+        <div className="flex h-14 items-center justify-between border-b bg-background px-4 lg:hidden">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+          <span className="text-sm font-semibold">Viewlify</span>
+          {showChatSidebar && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setChatOpen(!chatOpen)}
+            >
+              <MessageSquare className="h-5 w-5" />
+            </Button>
+          )}
+          {!showChatSidebar && <div className="w-9" />}
+        </div>
+
+        {/* Main content area */}
+        <main className="flex-1 overflow-auto">
+          <Outlet />
+        </main>
+      </div>
+
+      {/* Chat sidebar overlay on mobile */}
+      {showChatSidebar && chatOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={() => setChatOpen(false)}
+        />
+      )}
+
+      {/* Chat Sidebar - hidden on mobile/tablet, shown on xl+ or when toggled */}
+      {showChatSidebar && (
+        <div
+          className={`fixed inset-y-0 right-0 z-50 transform transition-transform duration-200 xl:relative xl:translate-x-0 ${
+            chatOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <ChatSidebar onClose={() => setChatOpen(false)} />
+        </div>
+      )}
+
+      {/* Floating chat button on tablet (between lg and xl) */}
+      {showChatSidebar && (
+        <Button
+          variant="default"
+          size="icon"
+          className="fixed bottom-4 right-4 z-30 h-12 w-12 rounded-full shadow-lg xl:hidden"
+          onClick={() => setChatOpen(!chatOpen)}
+        >
+          {chatOpen ? <X className="h-5 w-5" /> : <MessageSquare className="h-5 w-5" />}
+        </Button>
+      )}
+    </div>
+  );
+}
+
 function RootComponent() {
   const location = useLocation();
   const isAppRoute = location.pathname.startsWith("/app") ||
+                     location.pathname.startsWith("/dashboard") ||
                      location.pathname.startsWith("/analyses") ||
+                     location.pathname.startsWith("/discover") ||
                      location.pathname.startsWith("/exports") ||
                      location.pathname.startsWith("/settings") ||
                      location.pathname.startsWith("/help");
@@ -61,13 +153,7 @@ function RootComponent() {
         <body>
           <QuotaProvider>
             <ChatProvider>
-              <div className="flex h-screen overflow-hidden">
-                <Sidebar />
-                <main className="flex-1 overflow-auto">
-                  <Outlet />
-                </main>
-                {showChatSidebar && <ChatSidebar />}
-              </div>
+              <AppLayout showChatSidebar={showChatSidebar} />
             </ChatProvider>
           </QuotaProvider>
           <Scripts />

@@ -14,6 +14,7 @@ import {
   getRunDetails,
   listAllRuns,
   listUserRuns,
+  getDashboardStats,
   QuotaExceededError,
 } from "./tiktok.runs.server";
 import {
@@ -132,3 +133,13 @@ export const deleteProfileFn = createServerFn({ method: "POST" })
     }
     return deleteProfile(data.username);
   });
+
+export const getDashboardStatsFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const session = await getServerSession();
+    if (!session?.user?.id) {
+      return null;
+    }
+    return getDashboardStats(db, session.user.id);
+  },
+);

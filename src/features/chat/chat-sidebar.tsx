@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback, memo } from "react";
-import { Send, MessageSquare, Trash2, Sparkles } from "lucide-react";
+import { Send, MessageSquare, Trash2, Sparkles, X } from "lucide-react";
 import { Button } from "#/components/ui/button";
 import { Input } from "#/components/ui/input";
 import { useChat } from "./use-chat";
@@ -9,7 +9,11 @@ import { QuotaBadge } from "#/features/paywall/quota-badge";
 import { AiQuotaModal } from "#/features/paywall/ai-quota-modal";
 import { useQuotaDisplay } from "#/lib/stripe/quota-context";
 
-export function ChatSidebar() {
+type ChatSidebarProps = {
+  onClose?: () => void;
+};
+
+export function ChatSidebar({ onClose }: ChatSidebarProps) {
   const { videoContext } = useChatContext();
   const { messages, isLoading, error, quotaExceeded, send, clear, clearQuotaExceeded, hasContext } = useChat(videoContext);
   const [input, setInput] = useState("");
@@ -41,7 +45,7 @@ export function ChatSidebar() {
   }, [send]);
 
   return (
-    <div className="flex h-full w-[400px] flex-col border-l bg-background">
+    <div className="flex h-full w-[300px] flex-col border-l bg-background sm:w-[320px]">
       {/* Header */}
       <div className="flex-shrink-0 flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2">
@@ -55,16 +59,28 @@ export function ChatSidebar() {
             />
           )}
         </div>
-        {messages.length > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clear}
-            className="h-7 w-7 p-0"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        )}
+        <div className="flex items-center gap-1">
+          {messages.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clear}
+              className="h-7 w-7 p-0"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+          {onClose && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="h-7 w-7 p-0 xl:hidden"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Messages */}

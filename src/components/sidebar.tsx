@@ -1,17 +1,16 @@
-import { BarChart3, Compass, FileDown, HelpCircle, LayoutDashboard, ListVideo, LogOut, MessageCircle, Settings } from "lucide-react";
+import { BarChart3, Compass, LayoutDashboard, ListVideo, LogOut, MessageCircle, PlusCircle, X } from "lucide-react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Button } from "#/components/ui/button";
 import { QuotaSummaryCard } from "#/features/paywall/quota-summary-card";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Analyses", href: "/analyses", icon: ListVideo },
-  { name: "Discover", href: "/profiles", icon: Compass },
-  { name: "Exports", href: "/exports", icon: FileDown },
-  { name: "Settings", href: "/settings", icon: Settings },
-  { name: "Help", href: "/help", icon: HelpCircle },
+  { name: "Discover", href: "/discover", icon: Compass },
 ];
+
+const CONTACT_URL = "https://wa.me/33651774359?text=Hey%20I%20have%20a%20question%20or%20need%20help%20on%20Viewlify.app";
 
 function SidebarFooterFallback() {
   return (
@@ -100,21 +99,45 @@ function SidebarFooter() {
   );
 }
 
-export function Sidebar() {
+type SidebarProps = {
+  onClose?: () => void;
+};
+
+export function Sidebar({ onClose }: SidebarProps) {
   const location = useLocation();
 
   return (
-    <div className="flex h-screen w-48 flex-col border-r bg-muted/30">
+    <div className="flex h-screen w-56 flex-col border-r bg-background lg:w-48 lg:bg-muted/30">
       {/* Logo */}
-      <div className="flex h-14 items-center gap-2.5 border-b px-4">
-        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
-          <BarChart3 className="h-4 w-4 text-primary-foreground" />
+      <div className="flex h-14 items-center justify-between border-b px-4">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
+            <BarChart3 className="h-4 w-4 text-primary-foreground" />
+          </div>
+          <span className="text-sm font-semibold text-foreground">Viewlify</span>
         </div>
-        <span className="text-sm font-semibold text-foreground">Viewlify</span>
+        {onClose && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 w-7 p-0 lg:hidden"
+            onClick={onClose}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-0.5 p-2">
+      <nav className="flex-1 space-y-1 p-2">
+        {/* New Analysis Button */}
+        <Link to="/app" className="block mb-2">
+          <Button className="w-full justify-start gap-2">
+            <PlusCircle className="h-4 w-4" />
+            New analysis
+          </Button>
+        </Link>
+
         {navigation.map((item) => {
           const isActive = location.pathname === item.href;
           return (
@@ -132,17 +155,8 @@ export function Sidebar() {
             </Link>
           );
         })}
-      </nav>
-
-      {/* Quota Summary */}
-      <div className="px-2 pb-2">
-        <QuotaSummaryCard />
-      </div>
-
-      {/* Contact */}
-      <div className="px-2 pb-2">
         <a
-          href="https://wa.me/33651774359?text=Hey%20I%20have%20a%20question%20or%20need%20help%20on%20Viewlify.app"
+          href={CONTACT_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
@@ -150,6 +164,11 @@ export function Sidebar() {
           <MessageCircle className="h-4 w-4" />
           Contact us
         </a>
+      </nav>
+
+      {/* Quota Summary */}
+      <div className="px-2 pb-2">
+        <QuotaSummaryCard />
       </div>
 
       {/* Footer */}

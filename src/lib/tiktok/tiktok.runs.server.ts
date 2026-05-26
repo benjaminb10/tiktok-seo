@@ -219,3 +219,97 @@ export async function listUserRuns(database: TikTokDb, userId: string) {
 
   return runs;
 }
+
+export type DashboardStats = {
+  totalAnalyses: number;
+  totalVideos: number;
+  totalViews: number;
+  avgEngagement: number;
+  lastAnalysis: {
+    id: string;
+    handle: string | null;
+    avatarUrl: string | null;
+    videoCount: number;
+    totalViews: number;
+    createdAt: number;
+  } | null;
+};
+
+export async function getDashboardStats(
+  database: TikTokDb,
+  userId: string,
+): Promise<DashboardStats> {
+  // Get all completed runs for user
+  const runs = await database
+    .select({
+      id: schema.searchRuns.id,
+      handle: schema.searchRuns.handle,
+      avatarUrl: schema.searchRuns.avatarUrl,
+      totalSelected: schema.searchRuns.totalSelected,
+      createdAt: schema.searchRuns.createdAt,
+      status: schema.searchRuns.status,
+    })
+    .from(schema.searchRuns)
+    .where(eq(schema.searchRuns.userId, userId))
+    .orderBy(desc(schema.searchRuns.createdAt));
+
+  const completedRuns = runs.filter((r) => r.status === "completed");
+
+  if (completedRuns.length === 0) {
+    return {
+      totalAnalyses: 0,
+      totalVideos: 0,
+      totalViews: 0,
+      avgEngagement: 0,
+      lastAnalysis: null,
+    };
+  }
+
+  // Calculate aggregate stats
+  const runIds = completedRuns.map((r) => r.id);
+
+  const [videoStats] = await database
+    .select({
+      totalVideos: sql<number>`COUNT(DISTINCT ${schema.searchRunVideos.videoId})`,
+      totalViews: sql<number>`COALESCE(SUM(${schema.tiktokVideos.viewCount}), 0)`,
+      totalLikes: sql<number>`COALESCE(SUM(${schema.tiktokVideos.likeCount}), 0)`,
+    })
+    .from(schema.searchRunVideos)
+    .innerJoin(
+      schema.tiktokVideos,
+      eq(schema.searchRunVideos.videoId, schema.tiktokVideos.id)
+    )
+    .where(inArray(schema.searchRunVideos.runId, runIds));
+
+  const totalViews = Number(videoStats?.totalViews) || 0;
+  const totalLikes = Number(videoStats?.totalLikes) || 0;
+  const avgEngagement = totalViews > 0 ? (totalLikes / totalViews) * 100 : 0;
+
+  // Get last analysis details
+  const lastRun = completedRuns[0];
+  const [lastRunStats] = await database
+    .select({
+      totalViews: sql<number>`COALESCE(SUM(${schema.tiktokVideos.viewCount}), 0)`,
+    })
+    .from(schema.searchRunVideos)
+    .innerJoin(
+      schema.tiktokVideos,
+      eq(schema.searchRunVideos.videoId, schema.tiktokVideos.id)
+    )
+    .where(eq(schema.searchRunVideos.runId, lastRun.id));
+
+  return {
+    totalAnalyses: completedRuns.length,
+    totalVideos: Number(videoStats?.totalVideos) || 0,
+    totalViews,
+    avgEngagement,
+    lastAnalysis: {
+      id: lastRun.id,
+      handle: lastRun.handle,
+      avatarUrl: lastRun.avatarUrl,
+      videoCount: lastRun.totalSelected,
+      totalViews: Number(lastRunStats?.totalViews) || 0,
+      createdAt: lastRun.createdAt,
+    },
+  };
+}
