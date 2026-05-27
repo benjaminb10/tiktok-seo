@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { Eye, Heart, Play } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "#/components/ui/card";
+import { PremiumBlur } from "#/components/ui/premium-blur";
+import { useQuota } from "#/lib/stripe/quota-context";
 import { formatNumber } from "#/features/tiktok/formatters";
 import { getThumbnailUrl, type UnifiedVideo } from "./types";
+
+const FREE_PREVIEW_COUNT = 3;
 
 type RecentVideosPreviewProps = {
   videos: UnifiedVideo[];
@@ -16,6 +20,8 @@ export function RecentVideosPreview({
   onVideoClick,
 }: RecentVideosPreviewProps) {
   const displayVideos = videos.slice(0, maxVideos);
+  const { quota } = useQuota();
+  const isFree = !quota || quota.tier === "free";
 
   if (displayVideos.length === 0) {
     return null;
@@ -28,11 +34,12 @@ export function RecentVideosPreview({
       </CardHeader>
       <CardContent>
         <div className="grid gap-3 grid-cols-3 sm:grid-cols-4 lg:grid-cols-6">
-          {displayVideos.map((video) => (
+          {displayVideos.map((video, index) => (
             <VideoThumbnail
               key={video.id}
               video={video}
               onClick={onVideoClick}
+              isLocked={isFree && index >= FREE_PREVIEW_COUNT}
             />
           ))}
         </div>
@@ -44,9 +51,10 @@ export function RecentVideosPreview({
 type VideoThumbnailProps = {
   video: UnifiedVideo;
   onClick?: (video: UnifiedVideo) => void;
+  isLocked?: boolean;
 };
 
-function VideoThumbnail({ video, onClick }: VideoThumbnailProps) {
+function VideoThumbnail({ video, onClick, isLocked = false }: VideoThumbnailProps) {
   const [imgError, setImgError] = useState(false);
   const thumbnailUrl = getThumbnailUrl(video.id);
 
@@ -93,11 +101,24 @@ function VideoThumbnail({ video, onClick }: VideoThumbnailProps) {
     return (
       <button
         type="button"
-        onClick={handleClick}
+        onClick={isLocked ? undefined : handleClick}
         className="group overflow-hidden rounded-lg border bg-background transition-all hover:shadow-md text-left"
+        disabled={isLocked}
       >
-        {content}
+        <PremiumBlur isLocked={isLocked} label="Unlock">
+          {content}
+        </PremiumBlur>
       </button>
+    );
+  }
+
+  if (isLocked) {
+    return (
+      <div className="group overflow-hidden rounded-lg border bg-background">
+        <PremiumBlur isLocked={isLocked} label="Unlock">
+          {content}
+        </PremiumBlur>
+      </div>
     );
   }
 

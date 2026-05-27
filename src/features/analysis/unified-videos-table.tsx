@@ -270,7 +270,14 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
         id: "transcript",
         header: "Transcript",
         size: 200,
-        cell: ({ row }) => <TranscriptCell video={row.original} />,
+        cell: ({ row }) => {
+          const shouldBlur = isFree && row.index >= FREE_PREVIEW_ROWS;
+          return (
+            <PremiumBlur isLocked={shouldBlur} label="Unlock">
+              <TranscriptCell video={row.original} />
+            </PremiumBlur>
+          );
+        },
       },
       {
         accessorKey: "durationSeconds",
