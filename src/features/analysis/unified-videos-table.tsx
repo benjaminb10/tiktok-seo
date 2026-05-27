@@ -11,6 +11,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown, Download, Lock, Music, Play, Plus } fr
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
+import { PremiumBlur } from "#/components/ui/premium-blur";
 import { Progress } from "#/components/ui/progress";
 import {
   Table,
@@ -149,6 +150,7 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
 }: UnifiedVideosTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const { quota, canExport, getVideoLimit } = useQuota();
+  const isFree = !quota || quota.tier === "free";
 
   // Use prop limit or get from quota context
   const effectiveLimit = videoLimit ?? getVideoLimit();
@@ -207,10 +209,12 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
           const progressValue =
             rate != null ? Math.min((rate / 0.15) * 100, 100) : 0;
           return (
-            <div className="flex items-center gap-2 min-w-[100px]">
-              <Progress value={progressValue} className="h-2 w-16" />
-              <span className="text-sm">{formatPercent(rate)}</span>
-            </div>
+            <PremiumBlur isLocked={isFree} inline>
+              <div className="flex items-center gap-2 min-w-[100px]">
+                <Progress value={progressValue} className="h-2 w-16" />
+                <span className="text-sm">{formatPercent(rate)}</span>
+              </div>
+            </PremiumBlur>
           );
         },
       },
@@ -222,17 +226,29 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
       {
         accessorKey: "publishedAt",
         header: sortableHeader("Date"),
-        cell: ({ row }) => formatDate(row.original.publishedAt),
+        cell: ({ row }) => (
+          <PremiumBlur isLocked={isFree} inline>
+            {formatDate(row.original.publishedAt)}
+          </PremiumBlur>
+        ),
       },
       {
         accessorKey: "commentCount",
         header: sortableHeader("Comments"),
-        cell: ({ row }) => formatNumber(row.original.commentCount),
+        cell: ({ row }) => (
+          <PremiumBlur isLocked={isFree} inline>
+            {formatNumber(row.original.commentCount)}
+          </PremiumBlur>
+        ),
       },
       {
         accessorKey: "repostCount",
         header: sortableHeader("Reposts"),
-        cell: ({ row }) => formatNumber(row.original.repostCount),
+        cell: ({ row }) => (
+          <PremiumBlur isLocked={isFree} inline>
+            {formatNumber(row.original.repostCount)}
+          </PremiumBlur>
+        ),
       },
       {
         id: "transcript",
@@ -292,7 +308,7 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
         },
       },
     ],
-    [handleThumbnailClick],
+    [handleThumbnailClick, isFree],
   );
 
   const table = useReactTable({
