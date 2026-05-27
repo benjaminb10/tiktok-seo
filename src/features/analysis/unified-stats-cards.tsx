@@ -19,6 +19,7 @@ import { computeStats } from "./types";
 
 type UnifiedStatsCardsProps = {
   videos: UnifiedVideo[];
+  disablePremiumBlur?: boolean;
 };
 
 type StatConfig = {
@@ -29,10 +30,10 @@ type StatConfig = {
   premium?: boolean;
 };
 
-export function UnifiedStatsCards({ videos }: UnifiedStatsCardsProps) {
+export function UnifiedStatsCards({ videos, disablePremiumBlur = false }: UnifiedStatsCardsProps) {
   const stats = computeStats(videos);
   const { quota } = useQuota();
-  const isFree = !quota || quota.tier === "free";
+  const isFree = !disablePremiumBlur && (!quota || quota.tier === "free");
 
   const statConfigs: StatConfig[] = [
     {

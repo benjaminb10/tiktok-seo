@@ -135,6 +135,8 @@ type UnifiedVideosTableProps<T extends UnifiedVideo> = {
   // Paywall props
   videoLimit?: number;
   onExportBlocked?: () => void;
+  // Disable blur for public pages (SEO)
+  disablePremiumBlur?: boolean;
 };
 
 export function UnifiedVideosTable<T extends UnifiedVideo>({
@@ -147,13 +149,14 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
   title = "Available videos",
   videoLimit,
   onExportBlocked,
+  disablePremiumBlur = false,
 }: UnifiedVideosTableProps<T>) {
   // Default sort by date descending (most recent first)
   const [sorting, setSorting] = useState<SortingState>([
     { id: "publishedAt", desc: true },
   ]);
   const { quota, canExport, getVideoLimit } = useQuota();
-  const isFree = !quota || quota.tier === "free";
+  const isFree = !disablePremiumBlur && (!quota || quota.tier === "free");
 
   // Number of free preview rows before blurring
   const FREE_PREVIEW_ROWS = 3;

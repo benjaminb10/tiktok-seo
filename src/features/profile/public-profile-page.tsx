@@ -96,12 +96,12 @@ function ProfileWithData({ username, data }: { username: string; data: ProfileDe
 
         {/* Stats Cards with Sparklines */}
         <div className="mb-8">
-          <UnifiedStatsCards videos={data.videos} />
+          <UnifiedStatsCards videos={data.videos} disablePremiumBlur />
         </div>
 
         {/* Recent Videos Preview */}
         <div className="mb-8">
-          <RecentVideosPreview videos={data.videos} maxVideos={6} />
+          <RecentVideosPreview videos={data.videos} maxVideos={6} disablePremiumBlur />
         </div>
 
         {/* Full Analysis Table */}
@@ -114,6 +114,7 @@ function ProfileWithData({ username, data }: { username: string; data: ProfileDe
               videos={data.videos}
               title="All Videos"
               exportFilename="viewlify-profile-export.csv"
+              disablePremiumBlur
             />
           </CardContent>
         </Card>

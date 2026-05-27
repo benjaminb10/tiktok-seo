@@ -12,16 +12,18 @@ type RecentVideosPreviewProps = {
   videos: UnifiedVideo[];
   maxVideos?: number;
   onVideoClick?: (video: UnifiedVideo) => void;
+  disablePremiumBlur?: boolean;
 };
 
 export function RecentVideosPreview({
   videos,
   maxVideos = 6,
   onVideoClick,
+  disablePremiumBlur = false,
 }: RecentVideosPreviewProps) {
   const displayVideos = videos.slice(0, maxVideos);
   const { quota } = useQuota();
-  const isFree = !quota || quota.tier === "free";
+  const isFree = !disablePremiumBlur && (!quota || quota.tier === "free");
 
   if (displayVideos.length === 0) {
     return null;
