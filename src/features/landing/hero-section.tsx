@@ -1,8 +1,11 @@
 import { ArrowRight, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "#/components/ui/button";
+import { useState } from "react";
 
 export function HeroSection() {
+  const [avatarError, setAvatarError] = useState(false);
+
   return (
     <section className="relative py-20 lg:py-32">
       <div className="mx-auto max-w-4xl px-4 text-center">
@@ -60,9 +63,18 @@ export function HeroSection() {
               <div className="space-y-6">
                 {/* Search bar mockup */}
                 <div className="mx-auto flex max-w-xl items-center gap-3 rounded-lg border bg-background p-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                    MB
-                  </div>
+                  {avatarError ? (
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                      MB
+                    </div>
+                  ) : (
+                    <img
+                      src="/api/avatar/mrbeast"
+                      alt="MrBeast avatar"
+                      className="h-8 w-8 rounded-full object-cover"
+                      onError={() => setAvatarError(true)}
+                    />
+                  )}
                   <span className="text-sm font-medium text-foreground">@mrbeast</span>
                   <div className="ml-auto rounded-md bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground">
                     Analyze

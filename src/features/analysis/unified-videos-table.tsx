@@ -148,9 +148,15 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
   videoLimit,
   onExportBlocked,
 }: UnifiedVideosTableProps<T>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  // Default sort by date descending (most recent first)
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "publishedAt", desc: true },
+  ]);
   const { quota, canExport, getVideoLimit } = useQuota();
   const isFree = !quota || quota.tier === "free";
+
+  // Number of free preview rows before blurring
+  const FREE_PREVIEW_ROWS = 3;
 
   // Use prop limit or get from quota context
   const effectiveLimit = videoLimit ?? getVideoLimit();
@@ -208,8 +214,9 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
           const rate = engagementRate(row.original);
           const progressValue =
             rate != null ? Math.min((rate / 0.15) * 100, 100) : 0;
+          const shouldBlur = isFree && row.index >= FREE_PREVIEW_ROWS;
           return (
-            <PremiumBlur isLocked={isFree} inline>
+            <PremiumBlur isLocked={shouldBlur} inline>
               <div className="flex items-center gap-2 min-w-[100px]">
                 <Progress value={progressValue} className="h-2 w-16" />
                 <span className="text-sm">{formatPercent(rate)}</span>
@@ -226,29 +233,38 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
       {
         accessorKey: "publishedAt",
         header: sortableHeader("Date"),
-        cell: ({ row }) => (
-          <PremiumBlur isLocked={isFree} inline>
-            {formatDate(row.original.publishedAt)}
-          </PremiumBlur>
-        ),
+        cell: ({ row }) => {
+          const shouldBlur = isFree && row.index >= FREE_PREVIEW_ROWS;
+          return (
+            <PremiumBlur isLocked={shouldBlur} inline>
+              {formatDate(row.original.publishedAt)}
+            </PremiumBlur>
+          );
+        },
       },
       {
         accessorKey: "commentCount",
         header: sortableHeader("Comments"),
-        cell: ({ row }) => (
-          <PremiumBlur isLocked={isFree} inline>
-            {formatNumber(row.original.commentCount)}
-          </PremiumBlur>
-        ),
+        cell: ({ row }) => {
+          const shouldBlur = isFree && row.index >= FREE_PREVIEW_ROWS;
+          return (
+            <PremiumBlur isLocked={shouldBlur} inline>
+              {formatNumber(row.original.commentCount)}
+            </PremiumBlur>
+          );
+        },
       },
       {
         accessorKey: "repostCount",
         header: sortableHeader("Reposts"),
-        cell: ({ row }) => (
-          <PremiumBlur isLocked={isFree} inline>
-            {formatNumber(row.original.repostCount)}
-          </PremiumBlur>
-        ),
+        cell: ({ row }) => {
+          const shouldBlur = isFree && row.index >= FREE_PREVIEW_ROWS;
+          return (
+            <PremiumBlur isLocked={shouldBlur} inline>
+              {formatNumber(row.original.repostCount)}
+            </PremiumBlur>
+          );
+        },
       },
       {
         id: "transcript",
@@ -308,7 +324,7 @@ export function UnifiedVideosTable<T extends UnifiedVideo>({
         },
       },
     ],
-    [handleThumbnailClick, isFree],
+    [handleThumbnailClick, isFree, FREE_PREVIEW_ROWS],
   );
 
   const table = useReactTable({
